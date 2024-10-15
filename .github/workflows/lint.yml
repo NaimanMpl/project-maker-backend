@@ -15,9 +15,7 @@ jobs:
 
 
       - name: Install dependencies
-        working-directory: server
         run: npm install
 
       - name: Check lint
-        working-directory: server
         run: npm run lint
