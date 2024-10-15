@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "lint" : "eslint .",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +15,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@commitlint/config-conventional": "^19.5.0",
     "express": "^4.21.1",
     "nodemon": "^3.1.7",
     "tsx": "^4.19.1"
