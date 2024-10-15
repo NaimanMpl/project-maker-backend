@@ -1,21 +1,30 @@
-import express from "express";
-import dotenv from "dotenv";
-import WebSocket from 'ws';
+import WebSocket, { Server } from 'ws';
+import http from 'http';
 
-// const wss = new WebSocket.Server({ port: 8080 });
+const PORT = 8080;
 
-dotenv.config();
-
-const app = express();
-
-app.get("/", (req, res) => {
-  res.status(200).json({ messsage: "Hello, World!" });
+// Create an HTTP server
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('WebSocket server running');
 });
 
+// Create a WebSocket server by passing the HTTP server instance to ws
+const wss = new Server({ server });
+wss.on('connection', (ws: WebSocket) => {
+  console.log('Client connected');
 
+  // Handle messages from clients
+  ws.on('message', (message: string) => {
+    console.log(`Received message: ${message}`);
+  });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server listening at port: " + process.env.PORT);
+  // Handle client disconnect
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
 });
 
-export default app;
+server.listen(PORT, () => {
+  console.log(`HTTP server started on port ${PORT}`);
+});
