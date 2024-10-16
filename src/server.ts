@@ -1,10 +1,19 @@
 import { Config } from "@models/config";
 import { GameState } from "@models/gamestate";
+import { Player, PlayerType } from "@models/player";
+import { Room } from "@models/room";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+
+const rooms: Record<string, Room> = {
+  lobby: {
+    name: "lobby",
+    players: [],
+  },
+};
 
 const config: Config = {
   tickRate: 20,
@@ -52,6 +61,24 @@ io.on("connection", (socket) => {
   socket.on("message", (message: string) => {
     console.log(`Received message: ${message}`);
     socket.send(JSON.stringify({ message }));
+  });
+
+  socket.on("signup", (message) => {
+    const payload: { name: string; type: PlayerType } = JSON.parse(message);
+    const { name, type } = payload;
+    if (gameState.status !== "LOBBY") {
+      return;
+    }
+
+    const player: Player = {
+      name,
+      type,
+    };
+
+    rooms.lobby.players.push(player);
+
+    socket.join("lobby");
+    io.to("lobby").emit("newplayer", JSON.stringify(player));
   });
 
   // Handle client disconnect
