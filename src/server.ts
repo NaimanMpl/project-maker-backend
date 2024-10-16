@@ -1,8 +1,29 @@
+import { Config } from "@models/config";
+import { GameState } from "@models/gamestate";
+import { Player, PlayerType } from "@models/player";
+import { Room } from "@models/room";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+
+const rooms: Record<string, Room> = {
+  lobby: {
+    name: "lobby",
+    players: [],
+  },
+};
+
+const config: Config = {
+  tickRate: 20,
+};
+
+const gameState: GameState = {
+  status: "LOBBY",
+  timer: 0,
+  loops: 0,
+};
 
 const app = express();
 if (process.env.NODE_ENV !== "production") {
@@ -25,6 +46,14 @@ const io = new Server(server, {
   },
 });
 
+const gameLoop = () => {
+  gameState.timer += 1 / config.tickRate;
+
+  io.emit("gamestate", JSON.stringify(gameState));
+};
+
+const interval = setInterval(gameLoop, 1000 / config.tickRate);
+
 io.on("connection", (socket) => {
   console.log("Client connected");
 
@@ -34,10 +63,32 @@ io.on("connection", (socket) => {
     socket.send(JSON.stringify({ message }));
   });
 
+  socket.on("signup", (message) => {
+    const payload: { name: string; type: PlayerType } = JSON.parse(message);
+    const { name, type } = payload;
+    if (gameState.status !== "LOBBY") {
+      return;
+    }
+
+    const player: Player = {
+      name,
+      type,
+    };
+
+    rooms.lobby.players.push(player);
+
+    socket.join("lobby");
+    io.to("lobby").emit("newplayer", JSON.stringify(player));
+  });
+
   // Handle client disconnect
   socket.on("close", () => {
     console.log("Client disconnected");
   });
+});
+
+io.on("close", () => {
+  clearInterval(interval);
 });
 
 server.listen(PORT, () => {
