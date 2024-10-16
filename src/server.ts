@@ -1,8 +1,20 @@
+import { Config } from "@models/config";
+import { GameState } from "@models/gamestate";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+
+const config: Config = {
+  tickRate: 20,
+};
+
+const gameState: GameState = {
+  status: "LOBBY",
+  timer: 0,
+  loops: 0,
+};
 
 const app = express();
 if (process.env.NODE_ENV !== "production") {
@@ -25,6 +37,14 @@ const io = new Server(server, {
   },
 });
 
+const gameLoop = () => {
+  gameState.timer += 1 / config.tickRate;
+
+  io.emit("gamestate", JSON.stringify(gameState));
+};
+
+const interval = setInterval(gameLoop, 1000 / config.tickRate);
+
 io.on("connection", (socket) => {
   console.log("Client connected");
 
@@ -38,6 +58,10 @@ io.on("connection", (socket) => {
   socket.on("close", () => {
     console.log("Client disconnected");
   });
+});
+
+io.on("close", () => {
+  clearInterval(interval);
 });
 
 server.listen(PORT, () => {
