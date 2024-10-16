@@ -16,9 +16,11 @@
   "description": "",
   "dependencies": {
     "@commitlint/config-conventional": "^19.5.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "nodemon": "^3.1.7",
+    "socket.io": "^4.8.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
     "ws": "^8.18.0"

@@ -1,32 +1,41 @@
+import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
 import http from "http";
-import { WebSocketServer } from "ws";
+import { Server } from "socket.io";
 
+const app = express();
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
-const PORT = process.env.PORT ?? 3000;
+app.use(cors());
 
-// Create an HTTP server
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("WebSocket server running");
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "WebSocket Server Hello World" });
 });
 
+const PORT = process.env.PORT ?? 3001;
+const server = http.createServer(app);
+
 // Create a WebSocket server by passing the HTTP server instance to ws
-const wss = new WebSocketServer({ server });
-wss.on("connection", (ws) => {
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
   console.log("Client connected");
 
   // Handle messages from clients
-  ws.on("message", (message: string) => {
+  socket.on("message", (message: string) => {
     console.log(`Received message: ${message}`);
-    ws.send(message);
+    socket.send(JSON.stringify({ message }));
   });
 
   // Handle client disconnect
-  ws.on("close", () => {
+  socket.on("close", () => {
     console.log("Client disconnected");
   });
 });
