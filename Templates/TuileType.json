@@ -1,0 +1,12 @@
+{
+    "type": "Type of tile",
+    "description": "Description of the tile",
+    "properties": {
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "angle": 0
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "name": "MapName",
+    "type": "Map",
+    "description": "Description of the map",
+    "properties": {
+        "size": {
+            "Xmin": 0,
+            "Xmax": 50,
+            "Ymin": 0,
+            "Ymax": 100*
+        },
+        "tiles": [
+            {
+                "type": "Type of tile",
+                "description": "Description of the tile",
+                "properties": {
+                    "position": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "angle": 0
+                }
+            },
+            {
+                "type": "Type of tile",
+                "description": "Description of the tile",
+                "properties": {
+                    "position": {
+                        "x": 1,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "angle": 0
+                }
+            }
+        ]
+    }
+}
