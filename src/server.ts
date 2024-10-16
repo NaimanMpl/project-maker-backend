@@ -1,7 +1,12 @@
-import WebSocket, { Server } from "ws";
+import dotenv from "dotenv";
 import http from "http";
+import { WebSocketServer } from "ws";
 
-const PORT = 8080;
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
+
+const PORT = process.env.PORT ?? 3000;
 
 // Create an HTTP server
 const server = http.createServer((req, res) => {
@@ -10,13 +15,14 @@ const server = http.createServer((req, res) => {
 });
 
 // Create a WebSocket server by passing the HTTP server instance to ws
-const wss = new Server({ server });
-wss.on("connection", (ws: WebSocket) => {
+const wss = new WebSocketServer({ server });
+wss.on("connection", (ws) => {
   console.log("Client connected");
 
   // Handle messages from clients
   ws.on("message", (message: string) => {
     console.log(`Received message: ${message}`);
+    ws.send(message);
   });
 
   // Handle client disconnect
