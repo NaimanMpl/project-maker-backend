@@ -122,7 +122,11 @@ io.on("connection", (socket) => {
     game.rooms.lobby.players = game.rooms.lobby.players.filter(
       (player) => player.id !== id,
     );
-    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
+    const response: { players: Player[]; logoutPlayerId: string } = {
+      players: game.rooms.lobby.players,
+      logoutPlayerId: id,
+    };
+    io.to("lobby").emit("logoutplayer", JSON.stringify(response));
     console.log("Player : " + id + " quit the lobby.");
   });
 
