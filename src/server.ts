@@ -88,6 +88,16 @@ io.on("connection", (socket) => {
     io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
   });
 
+  socket.on("logout", (message) => {
+    const payload: { id: string } = JSON.parse(message);
+    const { id } = payload;
+    game.rooms.lobby.players = game.rooms.lobby.players.filter(
+      (player) => player.id !== id,
+    );
+    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
+    console.log("Player : " + id + " quit the lobby.");
+  });
+
   // Handle client disconnect
   socket.on("close", () => {
     console.log("Client disconnected");
