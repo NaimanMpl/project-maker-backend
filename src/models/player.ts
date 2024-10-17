@@ -6,4 +6,5 @@ export interface Player {
   name: string;
   type: PlayerType;
   role?: PlayerRole;
+  quitting: boolean;
 }

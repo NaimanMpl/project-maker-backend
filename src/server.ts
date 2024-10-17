@@ -65,6 +65,8 @@ io.on("connection", (socket) => {
     socket.send(JSON.stringify({ message }));
   });
 
+  let waitingQuit = false;
+
   socket.on("signup", (message) => {
     const payload: { name: string; type: PlayerType } = JSON.parse(message);
     const { name, type } = payload;
@@ -78,6 +80,7 @@ io.on("connection", (socket) => {
       id: uuidv4(),
       name,
       type,
+      quitting: false,
     };
 
     game.rooms.lobby.players.push(player);
@@ -86,6 +89,21 @@ io.on("connection", (socket) => {
 
     socket.join("lobby");
     io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
+    waitingQuit = true;
+  });
+
+  socket.on("quitting", (message) => {
+    const payload: { id: string } = JSON.parse(message);
+    const { id } = payload;
+    const index = game.rooms.lobby.players.indexOf(id);
+    console.log(game.rooms.lobby.players);
+
+    game.rooms.lobby.players.splice(index, 1);
+
+    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
+    console.log(game.rooms.lobby.players);
+
+    console.log("Player : " + id + " quit the lobby.");
   });
 
   // Handle client disconnect
