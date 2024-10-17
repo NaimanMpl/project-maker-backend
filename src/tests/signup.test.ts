@@ -1,5 +1,6 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
+import { Player } from "../models/player";
 import { game, io, server } from "../server";
 
 describe("SignUp Event", () => {
@@ -14,6 +15,10 @@ describe("SignUp Event", () => {
       clientSocket = ioc("http://localhost:3001");
       clientSocket.on("connect", done);
     });
+  });
+
+  afterEach(() => {
+    clientSocket.removeAllListeners();
   });
 
   afterAll((done) => {
@@ -48,6 +53,15 @@ describe("SignUp Event", () => {
           type: "WEB",
         },
       ]);
+    });
+
+    clientSocket.on("signupsuccess", (msg) => {
+      const player: Player = JSON.parse(msg);
+      expect(player).toEqual({
+        id: "123456789",
+        name: "John",
+        type: "WEB",
+      });
       done();
     });
   });
