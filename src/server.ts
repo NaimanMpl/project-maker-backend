@@ -1,12 +1,15 @@
-import { Config } from "@models/config";
-import { GameState } from "@models/gamestate";
-import { Player, PlayerType } from "@models/player";
-import { Room } from "@models/room";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
+import { Config } from "./models/config";
+import { Game } from "./models/game";
+import { GAME_ALREADY_STARTED } from "./models/gameerror";
+import { GameState } from "./models/gamestate";
+import { Player, PlayerType } from "./models/player";
+import { Room } from "./models/room";
 
 const rooms: Record<string, Room> = {
   lobby: {
@@ -36,11 +39,10 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "WebSocket Server Hello World" });
 });
 
-const PORT = process.env.PORT ?? 3001;
-const server = http.createServer(app);
+export const server = http.createServer(app);
 
 // Create a WebSocket server by passing the HTTP server instance to ws
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: "*",
   },
@@ -66,19 +68,24 @@ io.on("connection", (socket) => {
   socket.on("signup", (message) => {
     const payload: { name: string; type: PlayerType } = JSON.parse(message);
     const { name, type } = payload;
-    if (gameState.status !== "LOBBY") {
+
+    if (game.state.status !== "LOBBY") {
+      socket.emit("error", JSON.stringify(GAME_ALREADY_STARTED));
       return;
     }
 
     const player: Player = {
+      id: uuidv4(),
       name,
       type,
     };
 
-    rooms.lobby.players.push(player);
+    game.rooms.lobby.players.push(player);
+
+    socket.emit("signupsuccess", JSON.stringify(player));
 
     socket.join("lobby");
-    io.to("lobby").emit("newplayer", JSON.stringify(player));
+    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
   });
 
   // Handle client disconnect
@@ -91,6 +98,11 @@ io.on("close", () => {
   clearInterval(interval);
 });
 
-server.listen(PORT, () => {
-  console.log(`HTTP server started on port ${PORT}`);
+server.on("close", () => {
+  clearInterval(interval);
 });
+
+export const game: Game = {
+  rooms,
+  state: gameState,
+};
