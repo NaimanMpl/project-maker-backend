@@ -22,6 +22,7 @@ describe("SignUp Event", () => {
   });
 
   afterAll((done) => {
+    game.rooms.lobby.players = [];
     clientSocket.close();
     server.close(done);
     io.close();
@@ -82,6 +83,36 @@ describe("SignUp Event", () => {
         JSON.stringify({
           type: "GAME_ALREADY_STARTED",
           message: "Sorry, the game has already started.",
+        }),
+      );
+      done();
+    });
+  });
+
+  it("should not signup a new user if username already taken and send an error", (done) => {
+    game.state.status = "LOBBY";
+
+    game.rooms.lobby.players = [
+      {
+        id: "123456789",
+        name: "John",
+        type: "WEB",
+      },
+    ];
+
+    clientSocket.emit(
+      "signup",
+      JSON.stringify({
+        name: "John",
+        type: "WEB",
+      }),
+    );
+
+    clientSocket.on("signupfailed", (error) => {
+      expect(error).toEqual(
+        JSON.stringify({
+          type: "USERNAME_ALREADY_TAKEN",
+          message: "Username is already taken.",
         }),
       );
       done();

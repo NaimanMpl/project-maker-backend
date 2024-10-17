@@ -4,9 +4,14 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import * as whoamihandler from "./handlers/whoami.handler";
 import { Config } from "./models/config";
 import { Game } from "./models/game";
-import { GAME_ALREADY_STARTED } from "./models/gameerror";
+import {
+  GAME_ALREADY_STARTED,
+  UNKNOWN_PLAYER,
+  USERNAME_ALREADY_TAKEN,
+} from "./models/gameerror";
 import { GameState } from "./models/gamestate";
 import { Player, PlayerType } from "./models/player";
 import { Room } from "./models/room";
@@ -59,10 +64,27 @@ const interval = setInterval(gameLoop, 1000 / config.tickRate);
 io.on("connection", (socket) => {
   console.log("Client connected");
 
+  if (game.state.status === "LOBBY") {
+    socket.join("lobby");
+    socket.emit("lobbyplayers", JSON.stringify(game.rooms.lobby.players));
+  }
+
   // Handle messages from clients
   socket.on("message", (message: string) => {
     console.log(`Received message: ${message}`);
     socket.send(JSON.stringify({ message }));
+  });
+
+  socket.on("whoami", (message) => {
+    const { id }: { id: string } = JSON.parse(message);
+    const player = whoamihandler.getPlayer(game, id);
+
+    if (!player) {
+      socket.emit("error", JSON.stringify(UNKNOWN_PLAYER));
+      return;
+    }
+
+    socket.emit("playerInfo", JSON.stringify(player));
   });
 
   socket.on("signup", (message) => {
@@ -71,6 +93,12 @@ io.on("connection", (socket) => {
 
     if (game.state.status !== "LOBBY") {
       socket.emit("error", JSON.stringify(GAME_ALREADY_STARTED));
+      return;
+    }
+
+    if (game.rooms.lobby.players.some((player) => player.name === name)) {
+      socket.emit("error", JSON.stringify(USERNAME_ALREADY_TAKEN));
+      socket.emit("signupfailed", JSON.stringify(USERNAME_ALREADY_TAKEN));
       return;
     }
 
