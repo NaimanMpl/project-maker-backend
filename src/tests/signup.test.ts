@@ -43,6 +43,7 @@ describe("SignUp Event", () => {
     serverSocket.on("signup", () => {
       expect(game.rooms.lobby.players).toEqual([
         {
+          id: "123456789",
           name: "John",
           type: "WEB",
         },

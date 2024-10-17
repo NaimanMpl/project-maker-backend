@@ -1,10 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts",
+    "start": "node dist/app.js",
+    "dev": "tsx watch src/app.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
@@ -26,6 +25,7 @@
     "ts-jest": "^29.2.5",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
+    "uuid": "^10.0.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
@@ -33,6 +33,7 @@
     "@testing-library/dom": "^10.4.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.13",
+    "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.12",
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",

@@ -1,5 +1,5 @@
-import { GameState } from "@models/gamestate";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
+import { GameState } from "../models/gamestate";
 import { game, io, server } from "../server";
 
 describe("GameLoop", () => {

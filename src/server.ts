@@ -1,14 +1,15 @@
-import { Config } from "@models/config";
-import { Game } from "@models/game";
-import { GAME_ALREADY_STARTED } from "@models/gameerror";
-import { GameState } from "@models/gamestate";
-import { Player, PlayerType } from "@models/player";
-import { Room } from "@models/room";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
+import { Config } from "./models/config";
+import { Game } from "./models/game";
+import { GAME_ALREADY_STARTED } from "./models/gameerror";
+import { GameState } from "./models/gamestate";
+import { Player, PlayerType } from "./models/player";
+import { Room } from "./models/room";
 
 const rooms: Record<string, Room> = {
   lobby: {
@@ -74,11 +75,14 @@ io.on("connection", (socket) => {
     }
 
     const player: Player = {
+      id: uuidv4(),
       name,
       type,
     };
 
     game.rooms.lobby.players.push(player);
+
+    socket.emit("signupsuccess", JSON.stringify(player));
 
     socket.join("lobby");
     io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
@@ -102,5 +106,3 @@ export const game: Game = {
   rooms,
   state: gameState,
 };
-
-export default server;
