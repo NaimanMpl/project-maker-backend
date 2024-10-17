@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     rooms.lobby.players.push(player);
 
     socket.join("lobby");
-    io.to("lobby").emit("newplayer", JSON.stringify(player));
+    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
   });
 
   // Handle client disconnect
