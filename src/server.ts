@@ -4,11 +4,13 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import { map } from "../assets/map.json";
 import * as whoamihandler from "./handlers/whoami.handler";
 import { Config } from "./models/config";
 import { Game } from "./models/game";
 import {
   GAME_ALREADY_STARTED,
+  UNAUTHORIZED,
   UNKNOWN_PLAYER,
   USERNAME_ALREADY_TAKEN,
 } from "./models/gameerror";
@@ -30,7 +32,9 @@ const config: Config = {
 const gameState: GameState = {
   status: "LOBBY",
   timer: 0,
+  startTimer: 15,
   loops: 0,
+  map: map,
 };
 
 const app = express();
@@ -54,7 +58,20 @@ export const io = new Server(server, {
 });
 
 const gameLoop = () => {
-  gameState.timer += 1 / config.tickRate;
+  if (game.state.status === "STARTING") {
+    game.state.startTimer = Math.max(
+      0,
+      game.state.startTimer - 1 / config.tickRate,
+    );
+
+    if (game.state.startTimer === 0) {
+      game.state.status = "PLAYING";
+    }
+  }
+
+  if (game.state.status === "PLAYING") {
+    gameState.timer += 1 / config.tickRate;
+  }
 
   io.emit("gamestate", JSON.stringify(gameState));
 };
@@ -128,6 +145,26 @@ io.on("connection", (socket) => {
     };
     io.to("lobby").emit("logoutplayer", JSON.stringify(response));
     console.log("Player : " + id + " quit the lobby.");
+  });
+
+  socket.on("start", (message) => {
+    const { id }: { id: string } = JSON.parse(message);
+
+    const player = game.rooms.lobby.players.find((player) => player.id === id);
+
+    if (!player) {
+      socket.emit("error", JSON.stringify(UNAUTHORIZED));
+    }
+
+    game.state.status = "STARTING";
+    game.state.startTimer = 15;
+
+    io.to("lobby").emit(
+      "start",
+      JSON.stringify({
+        player,
+      }),
+    );
   });
 
   // Handle client disconnect

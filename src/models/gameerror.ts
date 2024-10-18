@@ -17,3 +17,8 @@ export const UNKNOWN_PLAYER: GameError = {
   type: "UNKNOWN_PLAYER",
   message: "The player was not found.",
 };
+
+export const UNAUTHORIZED: GameError = {
+  type: "UNAUTHORIZED",
+  message: "You cannot perform this action.",
+};
