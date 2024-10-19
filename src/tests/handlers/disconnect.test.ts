@@ -21,7 +21,7 @@ describe("Logout Handler", () => {
   });
 
   afterAll((done) => {
-    game.rooms.lobby.players = [];
+    game.reset();
     clientSocket.close();
     server.close(done);
     io.close();
@@ -43,7 +43,7 @@ describe("Logout Handler", () => {
     });
 
     serverSocket.on("disconnect", () => {
-      expect(game.rooms.lobby.players).toEqual([]);
+      expect(game.players).toEqual({});
       done();
     });
   });

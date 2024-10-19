@@ -22,7 +22,7 @@ describe("SignUp Event", () => {
   });
 
   afterAll((done) => {
-    game.rooms.lobby.players = [];
+    game.reset();
     clientSocket.close();
     server.close(done);
     io.close();
@@ -47,13 +47,13 @@ describe("SignUp Event", () => {
     );
 
     serverSocket.on("signup", () => {
-      expect(game.rooms.lobby.players).toEqual([
-        {
+      expect(game.players).toEqual({
+        "123456789": {
           id: "123456789",
           name: "John",
           type: "WEB",
         },
-      ]);
+      });
     });
 
     clientSocket.on("signupsuccess", (msg) => {
@@ -92,13 +92,11 @@ describe("SignUp Event", () => {
   it("should not signup a new user if username already taken and send an error", (done) => {
     game.state.status = "LOBBY";
 
-    game.rooms.lobby.players = [
-      {
-        id: "123456789",
-        name: "John",
-        type: "WEB",
-      },
-    ];
+    game.addPlayer({
+      id: "123456789",
+      name: "John",
+      type: "WEB",
+    });
 
     clientSocket.emit(
       "signup",

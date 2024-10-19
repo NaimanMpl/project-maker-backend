@@ -18,24 +18,22 @@ describe("Logout Handler", () => {
   });
 
   afterEach(() => {
+    game.reset();
     clientSocket.removeAllListeners();
   });
 
   afterAll((done) => {
-    game.rooms.lobby.players = [];
     clientSocket.close();
     server.close(done);
     io.close();
   });
 
   it("should remove a player of the lobby", (done) => {
-    game.rooms.lobby.players = [
-      {
-        id: "1",
-        name: "John",
-        type: "WEB",
-      },
-    ];
+    game.addPlayer({
+      id: "1",
+      name: "John",
+      type: "WEB",
+    });
 
     clientSocket.emit(
       "logout",
@@ -48,7 +46,7 @@ describe("Logout Handler", () => {
       const { id }: { id: string } = JSON.parse(message);
 
       expect(id).toEqual("1");
-      expect(game.rooms.lobby.players).toEqual([]);
+      expect(game.players).toEqual({});
     });
 
     clientSocket.on("logoutplayer", (message) => {

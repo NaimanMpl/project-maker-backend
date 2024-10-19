@@ -18,14 +18,14 @@ describe("Who Am I Handler", () => {
   });
 
   afterAll((done) => {
-    game.rooms.lobby.players = [];
+    game.reset();
     clientSocket.close();
     server.close(done);
     io.close();
   });
 
   it("should return back the player according to the id provided", (done) => {
-    game.rooms.lobby.players.push({
+    game.addPlayer({
       id: "123456789",
       name: "John",
       type: "WEB",
@@ -50,7 +50,7 @@ describe("Who Am I Handler", () => {
   });
 
   it("should return back the player according to the id provided", (done) => {
-    game.rooms.lobby.players.push({
+    game.addPlayer({
       id: "123456789",
       name: "John",
       type: "WEB",
@@ -75,29 +75,23 @@ describe("Who Am I Handler", () => {
 
   it("should return back the player according to the id provided even if state is not LOBBY", (done) => {
     game.state.status = "PLAYING";
-    game.rooms.protectors.players = [
-      {
-        id: "1",
-        name: "John",
-        type: "WEB",
-        role: "Protector",
-      },
-    ];
-    game.rooms.unity.players = [
-      {
-        id: "2",
-        name: "Hello",
-        type: "UNITY",
-      },
-    ];
-    game.rooms.evilmans.players = [
-      {
-        id: "3",
-        name: "Doe",
-        type: "WEB",
-        role: "Evilman",
-      },
-    ];
+    game.addPlayer({
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: "Protector",
+    });
+    game.addPlayer({
+      id: "2",
+      name: "Hello",
+      type: "UNITY",
+    });
+    game.addPlayer({
+      id: "3",
+      name: "Doe",
+      type: "WEB",
+      role: "Evilman",
+    });
 
     clientSocket.emit(
       "whoami",
