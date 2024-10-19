@@ -1,7 +1,9 @@
-export type GameStatus = "LOBBY" | "PLAYING" | "FINISHED";
+export type GameStatus = "LOBBY" | "STARTING" | "PLAYING" | "FINISHED";
 
 export interface GameState {
   status: GameStatus;
   timer: number;
+  startTimer: number;
   loops: number;
+  map: number[][];
 }

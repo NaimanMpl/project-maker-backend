@@ -4,34 +4,17 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
-import * as whoamihandler from "./handlers/whoami.handler";
-import { Config } from "./models/config";
 import { Game } from "./models/game";
 import {
   GAME_ALREADY_STARTED,
+  UNAUTHORIZED,
+  UNITY_PLAYER_NOT_FOUND,
   UNKNOWN_PLAYER,
   USERNAME_ALREADY_TAKEN,
 } from "./models/gameerror";
-import { GameState } from "./models/gamestate";
 import { Player, PlayerType } from "./models/player";
-import { Room } from "./models/room";
 
-const rooms: Record<string, Room> = {
-  lobby: {
-    name: "lobby",
-    players: [],
-  },
-};
-
-const config: Config = {
-  tickRate: 20,
-};
-
-const gameState: GameState = {
-  status: "LOBBY",
-  timer: 0,
-  loops: 0,
-};
+export const game: Game = new Game();
 
 const app = express();
 if (process.env.NODE_ENV !== "production") {
@@ -39,7 +22,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use(cors());
-
+/* istanbul ignore next */
 app.get("/", (req, res) => {
   res.status(200).json({ message: "WebSocket Server Hello World" });
 });
@@ -54,19 +37,18 @@ export const io = new Server(server, {
 });
 
 const gameLoop = () => {
-  gameState.timer += 1 / config.tickRate;
-
-  io.emit("gamestate", JSON.stringify(gameState));
+  game.tick();
+  io.emit("gamestate", JSON.stringify(game.state));
 };
 
-const interval = setInterval(gameLoop, 1000 / config.tickRate);
+const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
 
 io.on("connection", (socket) => {
   console.log("Client connected");
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
-    socket.emit("lobbyplayers", JSON.stringify(game.rooms.lobby.players));
+    socket.emit("lobbyplayers", JSON.stringify(Object.values(game.players)));
   }
 
   // Handle messages from clients
@@ -77,7 +59,7 @@ io.on("connection", (socket) => {
 
   socket.on("whoami", (message) => {
     const { id }: { id: string } = JSON.parse(message);
-    const player = whoamihandler.getPlayer(game, id);
+    const player = game.getPlayer(id);
 
     if (!player) {
       socket.emit("error", JSON.stringify(UNKNOWN_PLAYER));
@@ -96,7 +78,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (game.rooms.lobby.players.some((player) => player.name === name)) {
+    if (Object.values(game.players).some((player) => player.name === name)) {
       socket.emit("error", JSON.stringify(USERNAME_ALREADY_TAKEN));
       socket.emit("signupfailed", JSON.stringify(USERNAME_ALREADY_TAKEN));
       return;
@@ -108,34 +90,112 @@ io.on("connection", (socket) => {
       type,
     };
 
-    game.rooms.lobby.players.push(player);
+    game.players[player.id] = player;
+    game.sockets[player.id] = socket;
 
     socket.emit("signupsuccess", JSON.stringify(player));
 
     socket.join("lobby");
-    io.to("lobby").emit("newplayer", JSON.stringify(rooms.lobby.players));
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
+    );
   });
 
   socket.on("logout", (message) => {
     const payload: { id: string } = JSON.parse(message);
     const { id } = payload;
-    game.rooms.lobby.players = game.rooms.lobby.players.filter(
-      (player) => player.id !== id,
-    );
+    delete game.players[id];
+    delete game.sockets[id];
     const response: { players: Player[]; logoutPlayerId: string } = {
-      players: game.rooms.lobby.players,
+      players: Object.values(game.players),
       logoutPlayerId: id,
     };
     io.to("lobby").emit("logoutplayer", JSON.stringify(response));
     console.log("Player : " + id + " quit the lobby.");
   });
 
-  // Handle client disconnect
-  socket.on("close", () => {
-    console.log("Client disconnected");
+  socket.on("start", (message) => {
+    const { id }: { id: string } = JSON.parse(message);
+
+    const player = Object.values(game.players).find(
+      (player) => player.id === id,
+    );
+
+    if (!player) {
+      socket.emit("error", JSON.stringify(UNAUTHORIZED));
+      return;
+    }
+
+    const unityPlayer = Object.values(game.players).find(
+      (player) => player.type === "UNITY",
+    );
+
+    if (!unityPlayer) {
+      io.emit("error", JSON.stringify(UNITY_PLAYER_NOT_FOUND));
+      return;
+    }
+
+    const shuffledPlayers = game.webplayers.sort(() => 0.5 - Math.random());
+    const half = Math.ceil(shuffledPlayers.length / 2);
+
+    // Fill evilmans
+    shuffledPlayers.slice(0, half).forEach((protector) => {
+      const player = game.players[protector.id];
+      const socket = game.sockets[protector.id];
+      if (player) {
+        game.players[player.id] = { ...player, role: "Protector" };
+      }
+      socket?.join("protectors");
+    });
+
+    // Fill protectors
+    shuffledPlayers.slice(half).forEach((protector) => {
+      const player = game.players[protector.id];
+      const socket = game.sockets[protector.id];
+      if (player) {
+        game.players[player.id] = { ...player, role: "Evilman" };
+      }
+      socket?.join("evilmans");
+    });
+
+    game.state.status = "STARTING";
+    game.state.startTimer = 5;
+
+    io.to("lobby").emit(
+      "start",
+      JSON.stringify({
+        player,
+      }),
+    );
+  });
+
+  socket.on("disconnect", () => {
+    if (game.state.status === "LOBBY") {
+      return;
+    }
+
+    const id = Object.entries(game.sockets).find(
+      ([, playerSocket]) => socket.id === playerSocket?.id,
+    )?.[0];
+
+    if (!id) {
+      return;
+    }
+
+    const player = game.players[id];
+    delete game.players[id];
+    delete game.sockets[id];
+
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
+    );
+    console.log(`${player?.name} (${player?.type}) Client disconnected`);
   });
 });
 
+/* istanbul ignore next */
 io.on("close", () => {
   clearInterval(interval);
 });
@@ -143,8 +203,3 @@ io.on("close", () => {
 server.on("close", () => {
   clearInterval(interval);
 });
-
-export const game: Game = {
-  rooms,
-  state: gameState,
-};
