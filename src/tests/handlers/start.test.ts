@@ -80,9 +80,7 @@ describe("Start Handler", () => {
       }),
     );
     clientSocket.on("error", (message) => {
-      console.log("players", game.players);
       const error: GameError = JSON.parse(message);
-      console.log("error", error);
       expect(error).toEqual({
         type: "UNAUTHORIZED",
         message: "You cannot perform this action.",

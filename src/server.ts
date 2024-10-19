@@ -9,6 +9,7 @@ import { SignUpHandler } from "./handlers/signup.handler";
 import { LogoutHandler } from "./handlers/logout.handler";
 import { StartHandler } from "./handlers/start.handler";
 import { DisconnectHandler } from "./handlers/disconnect.handler";
+import { logger } from "./logger";
 
 export const game: Game = new Game();
 
@@ -41,7 +42,7 @@ const gameLoop = () => {
 const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
 
 io.on("connection", (socket) => {
-  console.log("Client connected");
+  logger.info("Client connected");
 
   const whoamiHandler = new WhoamiHandler(socket);
   const signupHandler = new SignUpHandler(socket);

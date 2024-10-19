@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
+import { logger } from "../logger";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -61,5 +62,6 @@ export class StartHandler extends MessageHandler {
         player,
       }),
     );
+    logger.info(`${player.name} a lancé la partie. Lancement du décompte`);
   }
 }
