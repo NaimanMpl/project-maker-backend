@@ -1,8 +1,9 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { game, io, server } from "../../server";
+import { Player } from "../../models/player";
 
-describe("Logout Handler", () => {
+describe("Disconnect Handler", () => {
   let clientSocket: ClientSocket;
   let serverSocket: ServerSocket;
 
@@ -27,20 +28,18 @@ describe("Logout Handler", () => {
     io.close();
   });
 
-  it("should remove player of the lobby if state is LOBBY", (done) => {
-    game.state.status = "LOBBY";
+  it("should remove player of the lobby if state is not LOBBY", (done) => {
+    game.state.status = "PLAYING";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+    };
 
-    clientSocket.emit(
-      "signup",
-      JSON.stringify({
-        name: "John",
-        type: "WEB",
-      }),
-    );
+    game.addPlayer(player);
+    game.setSocket(player, serverSocket);
 
-    clientSocket.on("signupsuccess", () => {
-      clientSocket.close();
-    });
+    clientSocket.close();
 
     serverSocket.on("disconnect", () => {
       expect(game.players).toEqual({});

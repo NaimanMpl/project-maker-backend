@@ -96,7 +96,10 @@ io.on("connection", (socket) => {
     socket.emit("signupsuccess", JSON.stringify(player));
 
     socket.join("lobby");
-    io.to("lobby").emit("newplayer", Object.values(player));
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
+    );
   });
 
   socket.on("logout", (message) => {
@@ -168,6 +171,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    if (game.state.status === "LOBBY") {
+      return;
+    }
+
     const id = Object.entries(game.sockets).find(
       ([, playerSocket]) => socket.id === playerSocket?.id,
     )?.[0];
@@ -180,13 +187,11 @@ io.on("connection", (socket) => {
     delete game.players[id];
     delete game.sockets[id];
 
-    if (game.state.status === "LOBBY") {
-      io.to("lobby").emit(
-        "newplayer",
-        JSON.stringify(Object.values(game.players)),
-      );
-      console.log(`${player?.name} (${player?.type}) Client disconnected`);
-    }
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
+    );
+    console.log(`${player?.name} (${player?.type}) Client disconnected`);
   });
 });
 
