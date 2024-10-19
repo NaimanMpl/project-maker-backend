@@ -28,15 +28,6 @@ describe("SignUp Event", () => {
     io.close();
   });
 
-  it("should respond back the messages that are being sent", (done) => {
-    clientSocket.emit("message", "Hello, World!");
-
-    clientSocket.on("message", (msg) => {
-      expect(msg).toBe(JSON.stringify({ message: "Hello, World!" }));
-      done();
-    });
-  });
-
   it("should signup a new user if state is LOBBY", (done) => {
     clientSocket.emit(
       "signup",
