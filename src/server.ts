@@ -2,15 +2,17 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { map } from "../assets/map.json";
+import unityMap from "../assets/unityMap.json";
 import * as whoamihandler from "./handlers/whoami.handler";
 import { Config } from "./models/config";
 import { Game } from "./models/game";
 import {
   GAME_ALREADY_STARTED,
   UNAUTHORIZED,
+  UNITY_PLAYER_NOT_FOUND,
   UNKNOWN_PLAYER,
   USERNAME_ALREADY_TAKEN,
 } from "./models/gameerror";
@@ -23,19 +25,35 @@ const rooms: Record<string, Room> = {
     name: "lobby",
     players: [],
   },
+  protectors: {
+    name: "protectors",
+    players: [],
+  },
+  evilmans: {
+    name: "evilmans",
+    players: [],
+  },
+  unity: {
+    name: "unity",
+    players: [],
+  },
 };
 
 const config: Config = {
   tickRate: 20,
 };
 
+const sockets: Record<string, Socket> = {};
+
 const gameState: GameState = {
   status: "LOBBY",
   timer: 0,
-  startTimer: 15,
+  startTimer: 5,
   loops: 0,
   map: map,
 };
+
+const connections: Record<string, string> = {};
 
 const app = express();
 if (process.env.NODE_ENV !== "production") {
@@ -66,11 +84,29 @@ const gameLoop = () => {
 
     if (game.state.startTimer === 0) {
       game.state.status = "PLAYING";
+      const allUnityPlayers = [
+        ...game.rooms.evilmans.players,
+        ...game.rooms.protectors.players,
+        ...game.rooms.unity.players,
+      ].filter((player) => player.type === "UNITY");
+      allUnityPlayers.forEach((player) => {
+        sockets[player.id]?.emit("go", JSON.stringify({ unityMap }));
+      });
     }
   }
 
   if (game.state.status === "PLAYING") {
     gameState.timer += 1 / config.tickRate;
+
+    game.rooms.evilmans.players.forEach((evilman) => {
+      sockets[evilman.id]?.emit("playerInfo", JSON.stringify(evilman));
+    });
+    game.rooms.protectors.players.forEach((protector) => {
+      sockets[protector.id]?.emit("playerInfo", JSON.stringify(protector));
+    });
+    game.rooms.unity.players.forEach((player) => {
+      sockets[player.id]?.emit("playerInfo", JSON.stringify(player));
+    });
   }
 
   io.emit("gamestate", JSON.stringify(gameState));
@@ -88,7 +124,7 @@ io.on("connection", (socket) => {
 
   // Handle messages from clients
   socket.on("message", (message: string) => {
-    console.log(`Received message: ${message}`);
+    // console.log(`Received message: ${message}`);
     socket.send(JSON.stringify({ message }));
   });
 
@@ -126,6 +162,8 @@ io.on("connection", (socket) => {
     };
 
     game.rooms.lobby.players.push(player);
+    sockets[player.id] = socket;
+    game.connections[socket.id] = player.id;
 
     socket.emit("signupsuccess", JSON.stringify(player));
 
@@ -154,10 +192,48 @@ io.on("connection", (socket) => {
 
     if (!player) {
       socket.emit("error", JSON.stringify(UNAUTHORIZED));
+      return;
     }
 
+    const unityPlayer = game.rooms.lobby.players.find(
+      (player) => player.type === "UNITY",
+    );
+
+    if (!unityPlayer) {
+      io.emit("error", JSON.stringify(UNITY_PLAYER_NOT_FOUND));
+      return;
+    }
+
+    game.rooms.unity.players.push(unityPlayer);
+
+    const webPlayers = game.rooms.lobby.players.filter(
+      (player) => player.type === "WEB",
+    );
+
+    const shuffledPlayers = webPlayers.sort(() => 0.5 - Math.random());
+
+    const half = Math.ceil(shuffledPlayers.length / 2);
+
+    const protectors = shuffledPlayers
+      .slice(0, half)
+      .map((player) => ({ ...player, role: "Protector" }));
+    const evilmans = shuffledPlayers
+      .slice(half)
+      .map((player) => ({ ...player, role: "Evilman" }));
+
+    game.rooms.evilmans.players = evilmans as Player[];
+    game.rooms.protectors.players = protectors as Player[];
+
+    evilmans.forEach((evilman) => {
+      sockets[evilman.id]?.join("evilmans");
+    });
+
+    protectors.forEach((protector) => {
+      sockets[protector.id]?.join("protectors");
+    });
+
     game.state.status = "STARTING";
-    game.state.startTimer = 15;
+    game.state.startTimer = 5;
 
     io.to("lobby").emit(
       "start",
@@ -168,8 +244,21 @@ io.on("connection", (socket) => {
   });
 
   // Handle client disconnect
-  socket.on("close", () => {
-    console.log("Client disconnected");
+  socket.on("disconnect", () => {
+    const playerId = game.connections[socket.id];
+    if (game.state.status === "LOBBY") {
+      const player = game.rooms.lobby.players.find(
+        (player) => player.id === playerId,
+      );
+      game.rooms.lobby.players = game.rooms.lobby.players.filter(
+        (player) => player.id !== playerId,
+      );
+      io.to("lobby").emit(
+        "newplayer",
+        JSON.stringify(game.rooms.lobby.players),
+      );
+      console.log(`${player?.name} (${player?.type}) Client disconnected`);
+    }
   });
 });
 
@@ -184,4 +273,6 @@ server.on("close", () => {
 export const game: Game = {
   rooms,
   state: gameState,
+  sockets,
+  connections,
 };

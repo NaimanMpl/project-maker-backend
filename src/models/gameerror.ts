@@ -22,3 +22,8 @@ export const UNAUTHORIZED: GameError = {
   type: "UNAUTHORIZED",
   message: "You cannot perform this action.",
 };
+
+export const UNITY_PLAYER_NOT_FOUND: GameError = {
+  type: "UNITY_PLAYER_NOT_FOUND",
+  message: "The unity player was not found.",
+};
