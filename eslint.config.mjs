@@ -9,5 +9,5 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettier,
-  { ignores: ["./dist/**/*", "commitlint.config.js"] },
+  { ignores: ["./dist/**/*", "commitlint.config.js", "dist"] },
 ];

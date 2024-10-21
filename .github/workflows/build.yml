@@ -3,7 +3,7 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,5 +17,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check lint
-        run: npm run lint
+      - name: Check build
+        run: npm run build
