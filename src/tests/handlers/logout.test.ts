@@ -52,10 +52,14 @@ describe("Logout Handler", () => {
     clientSocket.on("logoutplayer", (message) => {
       const {
         players,
-        logoutPlayerId,
-      }: { players: Player[]; logoutPlayerId: string } = JSON.parse(message);
+        logoutPlayer,
+      }: { players: Player[]; logoutPlayer: Player } = JSON.parse(message);
       expect(players).toEqual([]);
-      expect(logoutPlayerId).toEqual("1");
+      expect(logoutPlayer).toEqual({
+        id: "1",
+        name: "John",
+        type: "WEB",
+      });
       done();
     });
   });
