@@ -2,9 +2,7 @@ import random
 import json
 import argparse
 
-
-
-# INFO: This script generates a random maze and saves it as a JSON file
+# INFO: This script generates a random maze and saves it as 2 format of a JSON of tiles.
 # The maze is generated using a recursive backtracking algorithm
 # The maze is then upscaled
 # Roads(0) are added at the center of the maze (size 2x? or ?x2)
@@ -27,7 +25,9 @@ argparse.add_argument("--Name", type=str, default="RandomMaze", help="Name of th
 args = argparse.parse_args()
 width= args.width
 map_name = args.Name
-ratio = 12/5
+
+
+ratio = 12/5 # ratio of the maze to match with the basic ratio of unity player
 height = int(width / ratio)
 num_crosswalks = 20*width
 decorations = 500*width
@@ -421,7 +421,6 @@ def generate_json(maze, map_name):
     }
 
     return json.dumps(map_data, indent=4)
-
 
 def save_json_to_file(json_data, name):
     file_name = f"{name}{random_number}.json"
