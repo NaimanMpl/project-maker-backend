@@ -1,5 +1,5 @@
-import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { Socket as ServerSocket } from "socket.io";
+import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { GameError } from "../../models/gameerror";
 import { game, io, server } from "../../server";
 
@@ -90,6 +90,8 @@ describe("Start Handler", () => {
   });
 
   it("should not start the game if there's no unity client connected.", (done) => {
+    process.env.GAMEMODE = "unity";
+
     game.addPlayer({
       id: "123456789",
       name: "John",

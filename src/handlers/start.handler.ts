@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
+import { logger } from "../logger";
 import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
-import { logger } from "../logger";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -25,7 +25,7 @@ export class StartHandler extends MessageHandler {
       (player) => player.type === "UNITY",
     );
 
-    if (!unityPlayer) {
+    if (!unityPlayer && process.env.GAMEMODE === "unity") {
       io.emit("error", JSON.stringify(UNITY_PLAYER_NOT_FOUND));
       return;
     }
