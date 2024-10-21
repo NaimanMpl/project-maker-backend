@@ -7,6 +7,7 @@ import { Player, PlayerType } from "../models/player";
 import { io, game } from "../server";
 import { MessageHandler } from "./handler";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "../logger";
 
 export class SignUpHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -38,11 +39,11 @@ export class SignUpHandler extends MessageHandler {
     game.sockets[player.id] = this.socket;
 
     this.socket.emit("signupsuccess", JSON.stringify(player));
-
     this.socket.join("lobby");
     io.to("lobby").emit(
       "newplayer",
       JSON.stringify(Object.values(game.players)),
     );
+    logger.info(`${player.name} (${player.type}) a rejoint le lobby.`);
   }
 }

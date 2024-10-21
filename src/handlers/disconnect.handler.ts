@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
+import { logger } from "../logger";
 
 export class DisconnectHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -28,6 +29,6 @@ export class DisconnectHandler extends MessageHandler {
       "newplayer",
       JSON.stringify(Object.values(game.players)),
     );
-    console.log(`${player?.name} (${player?.type}) Client disconnected`);
+    logger.warn(`${player?.name} (${player?.type}) Client disconnected`);
   }
 }
