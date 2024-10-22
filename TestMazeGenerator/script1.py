@@ -443,6 +443,14 @@ def main():
             print(cell, end='')
         print()
     maze_json = generate_json(maze, map_name)
+    # in the maze array there is a lot of strings, i need to convert them to int
+    maze_str_to_int = []
+    for row in maze:
+        row_int = []
+        for cell in row:
+            row_int.append(int(cell))
+        maze_str_to_int.append(row_int)
+    maze = maze_str_to_int
     save_json_to_file(str({"map" : maze}), "mazeArray")
     save_json_to_file(maze_json, "map")
 
