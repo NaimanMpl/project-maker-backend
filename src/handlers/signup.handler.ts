@@ -1,13 +1,13 @@
 import { Socket } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
+import { logger } from "../logger";
 import {
   GAME_ALREADY_STARTED,
   USERNAME_ALREADY_TAKEN,
 } from "../models/gameerror";
-import { Player, PlayerType } from "../models/player";
-import { io, game } from "../server";
+import { DEFAULT_PLAYER_SPEED, Player, PlayerType } from "../models/player";
+import { game, io } from "../server";
 import { MessageHandler } from "./handler";
-import { v4 as uuidv4 } from "uuid";
-import { logger } from "../logger";
 
 export class SignUpHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -33,7 +33,13 @@ export class SignUpHandler extends MessageHandler {
       id: uuidv4(),
       name,
       type,
+      spells: [],
+      speed: 0,
     };
+
+    if (player.type === "UNITY") {
+      player.speed = DEFAULT_PLAYER_SPEED;
+    }
 
     game.players[player.id] = player;
     game.sockets[player.id] = this.socket;

@@ -29,6 +29,7 @@ describe("Who Am I Handler", () => {
       id: "123456789",
       name: "John",
       type: "WEB",
+      spells: [],
     });
 
     clientSocket.emit(
@@ -44,6 +45,7 @@ describe("Who Am I Handler", () => {
         id: "123456789",
         name: "John",
         type: "WEB",
+        spells: [],
       });
       done();
     });
@@ -54,6 +56,7 @@ describe("Who Am I Handler", () => {
       id: "123456789",
       name: "John",
       type: "WEB",
+      spells: [],
     });
 
     clientSocket.emit(
@@ -80,17 +83,20 @@ describe("Who Am I Handler", () => {
       name: "John",
       type: "WEB",
       role: "Protector",
+      spells: [],
     });
     game.addPlayer({
       id: "2",
       name: "Hello",
       type: "UNITY",
+      spells: [],
     });
     game.addPlayer({
       id: "3",
       name: "Doe",
       type: "WEB",
       role: "Evilman",
+      spells: [],
     });
 
     clientSocket.emit(
@@ -107,6 +113,7 @@ describe("Who Am I Handler", () => {
         name: "Doe",
         type: "WEB",
         role: "Evilman",
+        spells: [],
       });
       done();
     });

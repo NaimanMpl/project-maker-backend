@@ -34,6 +34,7 @@ describe("Logout Handler", () => {
       id: "1",
       name: "John",
       type: "WEB",
+      spells: [],
     });
 
     clientSocket.emit(
@@ -60,6 +61,7 @@ describe("Logout Handler", () => {
         id: "1",
         name: "John",
         type: "WEB",
+        spells: [],
       });
       done();
     });

@@ -1,9 +1,10 @@
 import { Socket } from "socket.io";
+import { map } from "../../assets/map.json";
+import unityMap from "../../assets/unityMap.json";
+import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
-import { map } from "../../assets/map.json";
-import { Config } from "./config";
-import unityMap from "../../assets/unityMap.json";
+import { Spell } from "./spells/spell";
 
 export class Game {
   state: GameState;
@@ -79,11 +80,21 @@ export class Game {
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
       });
 
       this.protectors.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
       });
 
@@ -103,6 +114,10 @@ export class Game {
   }
 
   getPlayer(id: string) {
-    return Object.values(this.players).find((player) => player.id === id);
+    return this.players[id];
+  }
+
+  addSpell(player: Player, spell: Spell) {
+    player.spells.push(spell);
   }
 }

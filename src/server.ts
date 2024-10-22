@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { Game } from "./models/game";
-import { WhoamiHandler } from "./handlers/whoami.handler";
-import { SignUpHandler } from "./handlers/signup.handler";
-import { LogoutHandler } from "./handlers/logout.handler";
-import { StartHandler } from "./handlers/start.handler";
 import { DisconnectHandler } from "./handlers/disconnect.handler";
+import { LogoutHandler } from "./handlers/logout.handler";
+import { SignUpHandler } from "./handlers/signup.handler";
+import { SpellHandler } from "./handlers/spell.handler";
+import { StartHandler } from "./handlers/start.handler";
+import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
+import { Game } from "./models/game";
 
 export const game: Game = new Game();
 
@@ -49,6 +50,7 @@ io.on("connection", (socket) => {
   const logoutHandler = new LogoutHandler(socket);
   const startHandler = new StartHandler(socket);
   const disconnectHandler = new DisconnectHandler(socket);
+  const spellHandler = new SpellHandler(socket);
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -60,6 +62,7 @@ io.on("connection", (socket) => {
   socket.on("logout", (msg) => logoutHandler.handleMessage(msg));
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
+  socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
