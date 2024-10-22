@@ -1,4 +1,4 @@
-import { item } from "./items/item";
+import { Item } from "./items/item";
 
 export type GameStatus = "LOBBY" | "STARTING" | "PLAYING" | "FINISHED";
 
@@ -8,5 +8,5 @@ export interface GameState {
   startTimer: number;
   loops: number;
   map: number[][];
-  items: item[];
+  items: Item[];
 }

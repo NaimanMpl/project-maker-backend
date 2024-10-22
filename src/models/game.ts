@@ -17,6 +17,7 @@ export class Game {
       timer: 0,
       startTimer: 5,
       status: "LOBBY",
+      items: [],
       map,
     };
     this.sockets = {};

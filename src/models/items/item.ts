@@ -1,39 +1,59 @@
-export type itemCategories = "LANDMINE" | "WALL" | "SPEEDBOOST" | "SLOWBOOST" | "COINS";
+export type ItemCategories =
+  | "LANDMINE"
+  | "WALL"
+  | "SPEEDBOOST"
+  | "SLOWBOOST"
+  | "COINS";
 
-export class item {
-    type: itemCategories;
-    id: string;
-    name: string;
-    description: string;
-    coords: { x: number, y: number, z: number };
-    cooldown: number;
-    castingTime: number;
-    duration: number;
+export interface ItemCoords {
+  x: number;
+  y: number;
+  z: number;
+}
 
-    get infinite(): boolean {
-        return this.duration === -1;
-    }
+export class Item {
+  type: ItemCategories;
+  id: string;
+  name: string;
+  description: string;
+  coords: { x: number; y: number; z: number };
+  cooldown: number;
+  castingTime: number;
+  duration: number;
 
-    place(): void {
-        console.log('Item : ' + this.type + ' placed');
-    }
+  get infinite(): boolean {
+    return this.duration === -1;
+  }
 
-    trigger(): void {
-        console.log('Item : ' + this.type + ' triggered');
-    }
+  place(): void {
+    console.log("Item : " + this.type + " placed");
+  }
 
-    destroy(): void {
-        console.log('Item : ' + this.type + ' destroyed');
-    }
+  trigger(): void {
+    console.log("Item : " + this.type + " triggered");
+  }
 
-    constructor(type: itemCategories, id: string, name:string, description:string, coords: { x: number, y: number, z: number }, cooldown: number, castingTime:number, duration: number) {
-        this.type = type;
-        this.id = id;
-        this.coords = coords;
-        this.name = name;
-        this.description = description;
-        this.castingTime = castingTime;
-        this.cooldown = cooldown;
-        this.duration = duration;
-    }
+  destroy(): void {
+    console.log("Item : " + this.type + " destroyed");
+  }
+
+  constructor(
+    type: ItemCategories,
+    id: string,
+    name: string,
+    description: string,
+    coords: ItemCoords,
+    cooldown: number,
+    castingTime: number,
+    duration: number,
+  ) {
+    this.type = type;
+    this.id = id;
+    this.coords = coords;
+    this.name = name;
+    this.description = description;
+    this.castingTime = castingTime;
+    this.cooldown = cooldown;
+    this.duration = duration;
+  }
 }
