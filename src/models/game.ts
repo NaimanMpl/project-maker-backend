@@ -4,8 +4,11 @@ import unityMap from "../../assets/unityMap.json";
 import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
-import { Spell } from "./spells/spell";
+import { Spell } from "./spell";
+<<<<<<< HEAD
 import { io } from "../server";
+=======
+>>>>>>> 4651425 (feat(spells): added slowmode spell)
 
 export class Game {
   state: GameState;

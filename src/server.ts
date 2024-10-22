@@ -11,8 +11,11 @@ import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
+<<<<<<< HEAD
 import { PlayerPositionHandler } from "./handlers/playerposition.handler";
 import { MapRequestHandler } from "./handlers/maprequest.handler";
+=======
+>>>>>>> 4651425 (feat(spells): added slowmode spell)
 
 export const game: Game = new Game();
 
@@ -53,8 +56,11 @@ io.on("connection", (socket) => {
   const startHandler = new StartHandler(socket);
   const disconnectHandler = new DisconnectHandler(socket);
   const spellHandler = new SpellHandler(socket);
+<<<<<<< HEAD
   const playerPositionHandler = new PlayerPositionHandler(socket);
   const mapRequestHandler = new MapRequestHandler(socket);
+=======
+>>>>>>> 4651425 (feat(spells): added slowmode spell)
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -66,11 +72,15 @@ io.on("connection", (socket) => {
   socket.on("logout", (msg) => logoutHandler.handleMessage(msg));
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
+<<<<<<< HEAD
   socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
   socket.on("player:position", (msg) =>
     playerPositionHandler.handleMessage(msg),
   );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
+=======
+  socket.on("spell_1_cast", (msg) => spellHandler.handleMessage(msg));
+>>>>>>> 4651425 (feat(spells): added slowmode spell)
 });
 
 /* istanbul ignore next */
