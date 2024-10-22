@@ -1,6 +1,7 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { GameError } from "../../models/gameerror";
+import { Player } from "../../models/player";
 import { SlowModeSpell } from "../../models/spells/slowmode.spell";
 import { game, io, server } from "../../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "../__fixtures__/player";
@@ -29,7 +30,7 @@ describe("Spell", () => {
 
   it("should not cast if the status is not PLAYING.", (done) => {
     clientSocket.emit(
-      "spell_1_cast",
+      "cast:spell",
       JSON.stringify({
         playerId: "1",
         id: 0,
@@ -60,7 +61,7 @@ describe("Spell", () => {
     expect(unityPlayer.speed).toEqual(10);
 
     clientSocket.emit(
-      "spell_1_cast",
+      "cast:spell",
       JSON.stringify({
         playerId: "1",
         id: 0,
@@ -68,8 +69,37 @@ describe("Spell", () => {
       }),
     );
 
-    serverSocket.on("spell_1_cast", () => {
+    serverSocket.on("cast:spell", () => {
       expect(unityPlayer.speed).toEqual(5);
+      done();
+    });
+  });
+
+  it("should return an error if player doesn't exist", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+    };
+
+    game.addPlayer(player);
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        id: "123",
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      expect(error).toEqual({
+        type: "UNKNOWN_PLAYER",
+        message: "The player was not found.",
+      });
       done();
     });
   });

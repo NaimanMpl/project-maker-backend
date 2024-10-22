@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { logger } from "../logger";
-import { UNAUTHORIZED } from "../models/gameerror";
+import { UNAUTHORIZED, UNKNOWN_PLAYER } from "../models/gameerror";
 import { game } from "../server";
 import { MessageHandler } from "./handler";
 
@@ -15,21 +15,22 @@ export class SpellHandler extends MessageHandler {
       return;
     }
 
-    const {
-      playerId,
-      id,
-      name,
-      cooldown,
-    }: { playerId: string; id: number; name: string; cooldown: number } =
+    const { playerId, id }: { playerId: string; id: number } =
       JSON.parse(message);
 
     const player = game.players[playerId];
+
+    if (!player) {
+      this.socket.emit("error", JSON.stringify(UNKNOWN_PLAYER));
+      return;
+    }
+
     game.unitys.forEach((unityPlayer) => {
       player.spells[id].cast(unityPlayer);
     });
 
     logger.info(
-      `${player.id} ${player?.name} ${player.type} as cast spell ${id} ${name} with ${cooldown} seconds remaining before next use.`,
+      `${player.id} ${player?.name} ${player.type} as cast spell ${id}`,
     );
   }
 }

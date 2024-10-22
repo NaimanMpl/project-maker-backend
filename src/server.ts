@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
   socket.on("logout", (msg) => logoutHandler.handleMessage(msg));
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
-  socket.on("spell_1_cast", (msg) => spellHandler.handleMessage(msg));
+  socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
