@@ -3,6 +3,7 @@ import json
 import argparse
 
 # INFO: This script generates a random maze and saves it as 2 format of a JSON of tiles.
+# complexity of the maze generation is O(X^2) with X the width of the maze
 # The maze is generated using a recursive backtracking algorithm
 # The maze is then upscaled
 # Roads(0) are added at the center of the maze (size 2x? or ?x2)
@@ -14,7 +15,39 @@ import argparse
 # Lakes(6) are added at random locations (size 2x2)
 # Start(7) and End(8) points are added at random locations (size 1x1)
 # End(8) point is the farthest point from the Start(7) point. (size 1x1)
+
 # The maze is saved as a JSON file with the following format:
+# {
+#     "name": "RandomMaze",
+#     "type": "Map",
+#     "description": "Description of the map",
+#     "properties": {
+#         "size": {
+#             "Xmin": 0,
+#             "Xmax": 100,
+#             "Ymin": 0,
+#             "Ymax": 100
+#         },
+#         "tiles": [
+#             {
+#                 "type": "Road",
+#                 "description": "Road tile",
+#                 "properties": {
+#                     "position": {
+#                         "x": 0,
+#                         "y": 0,
+#                         "z": 0
+#                     },
+#                     "angle": 0
+#                 }
+#             },
+#             {
+#                 "type": "Sidewalk",
+#                 [...]
+#          },   
+#          [...]
+#     }
+# }
 
 # the maze is generated with a ratio of 12/5 based on the width
 # default width is 12 (so the height is 5 and number of try to put crosswalks is 20*width)
@@ -450,9 +483,11 @@ def main():
         for cell in row:
             row_int.append(int(cell))
         maze_str_to_int.append(row_int)
+    
     maze = maze_str_to_int
     save_json_to_file(str({"map" : maze}), "mazeArray")
     save_json_to_file(maze_json, "map")
 
 if __name__ == '__main__':
     main()
+
