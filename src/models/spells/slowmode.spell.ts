@@ -19,30 +19,6 @@ export class SlowModeSpell extends Spell {
     this.timer = this.duration;
   }
 
-  update(player: Player): void {
-    if (this.currentCooldown > 0 && this.active) {
-      this.currentCooldown -= 1 / game.config.tickRate;
-
-      if (this.currentCooldown <= 0) {
-        this.currentCooldown = 0;
-      }
-    }
-
-    if (!this.active) {
-      return;
-    }
-
-    if (this.duration && this.timer) {
-      this.timer -= 1 / game.config.tickRate;
-
-      if (this.timer <= 0) {
-        this.active = false;
-        this.timer = this.duration;
-        this.reset(player);
-      }
-    }
-  }
-
   reset(player: Player) {
     player.speed = DEFAULT_PLAYER_SPEED;
     this.currentCooldown = this.cooldown;

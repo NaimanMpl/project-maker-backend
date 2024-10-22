@@ -5,11 +5,7 @@ import {
   GAME_ALREADY_STARTED,
   USERNAME_ALREADY_TAKEN,
 } from "../models/gameerror";
-<<<<<<< HEAD
 import { DEFAULT_PLAYER_SPEED, Player, PlayerType } from "../models/player";
-=======
-import { Player, PlayerType } from "../models/player";
->>>>>>> 4651425 (feat(spells): added slowmode spell)
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
 
@@ -38,10 +34,7 @@ export class SignUpHandler extends MessageHandler {
       name,
       type,
       spells: [],
-<<<<<<< HEAD
       speed: 0,
-=======
->>>>>>> 4651425 (feat(spells): added slowmode spell)
     };
 
     if (player.type === "UNITY") {
