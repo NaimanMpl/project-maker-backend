@@ -111,6 +111,14 @@ export class Game {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
       });
+
+      this.state.items.forEach((item) => {
+        // update item cooldowns, casting time and duration
+        item.reduceTimers(1 / this.config.tickRate);
+        if (item.duration <= 0) {
+          this.state.items = this.state.items.filter((i) => i.id !== item.id);
+        }
+      });
     }
   }
 

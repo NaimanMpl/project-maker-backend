@@ -10,7 +10,7 @@ export class Coin extends Item {
       coords,
       1,
       0,
-      -1,
+      999999999999999,
     );
   }
 }

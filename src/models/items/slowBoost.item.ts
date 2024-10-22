@@ -9,8 +9,8 @@ export class SlowBoost extends Item {
       "A slow boost that slows down the player",
       coords,
       10,
-      8,
       2,
+      8,
     );
   }
 }

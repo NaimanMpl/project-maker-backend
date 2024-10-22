@@ -9,8 +9,8 @@ export class SpeedBoost extends Item {
       "A speed boost that increases the player's speed",
       coords,
       10,
-      8,
-      2,
+      6,
+      4,
     );
   }
 }

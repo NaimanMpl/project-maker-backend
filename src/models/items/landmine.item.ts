@@ -9,8 +9,8 @@ export class Landmine extends Item {
       "A landmine that explodes when a player steps on it",
       coords,
       10,
-      8,
-      2,
+      3,
+      40,
     );
   }
 }
