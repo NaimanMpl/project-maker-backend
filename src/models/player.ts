@@ -11,4 +11,8 @@ export interface Player {
   role?: PlayerRole;
   speed?: number;
   spells: Spell[];
+  position?: {
+    x: number;
+    y: number;
+  };
 }

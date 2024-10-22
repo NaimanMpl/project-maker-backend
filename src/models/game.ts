@@ -86,6 +86,9 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.protectors.forEach((player) => {
@@ -96,6 +99,9 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.unitys.forEach((player) => {
