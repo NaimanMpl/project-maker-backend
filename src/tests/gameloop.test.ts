@@ -1,8 +1,10 @@
+import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { GameState } from "../models/gamestate";
+import { Player, PlayerRole } from "../models/player";
+import { SlowModeSpell } from "../models/spells/slowmode.spell";
 import { game, io, server } from "../server";
-import { Socket as ServerSocket } from "socket.io";
-import { Player } from "../models/player";
+import { PLAYER_MOCK } from "./__fixtures__/player";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -89,6 +91,7 @@ describe("GameLoop", () => {
       name: "John",
       type: "WEB",
       role: "Evilman",
+      spells: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -108,6 +111,7 @@ describe("GameLoop", () => {
         name: "John",
         type: "WEB",
         role: "Evilman",
+        spells: [],
       }),
     );
   });
@@ -118,6 +122,7 @@ describe("GameLoop", () => {
       name: "John",
       type: "WEB",
       role: "Protector",
+      spells: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -137,6 +142,7 @@ describe("GameLoop", () => {
         name: "John",
         type: "WEB",
         role: "Protector",
+        spells: [],
       }),
     );
   });
@@ -146,6 +152,7 @@ describe("GameLoop", () => {
       id: "1",
       name: "John",
       type: "UNITY",
+      spells: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -164,7 +171,223 @@ describe("GameLoop", () => {
         id: "1",
         name: "John",
         type: "UNITY",
+        spells: [],
       }),
     );
+  });
+
+  it("should update spell cooldown (Protector) on next tick.", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player = { ...PLAYER_MOCK, role: playerRole };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+    slowSpell.cast(unityPlayer);
+
+    game.tick();
+
+    expect(game.state.status).toEqual("PLAYING");
+    expect(player.spells[0].currentCooldown).toEqual(29.95);
+  });
+
+  it("should update spell cooldown (Evilman) on next tick.", () => {
+    const playerRole: PlayerRole = "Evilman";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+    slowSpell.cast(unityPlayer);
+
+    game.tick();
+
+    expect(game.state.status).toEqual("PLAYING");
+    expect(player.spells[0].currentCooldown).toEqual(29.95);
+  });
+
+  it("should reset the cooldown of a spell", () => {
+    const playerRole: PlayerRole = "Evilman";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+    slowSpell.cast(unityPlayer);
+
+    player.spells[0].currentCooldown = 0.05;
+
+    game.tick();
+
+    expect(game.state.status).toEqual("PLAYING");
+    expect(player.spells[0].currentCooldown).toEqual(0);
+
+    slowSpell.cast(unityPlayer);
+    expect(player.spells[0].currentCooldown).toEqual(30);
+  });
+
+  it("should reset the cooldown of a spell", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+    slowSpell.cast(unityPlayer);
+
+    player.spells[0].currentCooldown = 0.05;
+
+    game.tick();
+
+    expect(game.state.status).toEqual("PLAYING");
+    expect(player.spells[0].currentCooldown).toEqual(0);
+
+    slowSpell.cast(unityPlayer);
+    expect(player.spells[0].currentCooldown).toEqual(30);
+  });
+
+  it("should decrement timer on next tick.", () => {
+    const playerRole: PlayerRole = "Evilman";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+
+    expect(player.spells[0].duration).toEqual(10);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].active).toEqual(false);
+
+    slowSpell.cast(unityPlayer);
+    game.tick();
+    expect(player.spells[0].active).toEqual(true);
+    expect(player.spells[0].timer).toEqual(9.95);
+  });
+
+  it("should decrement timer on next tick.", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+
+    expect(player.spells[0].duration).toEqual(10);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].active).toEqual(false);
+
+    slowSpell.cast(unityPlayer);
+    game.tick();
+    expect(player.spells[0].active).toEqual(true);
+    expect(player.spells[0].timer).toEqual(9.95);
+  });
+
+  it("should reset the timer when duration is over", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+    };
+    game.addPlayer(player);
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+    const slowSpell = new SlowModeSpell();
+    game.addSpell(player, slowSpell);
+    game.state.status = "PLAYING";
+    slowSpell.cast(unityPlayer);
+
+    player.spells[0].timer = 0.05;
+    expect(unityPlayer.speed).toEqual(5);
+
+    game.tick();
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(unityPlayer.speed).toEqual(10);
+
+    game.tick();
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].currentCooldown).toEqual(30);
   });
 });

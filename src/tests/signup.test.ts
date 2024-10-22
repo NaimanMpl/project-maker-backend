@@ -43,6 +43,7 @@ describe("SignUp Event", () => {
           id: "123456789",
           name: "John",
           type: "WEB",
+          spells: [],
         },
       });
     });
@@ -53,6 +54,7 @@ describe("SignUp Event", () => {
         id: "123456789",
         name: "John",
         type: "WEB",
+        spells: [],
       });
       done();
     });
@@ -87,6 +89,7 @@ describe("SignUp Event", () => {
       id: "123456789",
       name: "John",
       type: "WEB",
+      spells: [],
     });
 
     clientSocket.emit(
