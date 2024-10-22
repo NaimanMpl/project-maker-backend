@@ -2,6 +2,13 @@ import { Socket } from "socket.io";
 import { logger } from "../logger";
 import { game } from "../server";
 import { MessageHandler } from "./handler";
+import { ItemCategories } from "../models/items/item";
+import { ItemFactory } from "../factories/item.factory";
+import {
+  ITEM_ON_COOLDOWN,
+  UNKNOWN_ITEM,
+  UNKNOWN_PLAYER,
+} from "../models/gameerror";
 
 //  the objectif of this class is to handle the item message (coords, id of the player, type of the item) and check the cooldown of the player
 
@@ -12,26 +19,46 @@ export class ItemHandler extends MessageHandler {
 
   handleMessage(message: string): void {
     const payload: {
-      id: string;
+      ownerId: string;
       coords: { x: number; y: number; z: number };
       itemType: string;
     } = JSON.parse(message);
-    const { id } = payload;
-    const player = game.players[id];
+    const { itemType, ownerId, coords } = payload;
+    const player = game.players[ownerId];
 
     if (!player) {
-      logger.warn(`L'Id du joueur ${id} n'existe pas.`);
+      this.socket.emit("error", UNKNOWN_PLAYER);
+      logger.warn(`Player with id : ${ownerId} does not exist.`);
       return;
     }
 
-    // const response: {
-    //   player: Player;
-    //   coords: { x: number; y: number };
-    //   type: string;
-    // } = {
-    //   player: player,
-    //   coords: coords,
-    //   type: itemType,
-    // };
+    const item = ItemFactory.createItem({
+      category: itemType as ItemCategories,
+      coords,
+      ownerId,
+    });
+
+    if (!item) {
+      this.socket.emit("error", JSON.stringify(UNKNOWN_ITEM));
+      logger.warn(`L'item de catégorie : ${itemType} est inconnu.`);
+      return;
+    }
+
+    if (
+      game.state.items.some(
+        (item) =>
+          item.type === payload.itemType &&
+          item.ownerId === ownerId &&
+          item.cooldown > 0,
+      )
+    ) {
+      this.socket.emit("error", JSON.stringify(ITEM_ON_COOLDOWN));
+      logger.warn(
+        `Player ${player.name} with id ${ownerId} is on cooldown for item ${payload.itemType}`,
+      );
+      return;
+    }
+
+    game.state.items.push(item);
   }
 }

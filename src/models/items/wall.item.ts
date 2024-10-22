@@ -8,9 +8,9 @@ export class Wall extends Item {
       "Wall",
       "A wall that blocks the path of players",
       coords,
+      11,
+      1,
       10,
-      8,
-      2,
     );
   }
 }
