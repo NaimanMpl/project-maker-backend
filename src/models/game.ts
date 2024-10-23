@@ -13,6 +13,7 @@ export class Game {
   sockets: Record<string, Socket | undefined>;
   players: Record<string, Player>;
   config: Config;
+  dev: boolean;
 
   constructor() {
     this.state = {
@@ -28,6 +29,7 @@ export class Game {
     this.config = {
       tickRate: 20,
     };
+    this.dev = process.env.DEV_MODE === "enabled";
   }
 
   get evilmans() {
@@ -60,7 +62,14 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
-    this.state.items = [];
+    this.state = {
+      loops: 0,
+      timer: 0,
+      startTimer: 5,
+      status: "LOBBY",
+      items: [],
+      map,
+    };
   }
 
   tick() {

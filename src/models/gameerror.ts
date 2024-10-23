@@ -42,3 +42,8 @@ export const UNKNOWN_ITEM: GameError = {
   type: "UNKNOWN_ITEM",
   message: "The following item is unknown.",
 };
+
+export const DEV_MODE_NOT_ENABLED = {
+  type: "DEV_MODE_NOT_ENABLED",
+  message: "The development mode is not enabled.",
+};
