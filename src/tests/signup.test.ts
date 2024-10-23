@@ -45,6 +45,8 @@ describe("SignUp Event", () => {
           type: "WEB",
           spells: [],
           speed: 0,
+          coins: 0,
+          items: [],
         },
       });
     });
@@ -57,6 +59,8 @@ describe("SignUp Event", () => {
         type: "WEB",
         spells: [],
         speed: 0,
+        coins: 0,
+        items: [],
       });
       done();
     });
@@ -93,6 +97,8 @@ describe("SignUp Event", () => {
       type: "WEB",
       spells: [],
       speed: 0,
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(

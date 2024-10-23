@@ -35,6 +35,8 @@ export class SignUpHandler extends MessageHandler {
       type,
       spells: [],
       speed: 0,
+      coins: 0,
+      items: [],
     };
 
     if (player.type === "UNITY") {

@@ -1,3 +1,4 @@
+import { Item } from "./items/item";
 import { Spell } from "./spell";
 
 export type PlayerType = "WEB" | "UNITY";
@@ -15,4 +16,6 @@ export interface Player {
     x: number;
     y: number;
   };
+  coins: number;
+  items: Item[];
 }

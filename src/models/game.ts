@@ -20,6 +20,7 @@ export class Game {
       timer: 0,
       startTimer: 5,
       status: "LOBBY",
+      items: [],
       map,
     };
     this.sockets = {};
@@ -59,6 +60,7 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
+    this.state.items = [];
   }
 
   tick() {
@@ -114,6 +116,19 @@ export class Game {
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
+      });
+
+      this.state.items.forEach((item) => {
+        this.unitys.forEach((player) => {
+          if (
+            item.coords.x === player.position?.x &&
+            item.coords.y === player.position?.y
+          ) {
+            item.trigger(player);
+          }
+        });
+
+        item.update(1 / this.config.tickRate);
       });
     }
   }

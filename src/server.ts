@@ -4,6 +4,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { DisconnectHandler } from "./handlers/disconnect.handler";
+import { ItemHandler } from "./handlers/item.handler";
 import { LogoutHandler } from "./handlers/logout.handler";
 import { MapRequestHandler } from "./handlers/maprequest.handler";
 import { PlayerPositionHandler } from "./handlers/playerposition.handler";
@@ -55,6 +56,7 @@ io.on("connection", (socket) => {
   const spellHandler = new SpellHandler(socket);
   const playerPositionHandler = new PlayerPositionHandler(socket);
   const mapRequestHandler = new MapRequestHandler(socket);
+  const itemHandler = new ItemHandler(socket);
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -66,11 +68,12 @@ io.on("connection", (socket) => {
   socket.on("logout", (msg) => logoutHandler.handleMessage(msg));
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
+  socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
+  socket.on("cast:item", (msg) => itemHandler.handleMessage(msg));
   socket.on("player:position", (msg) =>
     playerPositionHandler.handleMessage(msg),
   );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
-  socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
