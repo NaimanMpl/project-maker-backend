@@ -1,8 +1,8 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
+import { SpellEnum, SpellFactory } from "../../factories/spell.factory";
 import { GameError } from "../../models/gameerror";
 import { Player } from "../../models/player";
-import { SlowModeSpell } from "../../models/spells/slowmode.spell";
 import { game, io, server } from "../../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "../__fixtures__/player";
 
@@ -55,7 +55,7 @@ describe("Spell", () => {
     const unityPlayer = UNITY_PLAYER_MOCK;
     game.addPlayer(unityPlayer);
 
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
 
     expect(unityPlayer.speed).toEqual(10);

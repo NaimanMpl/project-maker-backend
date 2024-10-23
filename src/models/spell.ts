@@ -1,5 +1,5 @@
-import { game } from "../../server";
-import { Player } from "../player";
+import { game } from "../server";
+import { Player } from "./player";
 
 export interface SpellOptions {
   id: number;
@@ -8,6 +8,7 @@ export interface SpellOptions {
   description: string;
   duration?: number;
   active?: boolean;
+  type: string;
 }
 
 export abstract class Spell {
@@ -19,6 +20,7 @@ export abstract class Spell {
   active: boolean;
   timer?: number;
   currentCooldown: number;
+  type: string;
 
   constructor(options: SpellOptions) {
     const {
@@ -28,6 +30,7 @@ export abstract class Spell {
       description,
       duration,
       active = false,
+      type,
     } = options;
 
     this.id = id;
@@ -38,6 +41,7 @@ export abstract class Spell {
     this.active = active;
     this.timer = duration;
     this.currentCooldown = 0;
+    this.type = type;
   }
 
   abstract cast(player: Player): void;

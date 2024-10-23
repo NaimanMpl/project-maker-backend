@@ -5,6 +5,8 @@ import http from "http";
 import { Server } from "socket.io";
 import { DisconnectHandler } from "./handlers/disconnect.handler";
 import { LogoutHandler } from "./handlers/logout.handler";
+import { MapRequestHandler } from "./handlers/maprequest.handler";
+import { PlayerPositionHandler } from "./handlers/playerposition.handler";
 import { SignUpHandler } from "./handlers/signup.handler";
 import { SpellHandler } from "./handlers/spell.handler";
 import { StartHandler } from "./handlers/start.handler";
@@ -74,6 +76,7 @@ io.on("connection", (socket) => {
     playerPositionHandler.handleMessage(msg),
   );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
+  socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
