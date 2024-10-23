@@ -49,20 +49,23 @@ import argparse
 #     }
 # }
 
-# the maze is generated with a ratio of 12/5 based on the width
+# the maze is generated with a args.ratio based on the width
 # default width is 12 (so the height is 5 and number of try to put crosswalks is 20*width)
 
 argparse = argparse.ArgumentParser()
-argparse.add_argument("--width", type=int, default=15, help="Width of the maze")
+argparse.add_argument("--width", type=int, default=10, help="Width of the maze")
 argparse.add_argument("--Name", type=str, default="RandomMaze", help="Name of the maze")
+argparse.add_argument("--crosswalks", type=int, default=20, help="A ratio for number crosswalks")
+argparse.add_argument("--decorations", type=int, default=500, help="Number of decorations")
+argparse.add_argument("--ratio", type=int, default=16/9, help="Ratio of the maze")
 args = argparse.parse_args()
 width= args.width
+height = int(width / args.ratio)
+
 map_name = args.Name
 
-
-ratio = 16/9 # ratio of the maze to match with the basic ratio of unity player
-height = int(width / ratio)
-num_crosswalks = 20*width
+crosswalk_ratio = args.crosswalks * width
+num_crosswalks = width
 decorations = 500*width
 
 random_number = random.randint(100000000000000000000, 999999999999999999999)
