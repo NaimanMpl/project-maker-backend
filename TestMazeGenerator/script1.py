@@ -60,7 +60,7 @@ width= args.width
 map_name = args.Name
 
 
-ratio = 12/5 # ratio of the maze to match with the basic ratio of unity player
+ratio = 16/9 # ratio of the maze to match with the basic ratio of unity player
 height = int(width / ratio)
 num_crosswalks = 20*width
 decorations = 500*width
