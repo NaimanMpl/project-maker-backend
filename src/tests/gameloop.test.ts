@@ -4,7 +4,7 @@ import { GameState } from "../models/gamestate";
 import { Player, PlayerRole } from "../models/player";
 import { SlowModeSpell } from "../models/spells/slowmode.spell";
 import { game, io, server } from "../server";
-import { PLAYER_MOCK } from "./__fixtures__/player";
+import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -132,6 +132,38 @@ describe("GameLoop", () => {
     );
   });
 
+  it("should send unity player status to each evilmans at each tick", () => {
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: "Evilman",
+      spells: [],
+    };
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK });
+    game.addPlayer(player);
+    game.setSocket(player, serverSocket);
+
+    const socket = game.sockets[player.id];
+    if (!socket) {
+      fail();
+    }
+    const spy = jest.spyOn(socket, "emit");
+
+    game.tick();
+    expect(spy).toHaveBeenCalledWith(
+      "player:unity",
+      JSON.stringify({
+        id: "2",
+        name: "John",
+        type: "UNITY",
+        spells: [],
+        speed: 10,
+      }),
+    );
+  });
+
   it("should send personal player status to each protectors at each tick", () => {
     const player: Player = {
       id: "1",
@@ -159,6 +191,38 @@ describe("GameLoop", () => {
         type: "WEB",
         role: "Protector",
         spells: [],
+      }),
+    );
+  });
+
+  it("should send unity player status to each protectors at each tick", () => {
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: "Protector",
+      spells: [],
+    };
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK });
+    game.addPlayer(player);
+    game.setSocket(player, serverSocket);
+
+    const socket = game.sockets[player.id];
+    if (!socket) {
+      fail();
+    }
+    const spy = jest.spyOn(socket, "emit");
+
+    game.tick();
+    expect(spy).toHaveBeenCalledWith(
+      "player:unity",
+      JSON.stringify({
+        id: "2",
+        name: "John",
+        type: "UNITY",
+        spells: [],
+        speed: 10,
       }),
     );
   });

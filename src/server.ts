@@ -11,6 +11,7 @@ import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
+import { PlayerPositionHandler } from "./handlers/playerposition.handler";
 import { MapRequestHandler } from "./handlers/maprequest.handler";
 
 export const game: Game = new Game();
@@ -52,6 +53,7 @@ io.on("connection", (socket) => {
   const startHandler = new StartHandler(socket);
   const disconnectHandler = new DisconnectHandler(socket);
   const spellHandler = new SpellHandler(socket);
+  const playerPositionHandler = new PlayerPositionHandler(socket);
   const mapRequestHandler = new MapRequestHandler(socket);
 
   if (game.state.status === "LOBBY") {
@@ -65,6 +67,9 @@ io.on("connection", (socket) => {
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
   socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
+  socket.on("player:position", (msg) =>
+    playerPositionHandler.handleMessage(msg),
+  );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
 });
 
