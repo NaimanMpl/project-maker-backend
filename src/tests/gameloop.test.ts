@@ -2,10 +2,10 @@ import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { GameState } from "../models/gamestate";
+import { Coin } from "../models/items/coin.item";
 import { Player, PlayerRole } from "../models/player";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
-import { Coin } from "../models/items/coin.item";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -541,7 +541,7 @@ describe("GameLoop", () => {
     expect(game.state.items).toHaveLength(0);
   });
 
-  it("should trigger items on next tick if an unity player is on the the item", () => {
+  it("should trigger items on next tick if an unity player is on the item", () => {
     const coin = new Coin({ x: 0, y: 0, z: 0 });
     coin.duration = 1;
     game.state.items = [coin];
@@ -551,6 +551,7 @@ describe("GameLoop", () => {
     expect(game.unitys[0].coins).toEqual(0);
     game.tick();
     expect(game.unitys[0].coins).toEqual(1);
+  });
 
   it("should check if the webplayer has spell", () => {
     const playerRole: PlayerRole = "Protector";
@@ -561,6 +562,8 @@ describe("GameLoop", () => {
       role: playerRole,
       spells: [],
       speed: 10,
+      coins: 0,
+      items: [],
     };
 
     game.addPlayer(player);
@@ -583,6 +586,8 @@ describe("GameLoop", () => {
       role: playerRole,
       spells: [],
       speed: 10,
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
 
@@ -591,6 +596,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
 
@@ -611,6 +618,8 @@ describe("GameLoop", () => {
       role: playerRole,
       spells: [],
       speed: 10,
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
 
@@ -619,6 +628,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
 

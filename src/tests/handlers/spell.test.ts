@@ -21,30 +21,12 @@ describe("Spell", () => {
   });
 
   afterEach(() => {
+    clientSocket.removeAllListeners();
     clientSocket.close();
     serverSocket.disconnect();
     server.close();
     io.close();
     game.reset();
-  });
-
-  it("should not cast if the status is not PLAYING.", (done) => {
-    clientSocket.emit(
-      "cast:spell",
-      JSON.stringify({
-        playerId: "1",
-        id: 0,
-      }),
-    );
-
-    clientSocket.on("error", (message) => {
-      const error: GameError = JSON.parse(message);
-      expect(error).toEqual({
-        type: "UNAUTHORIZED",
-        message: "You cannot perform this action.",
-      });
-      done();
-    });
   });
 
   it("should update player speed on cast.", (done) => {
@@ -71,6 +53,28 @@ describe("Spell", () => {
 
     serverSocket.on("cast:spell", () => {
       expect(unityPlayer.speed).toEqual(5);
+      done();
+    });
+  });
+
+  it("should not cast if the status is not PLAYING.", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK });
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      console.log(error);
+      expect(error).toEqual({
+        type: "UNAUTHORIZED",
+        message: "You cannot perform this action.",
+      });
       done();
     });
   });
