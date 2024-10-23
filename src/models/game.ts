@@ -1,9 +1,12 @@
 import { Socket } from "socket.io";
+import { map } from "../../assets/map.json";
+import unityMap from "../../assets/unityMap.json";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
+import { io } from "../server";
+import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
-import { map } from "../../assets/map.json";
-import { Config } from "./config";
-import unityMap from "../../assets/unityMap.json";
+import { Spell } from "./spell";
 
 export class Game {
   state: GameState;
@@ -57,12 +60,14 @@ export class Game {
     this.state.timer = 300;
     this.players = {};
     this.sockets = {};
+    this.state.items = [];
   }
 
   win_reset() {
     this.state.status = "STARTING";
-    this.state.startTimer = 5;
+    this.state.startTimer = 10;
     this.state.timer = 300;
+    this.state.items = [];
     this.state.loops += 1;
     console.info("Player has won for the n°" + this.state.loops + " time !");
   }
@@ -80,6 +85,11 @@ export class Game {
           const socket = this.sockets[player.id];
           socket?.emit("go", JSON.stringify({ unityMap }));
         });
+        io.emit("map", JSON.stringify({ map: this.state.map }));
+        this.webplayers.forEach((webPlayer) => {
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SuddenStop));
+        });
       }
     }
 
@@ -88,33 +98,53 @@ export class Game {
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.protectors.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
+        if (player.position?.x === 0 && player.position?.y === 0) {
+          this.state.status = "WON";
+        }
       });
 
       this.state.items.forEach((item) => {
-        // update item cooldowns, casting time and duration
-        item.reduceTimers(1 / this.config.tickRate);
-        if (item.duration <= 0) {
-          this.state.items = this.state.items.filter((i) => i.id !== item.id);
-        }
+        this.unitys.forEach((player) => {
+          if (
+            item.coords.x === player.position?.x &&
+            item.coords.y === player.position?.y
+          ) {
+            item.trigger(player);
+          }
+        });
+
+        item.update(1 / this.config.tickRate);
       });
     }
     if (this.state.timer <= 0) {
       this.state.status = "FINISHED";
-    }
-    if (this.state.status === "DEAD") {
-      // gonna teleport the dead player to the spawn point
-      console.info("Player has been killed");
     }
 
     if (this.state.status === "WON") {
@@ -131,6 +161,10 @@ export class Game {
   }
 
   getPlayer(id: string) {
-    return Object.values(this.players).find((player) => player.id === id);
+    return this.players[id];
+  }
+
+  addSpell(player: Player, spell: Spell) {
+    player.spells.push(spell);
   }
 }
