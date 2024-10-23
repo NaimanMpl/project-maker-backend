@@ -59,6 +59,7 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
+    this.state.items = [];
   }
 
   tick() {
@@ -113,11 +114,16 @@ export class Game {
       });
 
       this.state.items.forEach((item) => {
-        // update item cooldowns, casting time and duration
-        item.reduceTimers(1 / this.config.tickRate);
-        if (item.duration <= 0) {
-          this.state.items = this.state.items.filter((i) => i.id !== item.id);
-        }
+        this.unitys.forEach((player) => {
+          if (
+            item.coords.x === player.position?.x &&
+            item.coords.y === player.position?.y
+          ) {
+            item.trigger(player);
+          }
+        });
+
+        item.update(1 / this.config.tickRate);
       });
     }
   }

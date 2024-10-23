@@ -5,6 +5,7 @@ import { Player, PlayerRole } from "../models/player";
 import { SlowModeSpell } from "../models/spells/slowmode.spell";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
+import { Coin } from "../models/items/coin.item";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -108,6 +109,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: "Evilman",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -128,6 +131,8 @@ describe("GameLoop", () => {
         type: "WEB",
         role: "Evilman",
         spells: [],
+        coins: 0,
+        items: [],
       }),
     );
   });
@@ -139,6 +144,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: "Evilman",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer({ ...UNITY_PLAYER_MOCK });
@@ -160,6 +167,8 @@ describe("GameLoop", () => {
         type: "UNITY",
         spells: [],
         speed: 10,
+        coins: 0,
+        items: [],
       }),
     );
   });
@@ -171,6 +180,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: "Protector",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -191,6 +202,8 @@ describe("GameLoop", () => {
         type: "WEB",
         role: "Protector",
         spells: [],
+        coins: 0,
+        items: [],
       }),
     );
   });
@@ -202,6 +215,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: "Protector",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer({ ...UNITY_PLAYER_MOCK });
@@ -223,6 +238,8 @@ describe("GameLoop", () => {
         type: "UNITY",
         spells: [],
         speed: 10,
+        coins: 0,
+        items: [],
       }),
     );
   });
@@ -233,6 +250,8 @@ describe("GameLoop", () => {
       name: "John",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -252,6 +271,8 @@ describe("GameLoop", () => {
         name: "John",
         type: "UNITY",
         spells: [],
+        coins: 0,
+        items: [],
       }),
     );
   });
@@ -265,6 +286,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -286,6 +309,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: playerRole,
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -293,6 +318,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -314,6 +341,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: playerRole,
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -321,6 +350,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -347,6 +378,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: playerRole,
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -354,6 +387,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -380,6 +415,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: playerRole,
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -387,6 +424,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -411,6 +450,8 @@ describe("GameLoop", () => {
       type: "WEB",
       role: playerRole,
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -418,6 +459,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -443,6 +486,8 @@ describe("GameLoop", () => {
       role: playerRole,
       spells: [],
       speed: 10,
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -450,6 +495,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
     const slowSpell = new SlowModeSpell();
@@ -469,5 +516,40 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(10);
     expect(player.spells[0].currentCooldown).toEqual(30);
+  });
+
+  it("should update items cooldown on each tick", () => {
+    const coin = new Coin({ x: 0, y: 0, z: 0 });
+    coin.duration = 1000;
+    game.state.items = [coin];
+    game.state.status = "PLAYING";
+
+    game.tick();
+    expect(coin.duration).toEqual(999.95);
+    expect(coin.cooldown).toEqual(29.95);
+    expect(coin.castingTime).toEqual(0.95);
+  });
+
+  it("should destroy items on next tick if their duration is under 0", () => {
+    const coin = new Coin({ x: 0, y: 0, z: 0 });
+    coin.duration = 0.05;
+    game.state.items = [coin];
+    game.state.status = "PLAYING";
+
+    game.tick();
+    expect(coin.duration).toEqual(0);
+    expect(game.state.items).toHaveLength(0);
+  });
+
+  it("should trigger items on next tick if an unity player is on the the item", () => {
+    const coin = new Coin({ x: 0, y: 0, z: 0 });
+    coin.duration = 1;
+    game.state.items = [coin];
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 0, y: 0 } });
+
+    expect(game.unitys[0].coins).toEqual(0);
+    game.tick();
+    expect(game.unitys[0].coins).toEqual(1);
   });
 });

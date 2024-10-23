@@ -35,6 +35,8 @@ describe("Logout Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -62,6 +64,8 @@ describe("Logout Handler", () => {
         name: "John",
         type: "WEB",
         spells: [],
+        coins: 0,
+        items: [],
       });
       done();
     });

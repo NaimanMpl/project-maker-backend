@@ -83,6 +83,8 @@ describe("Spell", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     };
 
     game.addPlayer(player);

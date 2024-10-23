@@ -30,6 +30,8 @@ describe("Who Am I Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -46,6 +48,8 @@ describe("Who Am I Handler", () => {
         name: "John",
         type: "WEB",
         spells: [],
+        coins: 0,
+        items: [],
       });
       done();
     });
@@ -57,6 +61,8 @@ describe("Who Am I Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -84,12 +90,16 @@ describe("Who Am I Handler", () => {
       type: "WEB",
       role: "Protector",
       spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "2",
       name: "Hello",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "3",
@@ -97,6 +107,8 @@ describe("Who Am I Handler", () => {
       type: "WEB",
       role: "Evilman",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -109,11 +121,13 @@ describe("Who Am I Handler", () => {
     clientSocket.on("playerInfo", (message) => {
       const player: Player = JSON.parse(message);
       expect(player).toEqual({
+        coins: 0,
         id: "3",
         name: "Doe",
         type: "WEB",
         role: "Evilman",
         spells: [],
+        items: [],
       });
       done();
     });

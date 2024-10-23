@@ -6,8 +6,8 @@ import { ItemCategories } from "../models/items/item";
 import { ItemFactory } from "../factories/item.factory";
 import {
   ITEM_ON_COOLDOWN,
+  NOT_A_PLAYER,
   UNKNOWN_ITEM,
-  UNKNOWN_PLAYER,
 } from "../models/gameerror";
 
 //  the objectif of this class is to handle the item message (coords, id of the player, type of the item) and check the cooldown of the player
@@ -19,23 +19,22 @@ export class ItemHandler extends MessageHandler {
 
   handleMessage(message: string): void {
     const payload: {
-      ownerId: string;
-      coords: { x: number; y: number; z: number };
-      itemType: string;
+      id: string;
+      x: number;
+      y: number;
+      item: string;
     } = JSON.parse(message);
-    const { itemType, ownerId, coords } = payload;
-    const player = game.players[ownerId];
+    const { item: itemType, x, y, id } = payload;
+    const player = game.players[id];
 
     if (!player) {
-      this.socket.emit("error", UNKNOWN_PLAYER);
-      logger.warn(`Player with id : ${ownerId} does not exist.`);
+      this.socket.emit("error", JSON.stringify(NOT_A_PLAYER));
       return;
     }
 
     const item = ItemFactory.createItem({
       category: itemType as ItemCategories,
-      coords,
-      ownerId,
+      coords: { x, y, z: 0 },
     });
 
     if (!item) {
@@ -44,21 +43,21 @@ export class ItemHandler extends MessageHandler {
       return;
     }
 
+    item.ownerId = id;
+
     if (
       game.state.items.some(
         (item) =>
-          item.type === payload.itemType &&
-          item.ownerId === ownerId &&
-          item.cooldown > 0,
+          item.type === itemType && item.ownerId === id && item.cooldown > 0,
       )
     ) {
       this.socket.emit("error", JSON.stringify(ITEM_ON_COOLDOWN));
       logger.warn(
-        `Player ${player.name} with id ${ownerId} is on cooldown for item ${payload.itemType}`,
+        `Player ${player.name} with id ${id} is on cooldown for item ${itemType}`,
       );
       return;
     }
-
-    game.state.items.push(item);
+    logger.info(`Le joueur ${player.name} a activé l'item ${item.type}`);
+    item.place();
   }
 }

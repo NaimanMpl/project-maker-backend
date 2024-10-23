@@ -1,9 +1,12 @@
+import { game } from "../../server";
+import { Player } from "../player";
+
 export type ItemCategories =
   | "LANDMINE"
   | "WALL"
   | "SPEEDBOOST"
   | "SLOWBOOST"
-  | "COINS";
+  | "COIN";
 
 export interface ItemCoords {
   x: number;
@@ -11,57 +14,66 @@ export interface ItemCoords {
   z: number;
 }
 
-export class Item {
+export interface ItemOptions {
   type: ItemCategories;
   id: string;
   name: string;
-  ownerId: string;
+  ownerId?: string;
   description: string;
   coords: { x: number; y: number; z: number };
   cooldown: number;
   castingTime: number;
-  duration: number;
+  duration?: number;
+}
 
-  reduceTimers(reduction: number): void {
+export abstract class Item {
+  type: ItemCategories;
+  id: string;
+  name: string;
+  ownerId?: string;
+  description: string;
+  coords: { x: number; y: number; z: number };
+  cooldown: number;
+  castingTime: number;
+  duration?: number;
+
+  update(reduction: number): void {
     if (this.castingTime > 0) {
       this.castingTime -= reduction;
     }
     if (this.cooldown > 0) {
       this.cooldown -= reduction;
     }
-    if (this.duration > 0) {
+    if (this.duration != undefined && this.duration > 0) {
       this.duration -= reduction;
     }
-    if (this.duration <= 0) {
+    if (this.duration !== undefined && this.duration <= 0) {
       this.destroy();
     }
   }
 
   place(): void {
-    console.log("Item : " + this.type + " placed");
+    game.state.items.push(this);
   }
 
-  trigger(): void {
-    console.log("Item : " + this.type + " triggered");
-  }
+  abstract trigger(player: Player): void;
 
   destroy(): void {
-    console.log(
-      "Item : " + this.id + " of type " + this.type + "has been destroyed",
-    );
+    game.state.items = game.state.items.filter((item) => item.id !== this.id);
   }
 
-  constructor(
-    type: ItemCategories,
-    id: string,
-    name: string,
-    ownerId: string,
-    description: string,
-    coords: ItemCoords,
-    cooldown: number,
-    castingTime: number,
-    duration: number,
-  ) {
+  constructor(options: ItemOptions) {
+    const {
+      type,
+      id,
+      name,
+      ownerId,
+      description,
+      coords,
+      castingTime,
+      cooldown,
+      duration,
+    } = options;
     this.type = type;
     this.id = id;
     this.name = name;
