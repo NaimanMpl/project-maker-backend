@@ -73,9 +73,6 @@ crosswalk_ratio = args.crosswalks * width
 num_crosswalks = width
 decorations = 500 * width
 
-random_number = random.randint(100000000000000000000, 999999999999999999999)
-
-
 def generate_maze(width, height):
     maze = [["1"] * (width * 2 + 1) for _ in range(height * 2 + 1)]
 
@@ -340,7 +337,6 @@ def add_random_decorations(maze, decorations):
                     maze[y][x] = str(type)
     return maze
 
-
 def check_angle_sidewalk(maze, i, j):
     angle = 1
     if maze[i - 1][j] == "0":
@@ -377,7 +373,6 @@ def check_angle_sidewalk(maze, i, j):
     elif maze[i + 1][j] == "3" and maze[i][j + 1] == "3":
         angle = 45
     return angle
-
 
 def generate_json(maze, map_name):
     tiles = []
