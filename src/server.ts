@@ -14,6 +14,7 @@ import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
+import { RestartHandler } from "./handlers/restart.handler";
 
 export const game: Game = new Game();
 
@@ -57,6 +58,12 @@ io.on("connection", (socket) => {
   const playerPositionHandler = new PlayerPositionHandler(socket);
   const mapRequestHandler = new MapRequestHandler(socket);
   const itemHandler = new ItemHandler(socket);
+  const restartHandler = new RestartHandler(socket);
+
+  socket.emit(
+    "devmode",
+    JSON.stringify({ dev: process.env.DEV_MODE === "enabled" }),
+  );
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -74,6 +81,7 @@ io.on("connection", (socket) => {
     playerPositionHandler.handleMessage(msg),
   );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
+  socket.on("restart", (msg) => restartHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
