@@ -12,6 +12,7 @@ import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
 import { PlayerPositionHandler } from "./handlers/playerposition.handler";
+import { MapRequestHandler } from "./handlers/maprequest.handler";
 
 export const game: Game = new Game();
 
@@ -38,7 +39,7 @@ export const io = new Server(server, {
 
 const gameLoop = () => {
   game.tick();
-  io.emit("gamestate", JSON.stringify(game.state));
+  io.emit("gamestate", JSON.stringify({ ...game.state, map: undefined }));
 };
 
 const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
@@ -53,6 +54,7 @@ io.on("connection", (socket) => {
   const disconnectHandler = new DisconnectHandler(socket);
   const spellHandler = new SpellHandler(socket);
   const playerPositionHandler = new PlayerPositionHandler(socket);
+  const mapRequestHandler = new MapRequestHandler(socket);
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -68,6 +70,7 @@ io.on("connection", (socket) => {
   socket.on("player:position", (msg) =>
     playerPositionHandler.handleMessage(msg),
   );
+  socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
