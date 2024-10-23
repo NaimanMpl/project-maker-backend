@@ -1,7 +1,7 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
-import { game, io, server } from "../../server";
 import { Player } from "../../models/player";
+import { game, io, server } from "../../server";
 
 describe("Disconnect Handler", () => {
   let clientSocket: ClientSocket;
@@ -34,6 +34,9 @@ describe("Disconnect Handler", () => {
       id: "1",
       name: "John",
       type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
     };
 
     game.addPlayer(player);

@@ -1,9 +1,12 @@
 import { Socket } from "socket.io";
+import { map } from "../../assets/map.json";
+import unityMap from "../../assets/unityMap.json";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
+import { io } from "../server";
+import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
-import { map } from "../../assets/map.json";
-import { Config } from "./config";
-import unityMap from "../../assets/unityMap.json";
+import { Spell } from "./spell";
 
 export class Game {
   state: GameState;
@@ -17,6 +20,7 @@ export class Game {
       timer: 0,
       startTimer: 5,
       status: "LOBBY",
+      items: [],
       map,
     };
     this.sockets = {};
@@ -56,6 +60,7 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
+    this.state.items = [];
   }
 
   tick() {
@@ -71,6 +76,11 @@ export class Game {
           const socket = this.sockets[player.id];
           socket?.emit("go", JSON.stringify({ unityMap }));
         });
+        io.emit("map", JSON.stringify({ map: this.state.map }));
+        this.webplayers.forEach((webPlayer) => {
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SuddenStop));
+        });
       }
     }
 
@@ -79,17 +89,46 @@ export class Game {
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.protectors.forEach((player) => {
         const socket = this.sockets[player.id];
+        player.spells.forEach((spell) => {
+          this.unitys.forEach((unityPlayer) => {
+            spell.update(unityPlayer);
+          });
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
+        this.unitys.forEach((unityPlayer) => {
+          socket?.emit("player:unity", JSON.stringify(unityPlayer));
+        });
       });
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
+      });
+
+      this.state.items.forEach((item) => {
+        this.unitys.forEach((player) => {
+          if (
+            item.coords.x === player.position?.x &&
+            item.coords.y === player.position?.y
+          ) {
+            item.trigger(player);
+          }
+        });
+
+        item.update(1 / this.config.tickRate);
       });
     }
   }
@@ -103,6 +142,10 @@ export class Game {
   }
 
   getPlayer(id: string) {
-    return Object.values(this.players).find((player) => player.id === id);
+    return this.players[id];
+  }
+
+  addSpell(player: Player, spell: Spell) {
+    player.spells.push(spell);
   }
 }

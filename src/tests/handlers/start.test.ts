@@ -1,5 +1,5 @@
-import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { Socket as ServerSocket } from "socket.io";
+import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { GameError } from "../../models/gameerror";
 import { game, io, server } from "../../server";
 
@@ -30,16 +30,25 @@ describe("Start Handler", () => {
       id: "1",
       name: "John",
       type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "2",
       name: "Doe",
       type: "UNITY",
+      spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "3",
       name: "Hello",
       type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -55,6 +64,9 @@ describe("Start Handler", () => {
           id: "2",
           name: "Doe",
           type: "UNITY",
+          spells: [],
+          coins: 0,
+          items: [],
         },
       ]);
       expect(game.evilmans).toHaveLength(1);
@@ -71,6 +83,9 @@ describe("Start Handler", () => {
       id: "123456789",
       name: "John",
       type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -80,9 +95,7 @@ describe("Start Handler", () => {
       }),
     );
     clientSocket.on("error", (message) => {
-      console.log("players", game.players);
       const error: GameError = JSON.parse(message);
-      console.log("error", error);
       expect(error).toEqual({
         type: "UNAUTHORIZED",
         message: "You cannot perform this action.",
@@ -92,10 +105,15 @@ describe("Start Handler", () => {
   });
 
   it("should not start the game if there's no unity client connected.", (done) => {
+    process.env.GAMEMODE = "unity";
+
     game.addPlayer({
       id: "123456789",
       name: "John",
       type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
