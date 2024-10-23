@@ -14,6 +14,7 @@ const config = {
     "^@models/(.*)$": "<rootDir>/src/models/$1",
   },
   clearMocks: true,
+  setupFilesAfterEnv: ["<rootDir>/src/tests/jest.setup.ts"],
 };
 
 export default config;

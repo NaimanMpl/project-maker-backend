@@ -649,4 +649,29 @@ describe("GameLoop", () => {
     expect(unityPlayer.speed).toEqual(10);
     expect(player.spells[0].currentCooldown).toEqual(60);
   });
+
+  it("should update loop if unity player is in a winnable state", () => {
+    const ioEmitSpy = jest.spyOn(io, "emit");
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 10, y: 10 } });
+    game.tick();
+    expect(game.state.loops).toEqual(1);
+    expect(game.unitys[0].position).toEqual({ x: 0, y: 0 });
+    expect(ioEmitSpy).toHaveBeenCalledWith(
+      "win",
+      JSON.stringify({
+        id: "2",
+        name: "John",
+        type: "UNITY",
+        spells: [],
+        speed: 10,
+        coins: 0,
+        items: [],
+        position: {
+          x: 10,
+          y: 10,
+        },
+      }),
+    );
+  });
 });

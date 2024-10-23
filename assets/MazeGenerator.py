@@ -535,8 +535,9 @@ def main():
         maze_str_to_int.append(row_int)
 
     maze = maze_str_to_int
-    save_json_to_file(str({"map": maze}), "mazeArray")
+    save_json_to_file(json.dumps({"map": maze}), "mazeArray")
     save_json_to_file(maze_json, "map")
+    print(json.dumps({"map": maze}))
 
 
 if __name__ == "__main__":

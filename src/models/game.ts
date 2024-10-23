@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { map } from "../../assets/map.json";
+import { map } from "../../assets/mazeArray.json";
 import unityMap from "../../assets/unityMap.json";
 import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { io } from "../server";
@@ -7,6 +7,7 @@ import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
 import { Spell } from "./spell";
+import * as mapLoader from "../loaders/map.loader";
 
 export class Game {
   state: GameState;
@@ -30,6 +31,15 @@ export class Game {
       tickRate: 20,
     };
     this.dev = process.env.DEV_MODE === "enabled";
+    this.loadMap();
+  }
+
+  loadMap() {
+    mapLoader.loadMap().then((map) => {
+      this.state.map = map;
+      this.state.items = [];
+      io.emit("map", JSON.stringify({ map }));
+    });
   }
 
   get evilmans() {
@@ -139,7 +149,19 @@ export class Game {
 
         item.update(1 / this.config.tickRate);
       });
+      this.checkWin();
     }
+  }
+
+  checkWin() {
+    this.unitys.forEach((player) => {
+      if (player.position?.x === 10 && player.position?.y === 10) {
+        io.emit("win", JSON.stringify(player));
+        this.state.loops++;
+        player.position = { x: 0, y: 0 };
+        this.loadMap();
+      }
+    });
   }
 
   addPlayer(player: Player) {
