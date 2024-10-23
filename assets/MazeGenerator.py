@@ -462,7 +462,7 @@ def save_json_to_file(json_data, name):
     file_name = f"{name}{random_number}.json"
     with open(file_name, 'w') as f:
         f.write(json_data)
-    print(f"Fichier enregistré sous : {file_name}")
+    # print(f"Fichier enregistré sous : {file_name}")
 
 def main():
     maze = generate_maze(width, height)
@@ -474,10 +474,10 @@ def main():
     maze = add_start_end(maze)
     maze = add_random_decorations(maze, decorations)
 
-    for row in maze:
-        for cell in row:
-            print(cell, end='')
-        print()
+    # for row in maze:
+    #     for cell in row:
+    #         print(cell, end='')
+    #     print()
     maze_json = generate_json(maze, map_name)
     # in the maze array there is a lot of strings, i need to convert them to int
     maze_str_to_int = []
