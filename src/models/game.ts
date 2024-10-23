@@ -14,8 +14,8 @@ export class Game {
   constructor() {
     this.state = {
       loops: 0,
-      timer: 0,
       startTimer: 5,
+      timer: 300,
       status: "LOBBY",
       items: [],
       map,
@@ -54,9 +54,17 @@ export class Game {
   reset() {
     this.state.status = "LOBBY";
     this.state.startTimer = 5;
-    this.state.timer = 0;
+    this.state.timer = 300;
     this.players = {};
     this.sockets = {};
+  }
+
+  win_reset() {
+    this.state.status = "STARTING";
+    this.state.startTimer = 5;
+    this.state.timer = 300;
+    this.state.loops += 1;
+    console.info("Player has won for the n°" + this.state.loops + " time !");
   }
 
   tick() {
@@ -76,7 +84,7 @@ export class Game {
     }
 
     if (this.state.status === "PLAYING") {
-      this.state.timer += 1 / this.config.tickRate;
+      this.state.timer -= 1 / this.config.tickRate;
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];
@@ -100,6 +108,17 @@ export class Game {
           this.state.items = this.state.items.filter((i) => i.id !== item.id);
         }
       });
+    }
+    if (this.state.timer <= 0) {
+      this.state.status = "FINISHED";
+    }
+    if (this.state.status === "DEAD") {
+      // gonna teleport the dead player to the spawn point
+      console.info("Player has been killed");
+    }
+
+    if (this.state.status === "WON") {
+      this.win_reset();
     }
   }
 
