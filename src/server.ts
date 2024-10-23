@@ -11,6 +11,7 @@ import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
+import { MapRequestHandler } from "./handlers/maprequest.handler";
 
 export const game: Game = new Game();
 
@@ -37,7 +38,7 @@ export const io = new Server(server, {
 
 const gameLoop = () => {
   game.tick();
-  io.emit("gamestate", JSON.stringify(game.state));
+  io.emit("gamestate", JSON.stringify({ ...game.state, map: undefined }));
 };
 
 const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
@@ -51,6 +52,7 @@ io.on("connection", (socket) => {
   const startHandler = new StartHandler(socket);
   const disconnectHandler = new DisconnectHandler(socket);
   const spellHandler = new SpellHandler(socket);
+  const mapRequestHandler = new MapRequestHandler(socket);
 
   if (game.state.status === "LOBBY") {
     socket.join("lobby");
@@ -63,6 +65,7 @@ io.on("connection", (socket) => {
   socket.on("start", (msg) => startHandler.handleMessage(msg));
   socket.on("disconnect", (msg) => disconnectHandler.handleMessage(msg));
   socket.on("cast:spell", (msg) => spellHandler.handleMessage(msg));
+  socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */

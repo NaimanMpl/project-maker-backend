@@ -5,6 +5,7 @@ import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
 import { Spell } from "./spells/spell";
+import { io } from "../server";
 
 export class Game {
   state: GameState;
@@ -72,6 +73,7 @@ export class Game {
           const socket = this.sockets[player.id];
           socket?.emit("go", JSON.stringify({ unityMap }));
         });
+        io.emit("map", JSON.stringify({ map: this.state.map }));
       }
     }
 

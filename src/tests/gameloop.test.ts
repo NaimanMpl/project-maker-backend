@@ -67,6 +67,12 @@ describe("GameLoop", () => {
 
   it("should emit a go message for unity players when start timer equals 0", (done) => {
     game.state.status = "LOBBY";
+    game.state.map = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
 
     const unityPlayer = {
       name: "John",
@@ -81,6 +87,16 @@ describe("GameLoop", () => {
 
     clientSocket.on("go", (message) => {
       expect(JSON.parse(message)).toHaveProperty("unityMap");
+    });
+
+    clientSocket.on("map", (message) => {
+      const { map }: { map: number[][] } = JSON.parse(message);
+      expect(map).toEqual([
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ]);
       done();
     });
   });
