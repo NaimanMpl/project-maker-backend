@@ -1,8 +1,8 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { GameState } from "../models/gamestate";
 import { Player, PlayerRole } from "../models/player";
-import { SlowModeSpell } from "../models/spells/slowmode.spell";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
 
@@ -267,7 +267,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
     slowSpell.cast(unityPlayer);
@@ -295,7 +295,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
     slowSpell.cast(unityPlayer);
@@ -323,7 +323,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
     slowSpell.cast(unityPlayer);
@@ -356,7 +356,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
     slowSpell.cast(unityPlayer);
@@ -389,7 +389,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
 
@@ -420,7 +420,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
 
@@ -452,7 +452,7 @@ describe("GameLoop", () => {
       spells: [],
     };
     game.addPlayer(unityPlayer);
-    const slowSpell = new SlowModeSpell();
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
     slowSpell.cast(unityPlayer);
@@ -469,5 +469,92 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(10);
     expect(player.spells[0].currentCooldown).toEqual(30);
+  });
+
+  it("should check if the webplayer has spell", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+    };
+
+    game.addPlayer(player);
+
+    game.state.status = "STARTING";
+
+    game.state.startTimer = 0;
+    game.tick();
+    expect(game.state.status).toEqual("PLAYING");
+    expect(player.spells[0].name).toEqual("Slow Mode");
+    expect(player.spells[1].name).toEqual("Sudden Stop");
+  });
+
+  it("should stop the unity player when spell is casted", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+
+    const suddenStopSpell = SpellFactory.createSpell(SpellEnum.SuddenStop);
+    game.addSpell(player, suddenStopSpell);
+    game.state.status = "PLAYING";
+
+    suddenStopSpell.cast(unityPlayer);
+    expect(unityPlayer.speed).toEqual(0);
+  });
+
+  it("should reset unity player speed after the duration", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+
+    const suddenStopSpell = SpellFactory.createSpell(SpellEnum.SuddenStop);
+    game.addSpell(player, suddenStopSpell);
+
+    game.state.status = "PLAYING";
+    suddenStopSpell.cast(unityPlayer);
+
+    player.spells[0].timer = 0.05;
+    expect(unityPlayer.speed).toEqual(0);
+    expect(player.spells[0].active).toEqual(true);
+
+    game.tick();
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(2);
+    expect(unityPlayer.speed).toEqual(10);
+    expect(player.spells[0].currentCooldown).toEqual(60);
   });
 });

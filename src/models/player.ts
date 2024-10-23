@@ -1,4 +1,4 @@
-import { Spell } from "./spells/spell";
+import { Spell } from "./spell";
 
 export type PlayerType = "WEB" | "UNITY";
 export type PlayerRole = "Protector" | "Evilman" | "Player";

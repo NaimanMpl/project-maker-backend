@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
 import { map } from "../../assets/map.json";
 import unityMap from "../../assets/unityMap.json";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
+import { io } from "../server";
 import { Config } from "./config";
 import { GameState } from "./gamestate";
 import { Player } from "./player";
-import { Spell } from "./spells/spell";
-import { io } from "../server";
+import { Spell } from "./spell";
 
 export class Game {
   state: GameState;
@@ -74,6 +75,10 @@ export class Game {
           socket?.emit("go", JSON.stringify({ unityMap }));
         });
         io.emit("map", JSON.stringify({ map: this.state.map }));
+        this.webplayers.forEach((webPlayer) => {
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SuddenStop));
+        });
       }
     }
 
