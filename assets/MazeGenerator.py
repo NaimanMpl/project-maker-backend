@@ -1,3 +1,4 @@
+import os
 import random
 import json
 import argparse
@@ -459,10 +460,11 @@ def generate_json(maze, map_name):
     return json.dumps(map_data, indent=4)
 
 def save_json_to_file(json_data, name):
-    file_name = f"{name}{random_number}.json"
+    script_dir  = os.path.dirname(os.path.abspath(__file__))
+    file_name = os.path.join(script_dir, f"{name}.json")
     with open(file_name, 'w') as f:
         f.write(json_data)
-    # print(f"Fichier enregistré sous : {file_name}")
+    # print(f"file_name")
 
 def main():
     maze = generate_maze(width, height)
