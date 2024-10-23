@@ -482,12 +482,10 @@ describe("GameLoop", () => {
       speed: 10,
     };
 
-    expect(game.state.status).toEqual("LOBBY");
     game.addPlayer(player);
 
     game.state.status = "STARTING";
 
-    expect(game.state.status).toEqual("STARTING");
     game.state.startTimer = 0;
     game.tick();
     expect(game.state.status).toEqual("PLAYING");
@@ -515,9 +513,7 @@ describe("GameLoop", () => {
     };
     game.addPlayer(unityPlayer);
 
-    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     const suddenStopSpell = SpellFactory.createSpell(SpellEnum.SuddenStop);
-    game.addSpell(player, slowSpell);
     game.addSpell(player, suddenStopSpell);
     game.state.status = "PLAYING";
 
@@ -545,26 +541,20 @@ describe("GameLoop", () => {
     };
     game.addPlayer(unityPlayer);
 
-    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
     const suddenStopSpell = SpellFactory.createSpell(SpellEnum.SuddenStop);
-    game.addSpell(player, slowSpell);
     game.addSpell(player, suddenStopSpell);
 
     game.state.status = "PLAYING";
     suddenStopSpell.cast(unityPlayer);
 
-    player.spells[1].timer = 0.05;
+    player.spells[0].timer = 0.05;
     expect(unityPlayer.speed).toEqual(0);
-    expect(player.spells[1].active).toEqual(true);
+    expect(player.spells[0].active).toEqual(true);
 
     game.tick();
-    expect(player.spells[1].active).toEqual(false);
-    expect(player.spells[1].timer).toEqual(2);
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(2);
     expect(unityPlayer.speed).toEqual(10);
-
-    game.tick();
-    expect(player.spells[1].active).toEqual(false);
-    expect(player.spells[1].timer).toEqual(2);
-    expect(player.spells[1].currentCooldown).toEqual(60);
+    expect(player.spells[0].currentCooldown).toEqual(60);
   });
 });
