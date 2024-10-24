@@ -18,7 +18,7 @@ export interface ItemOptions {
   type: ItemCategories;
   id: string;
   name: string;
-  ownerId?: string;
+  owner?: Player;
   description: string;
   coords: { x: number; y: number; z: number };
   cooldown: number;
@@ -30,7 +30,7 @@ export abstract class Item {
   type: ItemCategories;
   id: string;
   name: string;
-  ownerId?: string;
+  owner?: Player;
   description: string;
   coords: { x: number; y: number; z: number };
   cooldown: number;
@@ -67,7 +67,7 @@ export abstract class Item {
       type,
       id,
       name,
-      ownerId,
+      owner,
       description,
       coords,
       castingTime,
@@ -77,7 +77,7 @@ export abstract class Item {
     this.type = type;
     this.id = id;
     this.name = name;
-    this.ownerId = ownerId;
+    this.owner = owner;
     this.description = description;
     this.coords = coords;
     this.castingTime = castingTime;
