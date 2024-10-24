@@ -6,7 +6,7 @@
     "dev": "tsx watch src/app.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "tsc",
+    "build": "tsc && cp ./assets/MazeGenerator.py ./dist/assets/MazeGenerator.py",
     "test": "jest --runInBand"
   },
   "keywords": [],

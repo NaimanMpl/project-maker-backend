@@ -54,7 +54,7 @@ import argparse
 # default width is 12 (so the height is 5 and number of try to put crosswalks is 20*width)
 
 argparse = argparse.ArgumentParser()
-argparse.add_argument("--width", type=int, default=10, help="Width of the maze")
+argparse.add_argument("--width", type=int, default=12, help="Width of the maze")
 argparse.add_argument("--Name", type=str, default="RandomMaze", help="Name of the maze")
 argparse.add_argument(
     "--crosswalks", type=int, default=20, help="A ratio for number crosswalks"
@@ -69,8 +69,7 @@ height = int(width / args.ratio)
 
 map_name = args.Name
 
-crosswalk_ratio = args.crosswalks * width
-num_crosswalks = width
+num_crosswalks = args.crosswalks * width
 decorations = 500 * width
 
 def generate_maze(width, height):
@@ -537,7 +536,20 @@ def main():
     maze = maze_str_to_int
     save_json_to_file(json.dumps({"map": maze}), "mazeArray")
     save_json_to_file(maze_json, "map")
-    print(json.dumps({"map": maze}))
+
+    unity_map = json.loads(maze_json)
+
+    tiles = unity_map["properties"]["tiles"]
+    start = None
+    end = None
+
+    for tile in tiles:
+        if tile["type"] == "Start":
+            start = tile
+        if tile["type"] == "End":
+            end = tile
+
+    print(json.dumps({"map": maze, "start": start, "end": end}))
 
 
 if __name__ == "__main__":

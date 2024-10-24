@@ -19,11 +19,31 @@ export class Game {
   constructor() {
     this.state = {
       loops: 0,
-      timer: 0,
+      timer: 5 * 60,
       startTimer: 5,
       status: "LOBBY",
       items: [],
       map,
+      startPoint: {
+        type: "Start",
+        properties: {
+          position: {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+        },
+      },
+      endPoint: {
+        type: "Start",
+        properties: {
+          position: {
+            x: 10,
+            y: 10,
+            z: 0,
+          },
+        },
+      },
     };
     this.sockets = {};
     this.players = {};
@@ -33,11 +53,22 @@ export class Game {
     this.dev = process.env.DEV_MODE === "enabled";
     this.loadMap();
   }
-
   loadMap() {
-    mapLoader.loadMap().then((map) => {
+    mapLoader.loadMap().then((mapData) => {
+      const { map, start, end } = mapData;
+      this.state.startPoint = start;
+      this.state.endPoint = end;
       this.state.map = map;
       this.state.items = [];
+      this.unitys.forEach((player) => {
+        const socket = this.sockets[player.id];
+        player.position = {
+          x: start.properties.position.x,
+          y: start.properties.position.y,
+          z: start.properties.position.z,
+        };
+        socket?.emit("unity:position", player.position);
+      });
       io.emit("map", JSON.stringify({ map }));
     });
   }
@@ -74,11 +105,31 @@ export class Game {
     this.sockets = {};
     this.state = {
       loops: 0,
-      timer: 0,
+      timer: 5 * 60,
       startTimer: 5,
       status: "LOBBY",
       items: [],
       map,
+      startPoint: {
+        type: "Start",
+        properties: {
+          position: {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+        },
+      },
+      endPoint: {
+        type: "Start",
+        properties: {
+          position: {
+            x: 10,
+            y: 10,
+            z: 0,
+          },
+        },
+      },
     };
   }
 
@@ -104,7 +155,10 @@ export class Game {
     }
 
     if (this.state.status === "PLAYING") {
-      this.state.timer += 1 / this.config.tickRate;
+      this.state.timer = Math.max(
+        0,
+        this.state.timer - 1 / this.config.tickRate,
+      );
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];
@@ -139,27 +193,48 @@ export class Game {
 
       this.state.items.forEach((item) => {
         this.unitys.forEach((player) => {
-          if (
-            item.coords.x === player.position?.x &&
-            item.coords.y === player.position?.y
-          ) {
-            item.trigger(player);
+          if (player.position) {
+            if (
+              Math.abs(item.coords.x - player.position?.x) <= 0.3 &&
+              Math.abs(item.coords.y - player.position?.y) <= 0.3
+            ) {
+              item.trigger(player);
+            }
           }
         });
 
         item.update(1 / this.config.tickRate);
       });
+
       this.checkWin();
     }
   }
 
   checkWin() {
     this.unitys.forEach((player) => {
-      if (player.position?.x === 10 && player.position?.y === 10) {
-        io.emit("win", JSON.stringify(player));
-        this.state.loops++;
-        player.position = { x: 0, y: 0 };
-        this.loadMap();
+      if (!player.position) {
+        return;
+      }
+      if (this.state.endPoint) {
+        if (
+          Math.abs(
+            player.position.x - this.state.endPoint.properties.position.x,
+          ) <= 0.3 &&
+          Math.abs(
+            player.position.x - this.state.endPoint.properties.position.y,
+          ) <= 0.3
+        ) {
+          io.emit("win", JSON.stringify(player));
+          this.state.loops++;
+          this.state.items = [];
+          this.state.timer = 5 * 60;
+          this.webplayers.forEach((webplayer) => {
+            webplayer.spells.forEach((spell) => {
+              spell.spellReset();
+            });
+          });
+          this.loadMap();
+        }
       }
     });
   }

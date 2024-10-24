@@ -1,4 +1,5 @@
 import { Item } from "./items/item";
+import { Tile } from "./tile";
 
 export type GameStatus = "LOBBY" | "STARTING" | "PLAYING" | "FINISHED";
 
@@ -7,6 +8,8 @@ export interface GameState {
   timer: number;
   startTimer: number;
   loops: number;
+  startPoint?: Tile;
+  endPoint?: Tile;
   map: number[][];
   items: Item[];
 }

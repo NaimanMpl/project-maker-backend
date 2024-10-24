@@ -24,4 +24,10 @@ export class SlowModeSpell extends Spell {
     player.speed = DEFAULT_PLAYER_SPEED;
     this.currentCooldown = this.cooldown;
   }
+
+  spellReset(): void {
+    this.duration = 10;
+    this.currentCooldown = 0;
+    this.timer = 0;
+  }
 }
