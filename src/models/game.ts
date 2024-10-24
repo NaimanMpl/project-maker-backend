@@ -78,6 +78,7 @@ export class Game {
         this.webplayers.forEach((webPlayer) => {
           webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
           webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SuddenStop));
+          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.Quickness));
         });
       }
     }

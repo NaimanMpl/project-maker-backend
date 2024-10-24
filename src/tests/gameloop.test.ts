@@ -557,4 +557,41 @@ describe("GameLoop", () => {
     expect(unityPlayer.speed).toEqual(10);
     expect(player.spells[0].currentCooldown).toEqual(60);
   });
+
+  it("should remake the unity player walk normally", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+    };
+    game.addPlayer(unityPlayer);
+
+    const quicknessSpell = SpellFactory.createSpell(SpellEnum.Quickness);
+    game.addSpell(player, quicknessSpell);
+
+    game.state.status = "PLAYING";
+    quicknessSpell.cast(unityPlayer);
+
+    player.spells[0].timer = 0.05;
+    expect(unityPlayer.speed).toEqual(15);
+    expect(player.spells[0].active).toEqual(true);
+
+    game.tick();
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(unityPlayer.speed).toEqual(10);
+    expect(player.spells[0].currentCooldown).toEqual(40);
+  });
 });
