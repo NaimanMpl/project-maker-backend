@@ -18,6 +18,11 @@ export const UNKNOWN_PLAYER: GameError = {
   message: "The player was not found.",
 };
 
+export const NOT_A_PLAYER: GameError = {
+  type: "NOT_A_PLAYER",
+  message: "You're not in the players list.",
+};
+
 export const UNAUTHORIZED: GameError = {
   type: "UNAUTHORIZED",
   message: "You cannot perform this action.",
@@ -26,4 +31,19 @@ export const UNAUTHORIZED: GameError = {
 export const UNITY_PLAYER_NOT_FOUND: GameError = {
   type: "UNITY_PLAYER_NOT_FOUND",
   message: "The unity player was not found.",
+};
+
+export const ITEM_ON_COOLDOWN: GameError = {
+  type: "ITEM_ON_COOLDOWN",
+  message: "The item is on cooldown.",
+};
+
+export const UNKNOWN_ITEM: GameError = {
+  type: "UNKNOWN_ITEM",
+  message: "The following item is unknown.",
+};
+
+export const DEV_MODE_NOT_ENABLED = {
+  type: "DEV_MODE_NOT_ENABLED",
+  message: "The development mode is not enabled.",
 };

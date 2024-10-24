@@ -5,6 +5,8 @@ export const PLAYER_MOCK: Player = {
   name: "John",
   type: "WEB",
   spells: [],
+  coins: 0,
+  items: [],
 };
 
 export const UNITY_PLAYER_MOCK: Player = {
@@ -13,4 +15,6 @@ export const UNITY_PLAYER_MOCK: Player = {
   type: "UNITY",
   spells: [],
   speed: 10,
+  coins: 0,
+  items: [],
 };

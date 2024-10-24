@@ -3,6 +3,7 @@ import { logger } from "../logger";
 import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
+import { Coin } from "../models/items/coin.item";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -38,7 +39,11 @@ export class StartHandler extends MessageHandler {
       const player = game.players[protector.id];
       const socket = game.sockets[protector.id];
       if (player) {
-        game.players[player.id] = { ...player, role: "Protector" };
+        game.players[player.id] = {
+          ...player,
+          role: "Protector",
+          items: [new Coin({ x: 0, y: 0, z: 0 })],
+        };
       }
       socket?.join("protectors");
     });
@@ -48,7 +53,11 @@ export class StartHandler extends MessageHandler {
       const player = game.players[protector.id];
       const socket = game.sockets[protector.id];
       if (player) {
-        game.players[player.id] = { ...player, role: "Evilman" };
+        game.players[player.id] = {
+          ...player,
+          role: "Evilman",
+          items: [new Coin({ x: 0, y: 0, z: 0 })],
+        };
       }
       socket?.join("evilmans");
     });

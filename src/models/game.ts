@@ -13,6 +13,7 @@ export class Game {
   sockets: Record<string, Socket | undefined>;
   players: Record<string, Player>;
   config: Config;
+  dev: boolean;
 
   constructor() {
     this.state = {
@@ -20,6 +21,7 @@ export class Game {
       timer: 0,
       startTimer: 5,
       status: "LOBBY",
+      items: [],
       map,
     };
     this.sockets = {};
@@ -27,6 +29,7 @@ export class Game {
     this.config = {
       tickRate: 20,
     };
+    this.dev = process.env.DEV_MODE === "enabled";
   }
 
   get evilmans() {
@@ -59,6 +62,14 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
+    this.state = {
+      loops: 0,
+      timer: 0,
+      startTimer: 5,
+      status: "LOBBY",
+      items: [],
+      map,
+    };
   }
 
   tick() {
@@ -115,6 +126,19 @@ export class Game {
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
+      });
+
+      this.state.items.forEach((item) => {
+        this.unitys.forEach((player) => {
+          if (
+            item.coords.x === player.position?.x &&
+            item.coords.y === player.position?.y
+          ) {
+            item.trigger(player);
+          }
+        });
+
+        item.update(1 / this.config.tickRate);
       });
     }
   }

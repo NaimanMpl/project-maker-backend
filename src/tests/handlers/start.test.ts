@@ -31,18 +31,24 @@ describe("Start Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "2",
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     });
     game.addPlayer({
       id: "3",
       name: "Hello",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -59,6 +65,8 @@ describe("Start Handler", () => {
           name: "Doe",
           type: "UNITY",
           spells: [],
+          coins: 0,
+          items: [],
         },
       ]);
       expect(game.evilmans).toHaveLength(1);
@@ -76,6 +84,8 @@ describe("Start Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
@@ -102,6 +112,8 @@ describe("Start Handler", () => {
       name: "John",
       type: "WEB",
       spells: [],
+      coins: 0,
+      items: [],
     });
 
     clientSocket.emit(
