@@ -109,4 +109,28 @@ describe("Spell", () => {
       done();
     });
   });
+
+  it("should allow webplayer to cast spell if is not active", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
+    };
+
+    game.addPlayer(player);
+
+    const slowmodeSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowmodeSpell);
+
+    game.state.status = "PLAYING";
+
+    expect(player.spells[0].currentCooldown).toEqual(0);
+
+    done();
+  });
 });
