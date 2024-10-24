@@ -15,6 +15,7 @@ export class Game {
   players: Record<string, Player>;
   config: Config;
   dev: boolean;
+  unityMap: object;
 
   constructor() {
     this.state = {
@@ -45,6 +46,7 @@ export class Game {
         },
       },
     };
+    this.unityMap = unityMap;
     this.sockets = {};
     this.players = {};
     this.config = {
@@ -55,10 +57,11 @@ export class Game {
   }
   loadMap() {
     mapLoader.loadMap().then((mapData) => {
-      const { map, start, end } = mapData;
+      const { map, start, end, unityMap } = mapData;
       this.state.startPoint = start;
       this.state.endPoint = end;
       this.state.map = map;
+      this.unityMap = unityMap;
       this.state.items = [];
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
@@ -144,8 +147,9 @@ export class Game {
         this.state.status = "PLAYING";
         this.unitys.forEach((player) => {
           const socket = this.sockets[player.id];
-          socket?.emit("go", JSON.stringify({ unityMap }));
+          socket?.emit("go", JSON.stringify({ unityMap: this.unityMap }));
         });
+        console.log("unity map", this.unityMap);
         io.emit("map", JSON.stringify({ map: this.state.map }));
         this.webplayers.forEach((webPlayer) => {
           webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));

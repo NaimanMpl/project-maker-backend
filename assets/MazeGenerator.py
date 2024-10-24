@@ -549,7 +549,7 @@ def main():
         if tile["type"] == "End":
             end = tile
 
-    print(json.dumps({"map": maze, "start": start, "end": end}))
+    print(json.dumps({"map": maze, "start": start, "end": end, "unityMap": unity_map}))
 
 
 if __name__ == "__main__":

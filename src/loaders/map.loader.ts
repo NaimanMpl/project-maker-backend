@@ -7,6 +7,7 @@ import { MAP_DATA_MOCK } from "../__mocks__/mapdata";
 const SCRIPT_PATH = path.join(__dirname, "../../assets/MazeGenerator.py");
 
 export interface MapData {
+  unityMap: object;
   map: number[][];
   start: Tile;
   end: Tile;

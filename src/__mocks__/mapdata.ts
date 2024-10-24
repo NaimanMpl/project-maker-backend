@@ -27,4 +27,5 @@ export const MAP_DATA_MOCK: MapData = {
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ],
+  unityMap: {},
 };
