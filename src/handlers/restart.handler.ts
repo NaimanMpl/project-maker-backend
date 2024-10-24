@@ -10,5 +10,6 @@ export class RestartHandler extends MessageHandler {
     }
 
     game.reset();
+    game.loadMap();
   }
 }

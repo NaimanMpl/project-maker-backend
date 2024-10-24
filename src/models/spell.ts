@@ -70,4 +70,6 @@ export abstract class Spell {
       }
     }
   }
+
+  abstract spellReset(): void;
 }
