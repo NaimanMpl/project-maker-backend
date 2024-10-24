@@ -6,6 +6,7 @@ import { Coin } from "../models/items/coin.item";
 import { Player, PlayerRole } from "../models/player";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
+import * as mapLoader from "../loaders/map.loader";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -34,7 +35,7 @@ describe("GameLoop", () => {
       const gamestate: GameState = JSON.parse(msg);
 
       expect(gamestate.status).toEqual("LOBBY");
-      expect(gamestate.timer).toEqual(0);
+      expect(gamestate.timer).toEqual(300);
       expect(gamestate.startTimer).toEqual(5);
       expect(gamestate.loops).toEqual(0);
 
@@ -44,16 +45,15 @@ describe("GameLoop", () => {
 
   it("should update gamestate according to the tick rate", () => {
     expect(game.state.status).toBe("LOBBY");
-    expect(game.state.timer).toBe(0);
+    expect(game.state.timer).toBe(300);
     expect(game.state.loops).toBe(0);
-    expect(game.state.timer).toBe(0);
 
     game.state.status = "PLAYING";
     game.tick();
 
     expect(game.state.status).toBe("PLAYING");
     expect(game.state.loops).toBe(0);
-    expect(game.state.timer).toBe(0.05); // (1 / tickRate) = 1 / 20 = 0.05
+    expect(game.state.timer).toBe(299.95); // (1 / tickRate) = 1 / 20 = 0.05
   });
 
   it("should update start timer on each tick when starting", () => {
@@ -546,7 +546,7 @@ describe("GameLoop", () => {
     coin.duration = 1;
     game.state.items = [coin];
     game.state.status = "PLAYING";
-    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 0, y: 0 } });
+    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 0, y: 0, z: 0 } });
 
     expect(game.unitys[0].coins).toEqual(0);
     game.tick();
@@ -648,5 +648,63 @@ describe("GameLoop", () => {
     expect(player.spells[0].timer).toEqual(2);
     expect(unityPlayer.speed).toEqual(10);
     expect(player.spells[0].currentCooldown).toEqual(60);
+  });
+
+  it("should update loop if unity player is in a winnable state", () => {
+    const ioEmitSpy = jest.spyOn(io, "emit");
+    const mapLoaderSpy = jest.spyOn(mapLoader, "loadMap");
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 10, y: 10, z: 0 } });
+    game.addPlayer({
+      id: "1234",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      speed: 10,
+      coins: 0,
+      items: [],
+    });
+
+    const webPlayer = game.getPlayer("1234");
+    game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SlowMode));
+    game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SuddenStop));
+
+    game.currentTick = 20;
+
+    game.tick();
+    expect(game.state.loops).toEqual(1);
+    expect(game.unitys[0].position).toEqual({ x: 10, y: 10, z: 0 });
+    expect(ioEmitSpy).toHaveBeenCalledWith(
+      "win",
+      JSON.stringify({
+        id: "2",
+        name: "John",
+        type: "UNITY",
+        spells: [],
+        speed: 10,
+        coins: 0,
+        items: [],
+        position: {
+          x: 10,
+          y: 10,
+          z: 0,
+        },
+      }),
+    );
+
+    expect(mapLoaderSpy).toHaveBeenCalled();
+    const suddenStopSpell = webPlayer.spells.find(
+      (spell) => spell.name === "Sudden Stop",
+    );
+    const slowmodeSpell = webPlayer.spells.find(
+      (spell) => spell.name === "Slow Mode",
+    );
+
+    expect(slowmodeSpell?.duration).toEqual(10);
+    expect(slowmodeSpell?.currentCooldown).toEqual(0);
+    expect(slowmodeSpell?.timer).toEqual(0);
+    expect(suddenStopSpell?.duration).toEqual(2);
+    expect(suddenStopSpell?.currentCooldown).toEqual(0);
+    expect(suddenStopSpell?.timer).toEqual(0);
   });
 });

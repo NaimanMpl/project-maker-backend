@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { logger } from "../logger";
-import { game } from "../server";
+import { game, io } from "../server";
 import { MessageHandler } from "./handler";
 import { ItemCategories } from "../models/items/item";
 import { ItemFactory } from "../factories/item.factory";
@@ -43,12 +43,12 @@ export class ItemHandler extends MessageHandler {
       return;
     }
 
-    item.ownerId = id;
+    item.owner = player;
 
     if (
       game.state.items.some(
         (item) =>
-          item.type === itemType && item.ownerId === id && item.cooldown > 0,
+          item.type === itemType && item.owner?.id === id && item.cooldown > 0,
       )
     ) {
       this.socket.emit("error", JSON.stringify(ITEM_ON_COOLDOWN));
@@ -59,5 +59,6 @@ export class ItemHandler extends MessageHandler {
     }
     logger.info(`Le joueur ${player.name} a activé l'item ${item.type}`);
     item.place();
+    io.emit("newitem", JSON.stringify(item));
   }
 }

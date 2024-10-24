@@ -69,8 +69,7 @@ height = int(width / args.ratio)
 
 map_name = args.Name
 
-crosswalk_ratio = args.crosswalks * width
-num_crosswalks = width
+num_crosswalks = args.crosswalks * width
 decorations = 500 * width
 
 def generate_maze(width, height):
@@ -535,8 +534,22 @@ def main():
         maze_str_to_int.append(row_int)
 
     maze = maze_str_to_int
-    save_json_to_file(str({"map": maze}), "mazeArray")
+    save_json_to_file(json.dumps({"map": maze}), "mazeArray")
     save_json_to_file(maze_json, "map")
+
+    unity_map = json.loads(maze_json)
+
+    tiles = unity_map["properties"]["tiles"]
+    start = None
+    end = None
+
+    for tile in tiles:
+        if tile["type"] == "Start":
+            start = tile
+        if tile["type"] == "End":
+            end = tile
+
+    print(json.dumps({"map": maze, "start": start, "end": end, "unityMap": unity_map}))
 
 
 if __name__ == "__main__":

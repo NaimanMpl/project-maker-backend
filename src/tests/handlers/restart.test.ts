@@ -1,10 +1,9 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { game, io, server } from "../../server";
-import { UNITY_PLAYER_MOCK } from "../__fixtures__/player";
 import { GameError } from "../../models/gameerror";
 
-describe("Player Position Handler", () => {
+describe("Disconnect Handler", () => {
   let clientSocket: ClientSocket;
   let serverSocket: ServerSocket;
 
@@ -29,41 +28,32 @@ describe("Player Position Handler", () => {
     io.close();
   });
 
-  it("should send an error if the player is unknown", (done) => {
-    clientSocket.emit(
-      "player:position",
-      JSON.stringify({
-        id: "2",
-        x: 10,
-        y: 10,
-      }),
-    );
+  it("should error if the dev mode is not enabled", (done) => {
+    process.env.DEV_MODE = "disabled";
+    clientSocket.emit("restart", undefined);
 
     clientSocket.on("error", (msg) => {
       const error: GameError = JSON.parse(msg);
       expect(error).toEqual({
-        type: "UNAUTHORIZED",
-        message: "You cannot perform this action.",
+        type: "DEV_MODE_NOT_ENABLED",
+        message: "The development mode is not enabled.",
       });
       done();
     });
   });
 
-  it("should update the player position", (done) => {
-    game.addPlayer({ ...UNITY_PLAYER_MOCK });
+  it("should restart the game if dev mode is enabled", (done) => {
+    process.env.DEV_MODE = "enabled";
+    clientSocket.emit("restart", undefined);
 
-    clientSocket.emit(
-      "player:position",
-      JSON.stringify({
-        id: "2",
-        x: 10,
-        y: 10,
-        z: 0,
-      }),
-    );
-
-    serverSocket.on("player:position", () => {
-      expect(game.getPlayer("2").position).toEqual({ x: 10.25, y: 10, z: 0 });
+    serverSocket.on("restart", () => {
+      expect(game.state.status).toEqual("LOBBY");
+      expect(game.state.startTimer).toEqual(5);
+      expect(game.state.items).toEqual([]);
+      expect(game.state.loops).toEqual(0);
+      expect(game.state.timer).toEqual(300);
+      expect(game.players).toEqual({});
+      expect(game.sockets).toEqual({});
       done();
     });
   });
