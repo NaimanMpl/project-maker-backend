@@ -54,7 +54,7 @@ import argparse
 # default width is 12 (so the height is 5 and number of try to put crosswalks is 20*width)
 
 argparse = argparse.ArgumentParser()
-argparse.add_argument("--width", type=int, default=12, help="Width of the maze")
+argparse.add_argument("--width", type=int, default=10, help="Width of the maze")
 argparse.add_argument("--Name", type=str, default="RandomMaze", help="Name of the maze")
 argparse.add_argument(
     "--crosswalks", type=int, default=20, help="A ratio for number crosswalks"
