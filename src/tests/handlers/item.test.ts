@@ -28,6 +28,7 @@ describe("Item Handler", () => {
   });
 
   it("should create a new item", (done) => {
+    const emitSpy = jest.spyOn(io, "emit");
     game.addPlayer({ ...PLAYER_MOCK });
 
     clientSocket.emit(
@@ -44,8 +45,16 @@ describe("Item Handler", () => {
       expect(game.state.items).toHaveLength(1);
       expect(game.state.items[0].type).toEqual("COIN");
       expect(game.state.items[0].id).toEqual("123456789");
-      expect(game.state.items[0].ownerId).toEqual("1");
+      expect(game.state.items[0].owner).toEqual({
+        id: "1",
+        name: "John",
+        type: "WEB",
+        spells: [],
+        coins: 0,
+        items: [],
+      });
       expect(game.state.items[0].coords).toEqual({ x: 0, y: 0, z: 0 });
+      expect(emitSpy).toHaveBeenCalledWith("newitem", expect.anything());
       done();
     });
   });
@@ -97,7 +106,7 @@ describe("Item Handler", () => {
   it("should error if the item is already on cooldown", (done) => {
     game.addPlayer({ ...PLAYER_MOCK });
     const coin = new Coin({ x: 0, y: 0, z: 0 });
-    coin.ownerId = "1";
+    coin.owner = game.getPlayer("1");
     game.state.items = [coin];
 
     clientSocket.emit(
