@@ -19,8 +19,8 @@ export class PlayerPositionHandler extends MessageHandler {
     }
 
     player.position = {
-      x,
-      y: y + 0.3,
+      x: x + 0.25,
+      y,
       z: 0,
     };
   }

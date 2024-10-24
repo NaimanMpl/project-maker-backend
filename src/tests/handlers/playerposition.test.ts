@@ -63,7 +63,7 @@ describe("Player Position Handler", () => {
     );
 
     serverSocket.on("player:position", () => {
-      expect(game.getPlayer("2").position).toEqual({ x: 10, y: 10.3, z: 0 });
+      expect(game.getPlayer("2").position).toEqual({ x: 10.25, y: 10, z: 0 });
       done();
     });
   });
