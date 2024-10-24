@@ -24,6 +24,7 @@ export class Game {
       loops: 0,
       timer: 5 * 60,
       startTimer: 5,
+      finishedTimer: 5,
       status: "LOBBY",
       items: [],
       map,
@@ -111,9 +112,12 @@ export class Game {
     this.state.timer = 0;
     this.players = {};
     this.sockets = {};
+    this.winTick = 0;
+    this.currentTick = 0;
     this.state = {
       loops: 0,
       timer: 5 * 60,
+      finishedTimer: 5,
       startTimer: 5,
       status: "LOBBY",
       items: [],
@@ -163,11 +167,27 @@ export class Game {
       }
     }
 
+    if (this.state.status === "FINISHED") {
+      this.state.finishedTimer = Math.max(
+        0,
+        this.state.finishedTimer - 1 / this.config.tickRate,
+      );
+
+      if (this.state.finishedTimer <= 0) {
+        this.reset();
+      }
+    }
+
     if (this.state.status === "PLAYING") {
       this.state.timer = Math.max(
         0,
         this.state.timer - 1 / this.config.tickRate,
       );
+
+      if (this.state.timer <= 0) {
+        this.state.status = "FINISHED";
+        return;
+      }
 
       this.evilmans.forEach((player) => {
         const socket = this.sockets[player.id];

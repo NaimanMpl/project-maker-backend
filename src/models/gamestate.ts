@@ -7,6 +7,7 @@ export interface GameState {
   status: GameStatus;
   timer: number;
   startTimer: number;
+  finishedTimer: number;
   loops: number;
   startPoint?: Tile;
   endPoint?: Tile;

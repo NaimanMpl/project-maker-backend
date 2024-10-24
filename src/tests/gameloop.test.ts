@@ -707,4 +707,27 @@ describe("GameLoop", () => {
     expect(suddenStopSpell?.currentCooldown).toEqual(0);
     expect(suddenStopSpell?.timer).toEqual(0);
   });
+
+  it("should update the gamestate to FINISHED when the timer equals 0 and reset the game", () => {
+    game.state.timer = 0.01;
+    game.state.status = "PLAYING";
+    game.tick();
+
+    expect(game.state.status).toEqual("FINISHED");
+    expect(game.state.finishedTimer).toEqual(5);
+
+    game.tick();
+    expect(game.state.finishedTimer).toEqual(4.95);
+
+    game.state.finishedTimer = 0.01;
+    game.tick();
+
+    expect(game.state.status).toEqual("LOBBY");
+    expect(game.state.startTimer).toEqual(5);
+    expect(game.state.finishedTimer).toEqual(5);
+    expect(game.state.timer).toEqual(300);
+    expect(game.players).toEqual({});
+    expect(game.sockets).toEqual({});
+    expect(game.currentTick).toEqual(0);
+  });
 });
