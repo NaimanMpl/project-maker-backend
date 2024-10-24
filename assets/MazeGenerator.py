@@ -402,9 +402,9 @@ def generate_json(maze, map_name):
                 )
             elif maze[i][j] == "3":
                 angle = 1
-                if maze[i - 1][j] == "2" or maze[i + 1][j] == "2":
+                if maze[i - 1][j] == "2" or maze[i + 1][j] == "2" or maze[i-1][j] == "7" or maze[i+1][j] == "7" or maze[i-1][j] == "8" or maze[i+1][j] == "8":
                     angle = 0
-                elif maze[i][j + 1] == "2" or maze[i][j - 1] == "2":
+                elif maze[i][j + 1] == "2" or maze[i][j - 1] == "2" or maze[i][j+1] == "7" or maze[i][j-1] == "7" or maze[i][j+1] == "8" or maze[i][j-1] == "8":
                     angle = 90
 
                 tiles.append(
