@@ -15,6 +15,7 @@ import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
+import { ItemCancelHandler } from "./handlers/itemcancel.handler";
 
 export const game: Game = new Game();
 
@@ -59,6 +60,7 @@ io.on("connection", (socket) => {
   const mapRequestHandler = new MapRequestHandler(socket);
   const itemHandler = new ItemHandler(socket);
   const restartHandler = new RestartHandler(socket);
+  const itemCancelHandler = new ItemCancelHandler(socket);
 
   socket.emit(
     "devmode",
@@ -82,6 +84,7 @@ io.on("connection", (socket) => {
   );
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
   socket.on("restart", (msg) => restartHandler.handleMessage(msg));
+  socket.on("item:cancel", (msg) => itemCancelHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */
