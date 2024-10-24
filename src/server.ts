@@ -8,13 +8,13 @@ import { ItemHandler } from "./handlers/item.handler";
 import { LogoutHandler } from "./handlers/logout.handler";
 import { MapRequestHandler } from "./handlers/maprequest.handler";
 import { PlayerPositionHandler } from "./handlers/playerposition.handler";
+import { RestartHandler } from "./handlers/restart.handler";
 import { SignUpHandler } from "./handlers/signup.handler";
 import { SpellHandler } from "./handlers/spell.handler";
 import { StartHandler } from "./handlers/start.handler";
 import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
-import { RestartHandler } from "./handlers/restart.handler";
 
 export const game: Game = new Game();
 

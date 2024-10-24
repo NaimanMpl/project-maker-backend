@@ -659,6 +659,8 @@ describe("GameLoop", () => {
       role: playerRole,
       spells: [],
       speed: 10,
+      coins: 0,
+      items: [],
     };
     game.addPlayer(player);
 
@@ -667,6 +669,8 @@ describe("GameLoop", () => {
       name: "Doe",
       type: "UNITY",
       spells: [],
+      coins: 0,
+      items: [],
     };
     game.addPlayer(unityPlayer);
 

@@ -29,6 +29,8 @@ export class SpellHandler extends MessageHandler {
       player.spells[id].cast(unityPlayer);
     });
 
+    this.socket.emit("cast:spell", JSON.stringify(player.spells[id].name));
+
     logger.info(
       `${player.id} ${player?.name} ${player.type} as cast spell ${id}`,
     );
