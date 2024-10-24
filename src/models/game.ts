@@ -16,6 +16,8 @@ export class Game {
   config: Config;
   dev: boolean;
   unityMap: object;
+  currentTick: number;
+  winTick: number;
 
   constructor() {
     this.state = {
@@ -53,6 +55,8 @@ export class Game {
       tickRate: 20,
     };
     this.dev = process.env.DEV_MODE === "enabled";
+    this.winTick = 0;
+    this.currentTick = 0;
     this.loadMap();
   }
   loadMap() {
@@ -73,6 +77,7 @@ export class Game {
         socket?.emit("unity:position", player.position);
       });
       io.emit("map", JSON.stringify({ map }));
+      io.emit("unity:map", JSON.stringify({ unityMap }));
     });
   }
 
@@ -137,6 +142,7 @@ export class Game {
   }
 
   tick() {
+    this.currentTick++;
     if (this.state.status === "STARTING") {
       this.state.startTimer = Math.max(
         0,
@@ -149,7 +155,6 @@ export class Game {
           const socket = this.sockets[player.id];
           socket?.emit("go", JSON.stringify({ unityMap: this.unityMap }));
         });
-        console.log("unity map", this.unityMap);
         io.emit("map", JSON.stringify({ map: this.state.map }));
         this.webplayers.forEach((webPlayer) => {
           webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
@@ -219,16 +224,17 @@ export class Game {
       if (!player.position) {
         return;
       }
-      if (this.state.endPoint) {
+      if (this.state.endPoint && this.currentTick - this.winTick > 20) {
         if (
           Math.abs(
             player.position.x - this.state.endPoint.properties.position.x,
           ) <= 0.3 &&
           Math.abs(
-            player.position.x - this.state.endPoint.properties.position.y,
+            player.position.y - this.state.endPoint.properties.position.y,
           ) <= 0.3
         ) {
           io.emit("win", JSON.stringify(player));
+
           this.state.loops++;
           this.state.items = [];
           this.state.timer = 5 * 60;
@@ -237,7 +243,10 @@ export class Game {
               spell.spellReset();
             });
           });
+          this.state.endPoint = undefined;
+          this.state.startPoint = undefined;
           this.loadMap();
+          this.winTick = this.currentTick;
         }
       }
     });

@@ -669,6 +669,8 @@ describe("GameLoop", () => {
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SlowMode));
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SuddenStop));
 
+    game.currentTick = 20;
+
     game.tick();
     expect(game.state.loops).toEqual(1);
     expect(game.unitys[0].position).toEqual({ x: 10, y: 10, z: 0 });
@@ -689,6 +691,7 @@ describe("GameLoop", () => {
         },
       }),
     );
+
     expect(mapLoaderSpy).toHaveBeenCalled();
     const suddenStopSpell = webPlayer.spells.find(
       (spell) => spell.name === "Sudden Stop",
