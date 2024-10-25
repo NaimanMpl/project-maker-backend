@@ -144,4 +144,40 @@ describe("Spell", () => {
       done();
     });
   });
+
+  it("should error if there is no unity player in game", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
+    };
+
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowSpell);
+
+    game.addPlayer(player);
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+        spell: slowSpell,
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      expect(error).toEqual({
+        type: "UNITY_PLAYER_NOT_FOUND",
+        message: "The unity player was not found.",
+      });
+      done();
+    });
+  });
 });
