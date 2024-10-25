@@ -236,6 +236,7 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
+        io.emit("player:unity", JSON.stringify(player));
       });
 
       this.unitys.forEach((player) => {
