@@ -36,9 +36,8 @@ export class SpellHandler extends MessageHandler {
 
     game.unitys.forEach((unityPlayer) => {
       if (!player.spells[id].active) {
-        const socket = game.sockets[unityPlayer.id];
         player.spells[id].cast(unityPlayer);
-        socket?.emit(
+        this.socket.emit(
           "cast:spell",
           JSON.stringify({ name: player.spells[id].name }),
         );
