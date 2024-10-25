@@ -4,7 +4,7 @@ import unityMap from "../../assets/unityMap.json";
 import { io } from "../server";
 import { Config } from "./config";
 import { GameState } from "./gamestate";
-import { Player } from "./player";
+import { DEFAULT_PLAYER_HEALTH, Player } from "./player";
 import { Spell } from "./spell";
 import * as mapLoader from "../loaders/map.loader";
 import { RandomNumberEvent } from "../events/randomnumber.event";
@@ -257,7 +257,7 @@ export class Game {
                   z: this.state.startPoint.properties.position.z,
                 };
                 socket?.emit("unity:position", JSON.stringify(player.position));
-                player.health = 1;
+                player.health = DEFAULT_PLAYER_HEALTH;
                 logger.info("Player respawned", player.position);
               }
             }

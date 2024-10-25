@@ -17,7 +17,7 @@ export class Bomb extends Item {
   }
 
   trigger(player: Player): void {
-    player.health = -1;
+    player.health -= 1;
     this.destroy();
   }
 }
