@@ -72,6 +72,11 @@ describe("Start Handler", () => {
       expect(game.evilmans).toHaveLength(1);
       expect(game.protectors).toHaveLength(1);
 
+      expect(game.evilmans[0].spells[0].name).toEqual("Slow Mode");
+      expect(game.evilmans[0].spells[1].name).toEqual("Sudden Stop");
+
+      expect(game.protectors[0].spells[0].name).toEqual("Quickness");
+
       expect(game.state.status).toEqual("STARTING");
       expect(game.state.startTimer).toEqual(5);
       done();
