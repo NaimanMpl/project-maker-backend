@@ -15,6 +15,7 @@ export interface Player {
   position?: {
     x: number;
     y: number;
+    z: number;
   };
   coins: number;
   items: Item[];

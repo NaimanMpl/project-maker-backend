@@ -10,8 +10,11 @@ export type TileType =
 
 export interface Tile {
   type: TileType;
-  position: {
-    x: number;
-    y: number;
+  properties: {
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
   };
 }

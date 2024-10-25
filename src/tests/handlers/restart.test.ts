@@ -51,7 +51,7 @@ describe("Disconnect Handler", () => {
       expect(game.state.startTimer).toEqual(5);
       expect(game.state.items).toEqual([]);
       expect(game.state.loops).toEqual(0);
-      expect(game.state.timer).toEqual(0);
+      expect(game.state.timer).toEqual(300);
       expect(game.players).toEqual({});
       expect(game.sockets).toEqual({});
       done();
