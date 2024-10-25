@@ -33,6 +33,7 @@ export class SignUpHandler extends MessageHandler {
       id: uuidv4(),
       name,
       type,
+      health: 1,
       spells: [],
       speed: 0,
       coins: 0,
