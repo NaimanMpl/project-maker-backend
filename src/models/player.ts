@@ -19,4 +19,5 @@ export interface Player {
   };
   coins: number;
   items: Item[];
+  credits: number;
 }

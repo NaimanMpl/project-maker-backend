@@ -36,6 +36,7 @@ export class SignUpHandler extends MessageHandler {
       spells: [],
       speed: 0,
       coins: 0,
+      credits: 0,
       items: [],
     };
 

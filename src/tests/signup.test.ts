@@ -47,6 +47,7 @@ describe("SignUp Event", () => {
           speed: 0,
           coins: 0,
           items: [],
+          credits: 0,
         },
       });
     });
@@ -61,6 +62,7 @@ describe("SignUp Event", () => {
         speed: 0,
         coins: 0,
         items: [],
+        credits: 0,
       });
       done();
     });
@@ -99,6 +101,7 @@ describe("SignUp Event", () => {
       speed: 0,
       coins: 0,
       items: [],
+      credits: 0,
     });
 
     clientSocket.emit(
