@@ -244,25 +244,25 @@ export class Game {
         this.state.items.forEach((item) => {
           if (player.position) {
             if (
-              Math.abs(item.coords.x - player.position.x) <= 0.3 &&
-              Math.abs(item.coords.y - player.position.y) <= 0.3
+              Math.abs(item.coords.x - player.position.x) <= 0.5 &&
+              Math.abs(item.coords.y - player.position.y) <= 0.5
             ) {
               item.trigger(player);
               logger.info(`Player ${player.name} triggered item ${item.type}`);
-              if (player.health <= 0 && this.state.startPoint) {
-                logger.info("Player died");
-                player.position = {
-                  x: this.state.startPoint.properties.position.x,
-                  y: this.state.startPoint.properties.position.y,
-                  z: this.state.startPoint.properties.position.z,
-                };
-                socket?.emit("unity:position", JSON.stringify(player.position));
-                player.health = DEFAULT_PLAYER_HEALTH;
-                logger.info("Player respawned", player.position);
-              }
             }
           }
         });
+        if (player.health <= 0 && this.state.startPoint) {
+          logger.info("Player died");
+          player.position = {
+            x: this.state.startPoint.properties.position.x,
+            y: this.state.startPoint.properties.position.y,
+            z: this.state.startPoint.properties.position.z,
+          };
+          socket?.emit("unity:position", JSON.stringify(player.position));
+          player.health = DEFAULT_PLAYER_HEALTH;
+          logger.info("Player respawned", player.position);
+        }
         socket?.emit("playerInfo", JSON.stringify(player));
         io.emit("player:unity", JSON.stringify(player));
       });
@@ -278,7 +278,6 @@ export class Game {
             }
           }
         });
-
         item.update(1 / this.config.tickRate);
       });
 
