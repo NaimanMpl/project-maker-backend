@@ -248,13 +248,17 @@ export class Game {
               Math.abs(item.coords.y - player.position.y) <= 0.3
             ) {
               item.trigger(player);
+              logger.info(`Player ${player.name} triggered item ${item.type}`);
               if (player.health <= 0 && this.state.startPoint) {
+                logger.info("Player died");
                 player.position = {
                   x: this.state.startPoint.properties.position.x,
                   y: this.state.startPoint.properties.position.y,
                   z: this.state.startPoint.properties.position.z,
                 };
                 socket?.emit("unity:position", JSON.stringify(player.position));
+                player.health = 1;
+                logger.info("Player respawned", player.position);
               }
             }
           }
