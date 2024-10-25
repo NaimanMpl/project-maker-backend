@@ -109,4 +109,75 @@ describe("Spell", () => {
       done();
     });
   });
+
+  it("should allow webplayer to cast spell if is not active", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
+    };
+
+    game.addPlayer(player);
+
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowSpell);
+
+    game.addPlayer({ ...UNITY_PLAYER_MOCK });
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+        spell: slowSpell,
+      }),
+    );
+
+    serverSocket.on("cast:spell", () => {
+      expect(player.spells[0].currentCooldown).toEqual(30);
+      expect(player.spells[0].active).toEqual(true);
+      done();
+    });
+  });
+
+  it("should error if there is no unity player in game", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
+    };
+
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowSpell);
+
+    game.addPlayer(player);
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+        spell: slowSpell,
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      expect(error).toEqual({
+        type: "UNITY_PLAYER_NOT_FOUND",
+        message: "The unity player was not found.",
+      });
+      done();
+    });
+  });
 });

@@ -22,7 +22,6 @@ export class SuddenStopSpell extends Spell {
 
   reset(player: Player) {
     player.speed = DEFAULT_PLAYER_SPEED;
-    this.currentCooldown = this.cooldown;
   }
 
   spellReset(): void {

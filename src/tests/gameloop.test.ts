@@ -1,12 +1,12 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
 import { SpellEnum, SpellFactory } from "../factories/spell.factory";
+import * as mapLoader from "../loaders/map.loader";
 import { GameState } from "../models/gamestate";
 import { Coin } from "../models/items/coin.item";
 import { Player, PlayerRole } from "../models/player";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
-import * as mapLoader from "../loaders/map.loader";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -515,7 +515,7 @@ describe("GameLoop", () => {
     game.tick();
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(30);
+    expect(player.spells[0].currentCooldown).toEqual(29.9);
   });
 
   it("should update items cooldown on each tick", () => {
@@ -647,7 +647,48 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(2);
     expect(unityPlayer.speed).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(60);
+    expect(player.spells[0].currentCooldown).toEqual(59.95);
+  });
+
+  it("should remake the unity player walk normally", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+      coins: 0,
+      items: [],
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+      coins: 0,
+      items: [],
+    };
+    game.addPlayer(unityPlayer);
+
+    const quicknessSpell = SpellFactory.createSpell(SpellEnum.Quickness);
+    game.addSpell(player, quicknessSpell);
+
+    game.state.status = "PLAYING";
+    quicknessSpell.cast(unityPlayer);
+
+    player.spells[0].timer = 0.05;
+    expect(unityPlayer.speed).toEqual(15);
+    expect(player.spells[0].active).toEqual(true);
+
+    game.tick();
+    expect(player.spells[0].active).toEqual(false);
+    expect(player.spells[0].timer).toEqual(10);
+    expect(unityPlayer.speed).toEqual(10);
+    expect(player.spells[0].currentCooldown).toEqual(39.95);
   });
 
   it("should update loop if unity player is in a winnable state", () => {
@@ -668,6 +709,7 @@ describe("GameLoop", () => {
     const webPlayer = game.getPlayer("1234");
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SlowMode));
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SuddenStop));
+    game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.Quickness));
 
     game.currentTick = 20;
 
@@ -699,6 +741,9 @@ describe("GameLoop", () => {
     const slowmodeSpell = webPlayer.spells.find(
       (spell) => spell.name === "Slow Mode",
     );
+    const quicknessSpell = webPlayer.spells.find(
+      (spell) => spell.name === "Slow Mode",
+    );
 
     expect(slowmodeSpell?.duration).toEqual(10);
     expect(slowmodeSpell?.currentCooldown).toEqual(0);
@@ -706,6 +751,9 @@ describe("GameLoop", () => {
     expect(suddenStopSpell?.duration).toEqual(2);
     expect(suddenStopSpell?.currentCooldown).toEqual(0);
     expect(suddenStopSpell?.timer).toEqual(0);
+    expect(quicknessSpell?.duration).toEqual(10);
+    expect(quicknessSpell?.currentCooldown).toEqual(0);
+    expect(quicknessSpell?.timer).toEqual(0);
   });
 
   it("should update the gamestate to FINISHED when the timer equals 0 and reset the game", () => {

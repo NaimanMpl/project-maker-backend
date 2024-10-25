@@ -48,7 +48,7 @@ export abstract class Spell {
   abstract reset(player: Player): void;
 
   update(player: Player): void {
-    if (this.currentCooldown > 0 && this.active) {
+    if (this.currentCooldown > 0) {
       this.currentCooldown -= 1 / game.config.tickRate;
 
       if (this.currentCooldown <= 0) {
