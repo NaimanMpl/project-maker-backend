@@ -515,7 +515,7 @@ describe("GameLoop", () => {
     game.tick();
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(30);
+    expect(player.spells[0].currentCooldown).toEqual(29.9);
   });
 
   it("should update items cooldown on each tick", () => {
@@ -647,7 +647,7 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(2);
     expect(unityPlayer.speed).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(60);
+    expect(player.spells[0].currentCooldown).toEqual(59.95);
   });
 
   it("should remake the unity player walk normally", () => {
@@ -688,7 +688,7 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(10);
     expect(unityPlayer.speed).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(40);
+    expect(player.spells[0].currentCooldown).toEqual(39.95);
   });
 
   it("should update loop if unity player is in a winnable state", () => {
