@@ -5,6 +5,8 @@ import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
 import { Coin } from "../models/items/coin.item";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
+import { Wall } from "../models/items/wall.item";
+import { Bomb } from "../models/items/bomb.item";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -43,7 +45,10 @@ export class StartHandler extends MessageHandler {
         game.players[player.id] = {
           ...player,
           role: "Evilman",
-          items: [new Coin({ x: 0, y: 0, z: 0 })],
+          items: [
+            new Wall({ x: 0, y: 0, z: 0 }),
+            new Bomb({ x: 0, y: 0, z: 0 }),
+          ],
           spells: [
             SpellFactory.createSpell(SpellEnum.SlowMode),
             SpellFactory.createSpell(SpellEnum.SuddenStop),
