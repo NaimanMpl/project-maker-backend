@@ -86,7 +86,7 @@ export class Game {
           y: start.properties.position.y,
           z: start.properties.position.z,
         };
-        socket?.emit("unity:position", player.position);
+        socket?.emit("unity:position", JSON.stringify(player.position));
       });
       io.emit("map", JSON.stringify({ map }));
       io.emit("unity:map", JSON.stringify({ unityMap }));
@@ -240,6 +240,29 @@ export class Game {
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
+
+        this.state.items.forEach((item) => {
+          if (player.position) {
+            if (
+              Math.abs(item.coords.x - player.position.x) <= 0.3 &&
+              Math.abs(item.coords.y - player.position.y) <= 0.3
+            ) {
+              item.trigger(player);
+              if (
+                player.health <= 0 &&
+                player.type === "UNITY" &&
+                this.state.startPoint
+              ) {
+                player.position = {
+                  x: this.state.startPoint.properties.position.x,
+                  y: this.state.startPoint.properties.position.y,
+                  z: this.state.startPoint.properties.position.z,
+                };
+                socket?.emit("unity:position", JSON.stringify(player.position));
+              }
+            }
+          }
+        });
         socket?.emit("playerInfo", JSON.stringify(player));
         io.emit("player:unity", JSON.stringify(player));
       });

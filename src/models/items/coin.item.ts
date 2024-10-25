@@ -10,7 +10,7 @@ export class Coin extends Item {
       name: "Coin",
       description: "A coin that gives points to the player",
       coords,
-      cooldown: 30,
+      cooldown: 0,
       castingTime: 1,
     });
   }

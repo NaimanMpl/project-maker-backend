@@ -4,6 +4,7 @@ import { Spell } from "./spell";
 export type PlayerType = "WEB" | "UNITY";
 export type PlayerRole = "Protector" | "Evilman" | "Player";
 export const DEFAULT_PLAYER_SPEED = 10;
+export const DEFAULT_PLAYER_HEALTH = 1;
 
 export interface Player {
   id: string;
@@ -11,6 +12,7 @@ export interface Player {
   type: PlayerType;
   role?: PlayerRole;
   speed?: number;
+  health: number;
   spells: Spell[];
   position?: {
     x: number;
