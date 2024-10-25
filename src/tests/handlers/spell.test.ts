@@ -124,13 +124,24 @@ describe("Spell", () => {
 
     game.addPlayer(player);
 
-    const slowmodeSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
-    game.addSpell(player, slowmodeSpell);
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowSpell);
 
-    game.state.status = "PLAYING";
+    game.addPlayer({ ...UNITY_PLAYER_MOCK });
 
-    expect(player.spells[0].currentCooldown).toEqual(0);
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+        spell: slowSpell,
+      }),
+    );
 
-    done();
+    serverSocket.on("cast:spell", () => {
+      expect(player.spells[0].currentCooldown).toEqual(30);
+      expect(player.spells[0].active).toEqual(true);
+      done();
+    });
   });
 });
