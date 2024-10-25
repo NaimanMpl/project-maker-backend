@@ -45,7 +45,7 @@ const gameLoop = () => {
   io.emit("gamestate", JSON.stringify({ ...game.state, map: undefined }));
 };
 
-const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
+export const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
 
 io.on("connection", (socket) => {
   logger.info("Client connected");
