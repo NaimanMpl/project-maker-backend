@@ -248,11 +248,7 @@ export class Game {
               Math.abs(item.coords.y - player.position.y) <= 0.3
             ) {
               item.trigger(player);
-              if (
-                player.health <= 0 &&
-                player.type === "UNITY" &&
-                this.state.startPoint
-              ) {
+              if (player.health <= 0 && this.state.startPoint) {
                 player.position = {
                   x: this.state.startPoint.properties.position.x,
                   y: this.state.startPoint.properties.position.y,
