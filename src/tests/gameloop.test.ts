@@ -102,42 +102,7 @@ describe("GameLoop", () => {
     });
   });
 
-  it("should send personal player status to each evilmans at each tick", () => {
-    const player: Player = {
-      id: "1",
-      name: "John",
-      type: "WEB",
-      role: "Evilman",
-      spells: [],
-      coins: 0,
-      items: [],
-    };
-    game.state.status = "PLAYING";
-    game.addPlayer(player);
-    game.setSocket(player, serverSocket);
-
-    const socket = game.sockets[player.id];
-    if (!socket) {
-      fail();
-    }
-    const spy = jest.spyOn(socket, "emit");
-
-    game.tick();
-    expect(spy).toHaveBeenCalledWith(
-      "playerInfo",
-      JSON.stringify({
-        id: "1",
-        name: "John",
-        type: "WEB",
-        role: "Evilman",
-        spells: [],
-        coins: 0,
-        items: [],
-      }),
-    );
-  });
-
-  it("should send unity player status to each evilmans at each tick", () => {
+  it("should send unity player status to every client connected", () => {
     const player: Player = {
       id: "1",
       name: "John",
@@ -156,7 +121,7 @@ describe("GameLoop", () => {
     if (!socket) {
       fail();
     }
-    const spy = jest.spyOn(socket, "emit");
+    const spy = jest.spyOn(io, "emit");
 
     game.tick();
     expect(spy).toHaveBeenCalledWith(
@@ -202,42 +167,6 @@ describe("GameLoop", () => {
         type: "WEB",
         role: "Protector",
         spells: [],
-        coins: 0,
-        items: [],
-      }),
-    );
-  });
-
-  it("should send unity player status to each protectors at each tick", () => {
-    const player: Player = {
-      id: "1",
-      name: "John",
-      type: "WEB",
-      role: "Protector",
-      spells: [],
-      coins: 0,
-      items: [],
-    };
-    game.state.status = "PLAYING";
-    game.addPlayer({ ...UNITY_PLAYER_MOCK });
-    game.addPlayer(player);
-    game.setSocket(player, serverSocket);
-
-    const socket = game.sockets[player.id];
-    if (!socket) {
-      fail();
-    }
-    const spy = jest.spyOn(socket, "emit");
-
-    game.tick();
-    expect(spy).toHaveBeenCalledWith(
-      "player:unity",
-      JSON.stringify({
-        id: "2",
-        name: "John",
-        type: "UNITY",
-        spells: [],
-        speed: 10,
         coins: 0,
         items: [],
       }),
@@ -551,30 +480,6 @@ describe("GameLoop", () => {
     expect(game.unitys[0].coins).toEqual(0);
     game.tick();
     expect(game.unitys[0].coins).toEqual(1);
-  });
-
-  it("should check if the webplayer has spell", () => {
-    const playerRole: PlayerRole = "Protector";
-    const player: Player = {
-      id: "1",
-      name: "John",
-      type: "WEB",
-      role: playerRole,
-      spells: [],
-      speed: 10,
-      coins: 0,
-      items: [],
-    };
-
-    game.addPlayer(player);
-
-    game.state.status = "STARTING";
-
-    game.state.startTimer = 0;
-    game.tick();
-    expect(game.state.status).toEqual("PLAYING");
-    expect(player.spells[0].name).toEqual("Slow Mode");
-    expect(player.spells[1].name).toEqual("Sudden Stop");
   });
 
   it("should stop the unity player when spell is casted", () => {

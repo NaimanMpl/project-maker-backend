@@ -1,7 +1,6 @@
 import { Socket } from "socket.io";
 import { map } from "../../assets/mazeArray.json";
 import unityMap from "../../assets/unityMap.json";
-import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { io } from "../server";
 import { Config } from "./config";
 import { GameState } from "./gamestate";
@@ -160,11 +159,6 @@ export class Game {
           socket?.emit("go", JSON.stringify({ unityMap: this.unityMap }));
         });
         io.emit("map", JSON.stringify({ map: this.state.map }));
-        this.webplayers.forEach((webPlayer) => {
-          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SlowMode));
-          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.SuddenStop));
-          webPlayer.spells.push(SpellFactory.createSpell(SpellEnum.Quickness));
-        });
       }
     }
 
@@ -198,9 +192,6 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
-        this.unitys.forEach((unityPlayer) => {
-          socket?.emit("player:unity", JSON.stringify(unityPlayer));
-        });
       });
 
       this.protectors.forEach((player) => {
@@ -211,14 +202,12 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
-        this.unitys.forEach((unityPlayer) => {
-          socket?.emit("player:unity", JSON.stringify(unityPlayer));
-        });
       });
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
         socket?.emit("playerInfo", JSON.stringify(player));
+        io.emit("player:unity", JSON.stringify(player));
       });
 
       this.state.items.forEach((item) => {
