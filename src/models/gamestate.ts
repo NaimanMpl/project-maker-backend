@@ -1,3 +1,4 @@
+import { Event } from "./event";
 import { Item } from "./items/item";
 import { Tile } from "./tile";
 
@@ -19,4 +20,5 @@ export interface GameState {
   endPoint?: Tile;
   map: number[][];
   items: Item[];
+  currentEvent?: Event;
 }

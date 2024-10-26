@@ -1,3 +1,4 @@
+import { logger } from "../logger";
 import { NO_EVENT, NOT_A_PLAYER } from "../models/gameerror";
 import { game } from "../server";
 import { MessageHandler } from "./handler";
@@ -18,6 +19,9 @@ export class EventHandler extends MessageHandler {
       return;
     }
 
+    logger.info(
+      `${player.name} a soumis ${response} dans l'event ${event.type}`,
+    );
     event.submitResponse(player, response);
     this.socket.emit("event:submit:success", undefined);
   }

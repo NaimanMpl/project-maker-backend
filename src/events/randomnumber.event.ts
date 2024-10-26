@@ -1,3 +1,4 @@
+import { logger } from "../logger";
 import { Event, EventWinner } from "../models/event";
 import { Player } from "../models/player";
 import { game, io } from "../server";
@@ -21,6 +22,7 @@ export class RandomNumberEvent extends Event {
     super({
       type: "RANDOM_NUMBER",
       timeLimit: 30,
+      description: `Choisis un nombre entre ${min} et ${max}, l'équipe qui se rapproche le plus du nombre aléatoire remporte des crédits`,
     });
     this.randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
     this.responses = [];
@@ -89,6 +91,10 @@ export class RandomNumberEvent extends Event {
         });
         break;
     }
+
+    logger.info(
+      `Fin de l'évènement ${this.type}, la bonne réponse était ${this.randomNumber}. Les ${winner} ont gagné.`,
+    );
 
     io.emit(
       "event:winner",

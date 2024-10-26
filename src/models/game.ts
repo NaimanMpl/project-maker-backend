@@ -9,6 +9,7 @@ import { Spell } from "./spell";
 import * as mapLoader from "../loaders/map.loader";
 import { RandomNumberEvent } from "../events/randomnumber.event";
 import { Event } from "./event";
+import { logger } from "../logger";
 
 export const EVENT_INTERVAL = 30;
 
@@ -187,7 +188,7 @@ export class Game {
       }
     }
 
-    if (this.state.status === "PLAYING") {
+    if (this.state.status === "PLAYING" || this.state.status === "EVENT") {
       this.state.timer = Math.max(
         0,
         this.state.timer - 1 / this.config.tickRate,
@@ -202,10 +203,14 @@ export class Game {
         return;
       }
 
-      if (this.state.eventTimer <= 0) {
+      if (this.state.eventTimer <= 0 && !this.currentEvent) {
         this.state.status = "EVENT";
         this.currentEvent = new RandomNumberEvent({ min: 1, max: 100 });
+        this.state.currentEvent = this.currentEvent;
         this.currentEvent.start();
+        logger.info(
+          `Un nouvel évènement de type ${this.currentEvent.type} a commencé`,
+        );
         return;
       }
 
