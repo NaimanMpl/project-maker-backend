@@ -47,3 +47,7 @@ export const DEV_MODE_NOT_ENABLED = {
   type: "DEV_MODE_NOT_ENABLED",
   message: "The development mode is not enabled.",
 };
+export const NO_EVENT = {
+  type: "NO_EVENT",
+  message: "There is no event currently active.",
+};
