@@ -16,6 +16,7 @@ import { WhoamiHandler } from "./handlers/whoami.handler";
 import { logger } from "./logger";
 import { Game } from "./models/game";
 import { ItemCancelHandler } from "./handlers/itemcancel.handler";
+import { EventHandler } from "./handlers/event.handler";
 
 export const game: Game = new Game();
 
@@ -45,7 +46,7 @@ const gameLoop = () => {
   io.emit("gamestate", JSON.stringify({ ...game.state, map: undefined }));
 };
 
-const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
+export const interval = setInterval(gameLoop, 1000 / game.config.tickRate);
 
 io.on("connection", (socket) => {
   logger.info("Client connected");
@@ -61,6 +62,7 @@ io.on("connection", (socket) => {
   const itemHandler = new ItemHandler(socket);
   const restartHandler = new RestartHandler(socket);
   const itemCancelHandler = new ItemCancelHandler(socket);
+  const eventHandler = new EventHandler(socket);
 
   socket.emit(
     "devmode",
@@ -85,6 +87,7 @@ io.on("connection", (socket) => {
   socket.on("maprequest", (msg) => mapRequestHandler.handleMessage(msg));
   socket.on("restart", (msg) => restartHandler.handleMessage(msg));
   socket.on("item:cancel", (msg) => itemCancelHandler.handleMessage(msg));
+  socket.on("event:submit", (msg) => eventHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */

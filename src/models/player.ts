@@ -20,4 +20,5 @@ export interface Player {
   coins: number;
   items: Item[];
   vision?: boolean;
+  credits: number;
 }

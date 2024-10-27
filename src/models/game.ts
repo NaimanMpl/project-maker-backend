@@ -7,6 +7,11 @@ import { GameState } from "./gamestate";
 import { Player } from "./player";
 import { Spell } from "./spell";
 import * as mapLoader from "../loaders/map.loader";
+import { RandomNumberEvent } from "../events/randomnumber.event";
+import { Event } from "./event";
+import { logger } from "../logger";
+
+export const EVENT_INTERVAL = 30;
 
 export class Game {
   state: GameState;
@@ -17,6 +22,7 @@ export class Game {
   unityMap: object;
   currentTick: number;
   winTick: number;
+  currentEvent?: Event;
 
   constructor() {
     this.state = {
@@ -24,6 +30,7 @@ export class Game {
       timer: 5 * 60,
       startTimer: 5,
       finishedTimer: 5,
+      eventTimer: EVENT_INTERVAL,
       status: "LOBBY",
       items: [],
       map,
@@ -54,6 +61,7 @@ export class Game {
     this.config = {
       tickRate: 20,
     };
+    this.currentEvent = undefined;
     this.dev = process.env.DEV_MODE === "enabled";
     this.winTick = 0;
     this.currentTick = 0;
@@ -113,11 +121,13 @@ export class Game {
     this.sockets = {};
     this.winTick = 0;
     this.currentTick = 0;
+    this.currentEvent = undefined;
     this.state = {
       loops: 0,
       timer: 5 * 60,
       finishedTimer: 5,
       startTimer: 5,
+      eventTimer: EVENT_INTERVAL,
       status: "LOBBY",
       items: [],
       map,
@@ -146,6 +156,11 @@ export class Game {
 
   tick() {
     this.currentTick++;
+
+    if (this.currentEvent) {
+      this.currentEvent.update();
+    }
+
     if (this.state.status === "STARTING") {
       this.state.startTimer = Math.max(
         0,
@@ -173,14 +188,29 @@ export class Game {
       }
     }
 
-    if (this.state.status === "PLAYING") {
+    if (this.state.status === "PLAYING" || this.state.status === "EVENT") {
       this.state.timer = Math.max(
         0,
         this.state.timer - 1 / this.config.tickRate,
       );
+      this.state.eventTimer = Math.max(
+        0,
+        this.state.eventTimer - 1 / this.config.tickRate,
+      );
 
       if (this.state.timer <= 0) {
         this.state.status = "FINISHED";
+        return;
+      }
+
+      if (this.state.eventTimer <= 0 && !this.currentEvent) {
+        this.state.status = "EVENT";
+        this.currentEvent = new RandomNumberEvent({ min: 1, max: 100 });
+        this.state.currentEvent = this.currentEvent;
+        this.currentEvent.start();
+        logger.info(
+          `Un nouvel évènement de type ${this.currentEvent.type} a commencé`,
+        );
         return;
       }
 

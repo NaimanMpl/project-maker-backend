@@ -89,6 +89,7 @@ describe("Spell", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
 
     game.addPlayer(player);
@@ -120,6 +121,7 @@ describe("Spell", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
 
     game.addPlayer(player);
@@ -155,6 +157,7 @@ describe("Spell", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
 
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);

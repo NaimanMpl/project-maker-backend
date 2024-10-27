@@ -111,6 +111,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.state.status = "PLAYING";
     game.addPlayer({ ...UNITY_PLAYER_MOCK });
@@ -134,6 +135,7 @@ describe("GameLoop", () => {
         speed: 10,
         coins: 0,
         items: [],
+        credits: 0,
       }),
     );
   });
@@ -147,6 +149,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -169,6 +172,7 @@ describe("GameLoop", () => {
         spells: [],
         coins: 0,
         items: [],
+        credits: 0,
       }),
     );
   });
@@ -181,6 +185,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -202,6 +207,7 @@ describe("GameLoop", () => {
         spells: [],
         coins: 0,
         items: [],
+        credits: 0,
       }),
     );
   });
@@ -217,6 +223,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -240,6 +247,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -249,6 +257,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -272,6 +281,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -281,6 +291,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -309,6 +320,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -318,6 +330,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -346,6 +359,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -355,6 +369,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -381,6 +396,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -390,6 +406,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -417,6 +434,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -426,6 +444,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -475,7 +494,11 @@ describe("GameLoop", () => {
     coin.duration = 1;
     game.state.items = [coin];
     game.state.status = "PLAYING";
-    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 0, y: 0, z: 0 } });
+    game.addPlayer({
+      ...UNITY_PLAYER_MOCK,
+      position: { x: 0, y: 0, z: 0 },
+      credits: 0,
+    });
 
     expect(game.unitys[0].coins).toEqual(0);
     game.tick();
@@ -493,6 +516,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
 
@@ -503,6 +527,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
 
@@ -525,6 +550,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
 
@@ -535,6 +561,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
 
@@ -566,6 +593,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
 
@@ -576,6 +604,7 @@ describe("GameLoop", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
 
@@ -609,6 +638,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     });
 
     const webPlayer = game.getPlayer("1234");
@@ -632,6 +662,7 @@ describe("GameLoop", () => {
         speed: 10,
         coins: 0,
         items: [],
+        credits: 0,
         position: {
           x: 10,
           y: 10,

@@ -37,6 +37,7 @@ describe("Disconnect Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     };
 
     game.addPlayer(player);
