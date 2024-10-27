@@ -722,7 +722,7 @@ describe("GameLoop", () => {
     expect(game.currentTick).toEqual(0);
   });
 
-  it("should make the unity player blind when the spell is cast", () => {
+  it("should make the unity player drunk when the spell is cast", () => {
     const playerRole: PlayerRole = "Protector";
     const player: Player = {
       id: "1",
@@ -733,6 +733,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
 
@@ -744,6 +745,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       vision: true,
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
 
@@ -754,7 +756,7 @@ describe("GameLoop", () => {
     expect(unityPlayer.vision).toEqual(false);
   });
 
-  it("should restore sight to unity player", () => {
+  it("should make the unity player sober", () => {
     const playerRole: PlayerRole = "Protector";
     const player: Player = {
       id: "1",
@@ -765,6 +767,7 @@ describe("GameLoop", () => {
       speed: 10,
       coins: 0,
       items: [],
+      credits: 0,
     };
     game.addPlayer(player);
 
@@ -776,6 +779,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       vision: true,
+      credits: 0,
     };
     game.addPlayer(unityPlayer);
 
