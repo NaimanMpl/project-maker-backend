@@ -33,5 +33,6 @@ export class ActivateItemHandler extends MessageHandler {
     }
 
     specialItem.activate(player);
+    this.socket.emit("item:activate:success", undefined);
   }
 }

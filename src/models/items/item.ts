@@ -54,6 +54,7 @@ export abstract class Item {
     }
     if (this.duration !== undefined && this.duration <= 0) {
       this.destroy();
+      this.deactivate();
     }
   }
 
@@ -62,6 +63,8 @@ export abstract class Item {
   }
 
   abstract activate(caster: Player): void;
+  abstract reset(player: Player): void;
+  abstract deactivate(): void;
   abstract trigger(player: Player): void;
 
   destroy(): void {

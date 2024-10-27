@@ -18,10 +18,25 @@ export class FreezeItem extends Item {
   }
 
   activate(caster: Player): void {
+    this.owner = caster;
     if (caster.role === "Evilman") {
       game.protectors.forEach((player) => this.trigger(player));
     } else {
       game.evilmans.forEach((player) => this.trigger(player));
+    }
+    this.currentCooldown = this.cooldown;
+  }
+
+  reset(player: Player): void {
+    player.blind = false;
+  }
+
+  deactivate(): void {
+    game.webplayers.forEach((player) => this.reset(player));
+    if (this.owner?.specialItems) {
+      this.owner.specialItems = this.owner.specialItems.filter(
+        (item) => item.id !== this.id,
+      );
     }
     this.currentCooldown = this.cooldown;
   }

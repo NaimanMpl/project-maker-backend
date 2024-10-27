@@ -15,7 +15,14 @@ export class Coin extends Item {
     });
   }
 
+  /* istanbul ignore next */
   activate(_: Player): void {}
+
+  /* istanbul ignore next */
+  deactivate(): void {}
+
+  /* istanbul ignore next */
+  reset(_: Player): void {}
 
   trigger(player: Player): void {
     player.coins += 1;

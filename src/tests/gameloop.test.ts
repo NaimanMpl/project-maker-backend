@@ -734,4 +734,58 @@ describe("GameLoop", () => {
     const player = game.getPlayer("1");
     expect(player.specialItems?.[0].duration).toEqual(4.95);
   });
+
+  it("should deactivate special items on update if duration is over according to the team", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.duration = 0.05;
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      specialItems: [freezeItem],
+      role: "Evilman",
+    });
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      id: "2",
+      name: "Dummy",
+      blind: true,
+      specialItems: [freezeItem],
+      role: "Protector",
+    });
+
+    const player = game.getPlayer("1");
+    freezeItem.owner = player;
+
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const protector = game.getPlayer("2");
+    expect(protector.blind).toEqual(false);
+  });
+
+  it("should deactivate special items on update if duration is over according to the team", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.duration = 0.05;
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      specialItems: [freezeItem],
+      role: "Protector",
+    });
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      id: "2",
+      name: "Dummy",
+      blind: true,
+      specialItems: [freezeItem],
+      role: "Evilman",
+    });
+
+    const player = game.getPlayer("1");
+    freezeItem.owner = player;
+
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const evilman = game.getPlayer("2");
+    expect(evilman.blind).toEqual(false);
+  });
 });
