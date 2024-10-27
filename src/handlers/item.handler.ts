@@ -61,6 +61,7 @@ export class ItemHandler extends MessageHandler {
     }
     logger.info(`Le joueur ${player.name} a activé l'item ${item.type}`);
     item.place();
+    item.currentCooldown = item.cooldown;
     io.emit("newitem", JSON.stringify(item));
   }
 }
