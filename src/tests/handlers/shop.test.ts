@@ -27,7 +27,7 @@ describe("Event Handler", () => {
   });
 
   it("should return shop items", (done) => {
-    clientSocket.emit("shop", undefined);
+    clientSocket.emit("shoprequest", undefined);
 
     clientSocket.on("shop", (msg) => {
       const { items }: { items: ShopItem[] } = JSON.parse(msg);

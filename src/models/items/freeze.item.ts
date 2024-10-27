@@ -1,3 +1,4 @@
+import { game } from "../../server";
 import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
@@ -14,6 +15,15 @@ export class FreezeItem extends Item {
       castingTime: 1,
       duration: 5,
     });
+  }
+
+  activate(caster: Player): void {
+    if (caster.role === "Evilman") {
+      game.protectors.forEach((player) => this.trigger(player));
+    } else {
+      game.evilmans.forEach((player) => this.trigger(player));
+    }
+    this.currentCooldown = this.cooldown;
   }
 
   trigger(player: Player): void {

@@ -479,6 +479,16 @@ describe("GameLoop", () => {
     expect(coin.castingTime).toEqual(0.95);
   });
 
+  it("should update special items cooldown on each tick", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.currentCooldown = 30;
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...PLAYER_MOCK, specialItems: [freezeItem] });
+
+    game.tick();
+    expect(freezeItem.currentCooldown).toEqual(29.95);
+  });
+
   it("should destroy items on next tick if their duration is under 0", () => {
     const coin = new Coin({ x: 0, y: 0, z: 0 });
     coin.duration = 0.05;

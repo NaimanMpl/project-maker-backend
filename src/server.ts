@@ -19,6 +19,7 @@ import { ItemCancelHandler } from "./handlers/itemcancel.handler";
 import { EventHandler } from "./handlers/event.handler";
 import { ShopHandler } from "./handlers/shop.handler";
 import { BuyItemHandler } from "./handlers/buyitem.handler";
+import { ActivateItemHandler } from "./handlers/activateitem.handler";
 
 export const game: Game = new Game();
 
@@ -67,6 +68,7 @@ io.on("connection", (socket) => {
   const eventHandler = new EventHandler(socket);
   const shopHandler = new ShopHandler(socket);
   const buyItemHandler = new BuyItemHandler(socket);
+  const activateItemHandler = new ActivateItemHandler(socket);
 
   socket.emit(
     "devmode",
@@ -92,8 +94,9 @@ io.on("connection", (socket) => {
   socket.on("restart", (msg) => restartHandler.handleMessage(msg));
   socket.on("item:cancel", (msg) => itemCancelHandler.handleMessage(msg));
   socket.on("event:submit", (msg) => eventHandler.handleMessage(msg));
-  socket.on("shop", (msg) => shopHandler.handleMessage(msg));
+  socket.on("shoprequest", (msg) => shopHandler.handleMessage(msg));
   socket.on("shop:buy", (msg) => buyItemHandler.handleMessage(msg));
+  socket.on("item:activate", (msg) => activateItemHandler.handleMessage(msg));
 });
 
 /* istanbul ignore next */

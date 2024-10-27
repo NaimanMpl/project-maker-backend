@@ -15,6 +15,8 @@ export class Coin extends Item {
     });
   }
 
+  activate(_: Player): void {}
+
   trigger(player: Player): void {
     player.coins += 1;
   }

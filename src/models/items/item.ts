@@ -37,8 +37,12 @@ export abstract class Item {
   cooldown: number;
   castingTime: number;
   duration?: number;
+  currentCooldown: number;
 
   update(reduction: number): void {
+    if (this.currentCooldown > 0) {
+      this.currentCooldown = Math.max(0, this.currentCooldown - reduction);
+    }
     if (this.castingTime > 0) {
       this.castingTime -= reduction;
     }
@@ -57,6 +61,7 @@ export abstract class Item {
     game.state.items.push(this);
   }
 
+  abstract activate(caster: Player): void;
   abstract trigger(player: Player): void;
 
   destroy(): void {
@@ -83,6 +88,7 @@ export abstract class Item {
     this.coords = coords;
     this.castingTime = castingTime;
     this.cooldown = cooldown;
+    this.currentCooldown = 0;
     this.duration = duration;
   }
 }
