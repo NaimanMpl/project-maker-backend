@@ -241,18 +241,6 @@ export class Game {
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
-
-        this.state.items.forEach((item) => {
-          if (player.position) {
-            if (
-              Math.abs(item.coords.x - player.position.y) <= 0.5 &&
-              Math.abs(item.coords.y - player.position.x) <= 0.5
-            ) {
-              item.trigger(player);
-              logger.info(`Player ${player.name} triggered item ${item.type}`);
-            }
-          }
-        });
         if (player.health <= 0 && this.state.startPoint) {
           logger.info("Player died");
           player.position = {

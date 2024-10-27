@@ -1,3 +1,4 @@
+import { logger } from "../../logger";
 import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
@@ -16,7 +17,17 @@ export class Wall extends Item {
     });
   }
 
+  /* istanbul ignore next */
+  activate(_: Player): void {}
+
+  /* istanbul ignore next */
+  deactivate(): void {}
+
+  /* istanbul ignore next */
+  reset(_: Player): void {}
+
+  /* istanbul ignore next */
   trigger(player: Player): void {
-    console.info("Wall touched by : ", player.name);
+    logger.info("Wall touched by : ", player.name);
   }
 }

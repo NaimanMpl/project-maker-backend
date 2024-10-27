@@ -34,6 +34,7 @@ describe("Start Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
     game.addPlayer({
       id: "2",
@@ -43,6 +44,7 @@ describe("Start Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
     game.addPlayer({
       id: "3",
@@ -52,6 +54,7 @@ describe("Start Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -71,6 +74,7 @@ describe("Start Handler", () => {
           coins: 0,
           credits: 0,
           items: [],
+          health: 100,
         },
       ]);
       expect(game.evilmans).toHaveLength(1);
@@ -96,6 +100,7 @@ describe("Start Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -125,6 +130,7 @@ describe("Start Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(

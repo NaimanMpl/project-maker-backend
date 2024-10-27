@@ -33,6 +33,7 @@ describe("Who Am I Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -52,6 +53,7 @@ describe("Who Am I Handler", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
       });
       done();
     });
@@ -66,6 +68,7 @@ describe("Who Am I Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -96,6 +99,7 @@ describe("Who Am I Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
     game.addPlayer({
       id: "2",
@@ -105,6 +109,7 @@ describe("Who Am I Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
     game.addPlayer({
       id: "3",
@@ -115,6 +120,7 @@ describe("Who Am I Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -135,6 +141,7 @@ describe("Who Am I Handler", () => {
         spells: [],
         items: [],
         credits: 0,
+        health: 100,
       });
       done();
     });

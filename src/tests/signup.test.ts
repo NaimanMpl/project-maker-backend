@@ -52,6 +52,7 @@ describe("SignUp Event", () => {
         items: [],
         credits: 0,
         specialItems: [],
+        health: 1,
       },
     });
   });
@@ -89,6 +90,7 @@ describe("SignUp Event", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(

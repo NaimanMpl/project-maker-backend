@@ -27,7 +27,7 @@ describe("Item Handler", () => {
     game.reset();
   });
 
-  it("should create a new item", (done) => {
+  it("should create a coin", (done) => {
     const emitSpy = jest.spyOn(io, "emit");
     game.addPlayer({ ...PLAYER_MOCK });
 
@@ -52,6 +52,75 @@ describe("Item Handler", () => {
         spells: [],
         coins: 0,
         credits: 0,
+        health: 100,
+        items: [],
+      });
+      expect(game.state.items[0].coords).toEqual({ x: 0, y: 0, z: 0 });
+      expect(emitSpy).toHaveBeenCalledWith("newitem", expect.anything());
+      done();
+    });
+  });
+
+  it("should create a bomb", (done) => {
+    const emitSpy = jest.spyOn(io, "emit");
+    game.addPlayer({ ...PLAYER_MOCK });
+
+    clientSocket.emit(
+      "cast:item",
+      JSON.stringify({
+        item: "BOMB",
+        x: 0,
+        y: 0,
+        id: "1",
+      }),
+    );
+
+    serverSocket.on("cast:item", () => {
+      expect(game.state.items).toHaveLength(1);
+      expect(game.state.items[0].type).toEqual("BOMB");
+      expect(game.state.items[0].id).toEqual("123456789");
+      expect(game.state.items[0].owner).toEqual({
+        id: "1",
+        name: "John",
+        type: "WEB",
+        spells: [],
+        coins: 0,
+        credits: 0,
+        health: 100,
+        items: [],
+      });
+      expect(game.state.items[0].coords).toEqual({ x: 0, y: 0, z: 0 });
+      expect(emitSpy).toHaveBeenCalledWith("newitem", expect.anything());
+      done();
+    });
+  });
+
+  it("should create a wall", (done) => {
+    const emitSpy = jest.spyOn(io, "emit");
+    game.addPlayer({ ...PLAYER_MOCK });
+
+    clientSocket.emit(
+      "cast:item",
+      JSON.stringify({
+        item: "WALL",
+        x: 0,
+        y: 0,
+        id: "1",
+      }),
+    );
+
+    serverSocket.on("cast:item", () => {
+      expect(game.state.items).toHaveLength(1);
+      expect(game.state.items[0].type).toEqual("WALL");
+      expect(game.state.items[0].id).toEqual("123456789");
+      expect(game.state.items[0].owner).toEqual({
+        id: "1",
+        name: "John",
+        type: "WEB",
+        spells: [],
+        coins: 0,
+        credits: 0,
+        health: 100,
         items: [],
       });
       expect(game.state.items[0].coords).toEqual({ x: 0, y: 0, z: 0 });
@@ -107,6 +176,7 @@ describe("Item Handler", () => {
   it("should error if the item is already on cooldown", (done) => {
     game.addPlayer({ ...PLAYER_MOCK });
     const coin = new Coin({ x: 0, y: 0, z: 0 });
+    coin.currentCooldown = 30;
     coin.owner = game.getPlayer("1");
     game.state.items = [coin];
 
