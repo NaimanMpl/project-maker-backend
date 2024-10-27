@@ -2,16 +2,17 @@ import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
 
-export class Coin extends Item {
+export class Bomb extends Item {
   constructor(coords: { x: number; y: number; z: number }) {
     super({
       id: uuid4(),
-      type: "COIN",
-      name: "Coin",
-      description: "A coin that gives points to the player",
+      type: "BOMB",
+      name: "Bomb",
+      description: "A bomb that kills the player if the player walks on it",
       coords,
-      cooldown: 0,
+      cooldown: 15,
       castingTime: 1,
+      duration: 15,
     });
   }
 
@@ -25,6 +26,7 @@ export class Coin extends Item {
   reset(_: Player): void {}
 
   trigger(player: Player): void {
-    player.coins += 1;
+    player.health -= 1;
+    this.destroy();
   }
 }

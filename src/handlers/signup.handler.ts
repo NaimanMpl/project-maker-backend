@@ -5,7 +5,12 @@ import {
   GAME_ALREADY_STARTED,
   USERNAME_ALREADY_TAKEN,
 } from "../models/gameerror";
-import { DEFAULT_PLAYER_SPEED, Player, PlayerType } from "../models/player";
+import {
+  DEFAULT_PLAYER_HEALTH,
+  DEFAULT_PLAYER_SPEED,
+  Player,
+  PlayerType,
+} from "../models/player";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
 
@@ -33,6 +38,7 @@ export class SignUpHandler extends MessageHandler {
       id: uuidv4(),
       name,
       type,
+      health: DEFAULT_PLAYER_HEALTH,
       spells: [],
       speed: 0,
       coins: 0,

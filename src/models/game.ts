@@ -4,7 +4,7 @@ import unityMap from "../../assets/unityMap.json";
 import { io } from "../server";
 import { Config } from "./config";
 import { GameState } from "./gamestate";
-import { Player } from "./player";
+import { DEFAULT_PLAYER_HEALTH, Player } from "./player";
 import { Spell } from "./spell";
 import * as mapLoader from "../loaders/map.loader";
 import { RandomNumberEvent } from "../events/randomnumber.event";
@@ -86,7 +86,7 @@ export class Game {
           y: start.properties.position.y,
           z: start.properties.position.z,
         };
-        socket?.emit("unity:position", player.position);
+        socket?.emit("unity:position", JSON.stringify(player.position));
       });
       io.emit("map", JSON.stringify({ map }));
       io.emit("unity:map", JSON.stringify({ unityMap }));
@@ -236,10 +236,22 @@ export class Game {
           });
         });
         socket?.emit("playerInfo", JSON.stringify(player));
+        io.emit("player:unity", JSON.stringify(player));
       });
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
+        if (player.health <= 0 && this.state.startPoint) {
+          logger.info("Player died");
+          player.position = {
+            x: this.state.startPoint.properties.position.x,
+            y: this.state.startPoint.properties.position.y,
+            z: this.state.startPoint.properties.position.z,
+          };
+          socket?.emit("unity:position", JSON.stringify(player.position));
+          player.health = DEFAULT_PLAYER_HEALTH;
+          logger.info("Player respawned", player.position);
+        }
         socket?.emit("playerInfo", JSON.stringify(player));
         io.emit("player:unity", JSON.stringify(player));
       });
@@ -255,7 +267,6 @@ export class Game {
             }
           }
         });
-
         item.update(1 / this.config.tickRate);
       });
 

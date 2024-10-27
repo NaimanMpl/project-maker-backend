@@ -70,7 +70,6 @@ describe("Spell", () => {
 
     clientSocket.on("error", (message) => {
       const error: GameError = JSON.parse(message);
-      console.log(error);
       expect(error).toEqual({
         type: "UNAUTHORIZED",
         message: "You cannot perform this action.",
@@ -90,6 +89,7 @@ describe("Spell", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
 
     game.addPlayer(player);
@@ -122,6 +122,7 @@ describe("Spell", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
 
     game.addPlayer(player);
@@ -158,6 +159,7 @@ describe("Spell", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
 
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);

@@ -1,17 +1,19 @@
+import { logger } from "../../logger";
 import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
 
-export class Coin extends Item {
+export class Wall extends Item {
   constructor(coords: { x: number; y: number; z: number }) {
     super({
       id: uuid4(),
-      type: "COIN",
-      name: "Coin",
-      description: "A coin that gives points to the player",
+      type: "WALL",
+      name: "Wall",
+      description: " A wall that block the path of the player",
       coords,
-      cooldown: 0,
+      cooldown: 10,
       castingTime: 1,
+      duration: 15,
     });
   }
 
@@ -24,7 +26,8 @@ export class Coin extends Item {
   /* istanbul ignore next */
   reset(_: Player): void {}
 
+  /* istanbul ignore next */
   trigger(player: Player): void {
-    player.coins += 1;
+    logger.info("Wall touched by : ", player.name);
   }
 }

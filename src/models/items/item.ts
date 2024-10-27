@@ -2,7 +2,7 @@ import { game } from "../../server";
 import { Player } from "../player";
 
 export type ItemCategories =
-  | "LANDMINE"
+  | "BOMB"
   | "WALL"
   | "SPEEDBOOST"
   | "SLOWBOOST"

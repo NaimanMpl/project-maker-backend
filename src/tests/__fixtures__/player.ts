@@ -8,6 +8,7 @@ export const PLAYER_MOCK: Player = {
   coins: 0,
   items: [],
   credits: 0,
+  health: 100,
 };
 
 export const UNITY_PLAYER_MOCK: Player = {
@@ -19,4 +20,5 @@ export const UNITY_PLAYER_MOCK: Player = {
   coins: 0,
   items: [],
   credits: 0,
+  health: 100,
 };

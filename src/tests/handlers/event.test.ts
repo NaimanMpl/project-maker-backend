@@ -80,6 +80,7 @@ describe("Event Handler", () => {
           coins: 0,
           items: [],
           credits: 0,
+          health: 100,
         },
         response: 4,
       },

@@ -9,7 +9,7 @@ export class DrunkModeSpell extends Spell {
       cooldown: 30,
       description: "Ce sort rend ivre temporairement le joueur Unity.",
       duration: 7,
-      type: "Ivre",
+      type: "Ivresse",
     });
   }
 

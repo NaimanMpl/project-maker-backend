@@ -113,6 +113,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.state.status = "PLAYING";
     game.addPlayer({ ...UNITY_PLAYER_MOCK });
@@ -137,6 +138,7 @@ describe("GameLoop", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
       }),
     );
   });
@@ -151,6 +153,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -174,6 +177,7 @@ describe("GameLoop", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
       }),
     );
   });
@@ -187,6 +191,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.state.status = "PLAYING";
     game.addPlayer(player);
@@ -209,6 +214,7 @@ describe("GameLoop", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
       }),
     );
   });
@@ -225,6 +231,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -249,6 +256,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -259,6 +267,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -283,6 +292,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -293,6 +303,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -322,6 +333,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -332,6 +344,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -361,6 +374,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -371,6 +385,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -398,6 +413,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -408,6 +424,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -436,6 +453,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
     const unityPlayer: Player = {
@@ -446,6 +464,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
     const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
@@ -502,7 +521,7 @@ describe("GameLoop", () => {
     expect(game.state.items).toHaveLength(0);
   });
 
-  it("should trigger items on next tick if an unity player is on the item", () => {
+  it("should trigger coin on next tick if an unity player is on the item", () => {
     const coin = new Coin({ x: 0, y: 0, z: 0 });
     coin.duration = 1;
     game.state.items = [coin];
@@ -511,6 +530,7 @@ describe("GameLoop", () => {
       ...UNITY_PLAYER_MOCK,
       position: { x: 0, y: 0, z: 0 },
       credits: 0,
+      health: 100,
     });
 
     expect(game.unitys[0].coins).toEqual(0);
@@ -530,6 +550,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
 
@@ -541,6 +562,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
 
@@ -564,6 +586,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
 
@@ -575,6 +598,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
 
@@ -607,6 +631,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
 
@@ -618,6 +643,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
 
@@ -642,7 +668,11 @@ describe("GameLoop", () => {
     const ioEmitSpy = jest.spyOn(io, "emit");
     const mapLoaderSpy = jest.spyOn(mapLoader, "loadMap");
     game.state.status = "PLAYING";
-    game.addPlayer({ ...UNITY_PLAYER_MOCK, position: { x: 10, y: 10, z: 0 } });
+    const unityPlayer = {
+      ...UNITY_PLAYER_MOCK,
+      position: { x: 10, y: 10, z: 0 },
+    };
+    game.addPlayer(unityPlayer);
     game.addPlayer({
       id: "1234",
       name: "John",
@@ -652,6 +682,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     const webPlayer = game.getPlayer("1234");
@@ -676,6 +707,7 @@ describe("GameLoop", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
         position: {
           x: 10,
           y: 10,
@@ -765,7 +797,7 @@ describe("GameLoop", () => {
     });
 
     const player = game.getPlayer("1");
-    freezeItem.owner = player;
+    freezeItem.owner = { ...player, specialItems: undefined };
 
     game.state.status = "PLAYING";
     game.tick();
@@ -793,7 +825,7 @@ describe("GameLoop", () => {
     });
 
     const player = game.getPlayer("1");
-    freezeItem.owner = player;
+    freezeItem.owner = { ...player, specialItems: undefined };
 
     game.state.status = "PLAYING";
     game.tick();
@@ -814,6 +846,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
 
@@ -826,6 +859,7 @@ describe("GameLoop", () => {
       items: [],
       vision: true,
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
 
@@ -848,6 +882,7 @@ describe("GameLoop", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
     game.addPlayer(player);
 
@@ -860,6 +895,7 @@ describe("GameLoop", () => {
       items: [],
       vision: true,
       credits: 0,
+      health: 100,
     };
     game.addPlayer(unityPlayer);
 
@@ -876,5 +912,22 @@ describe("GameLoop", () => {
     expect(unityPlayer.vision).toEqual(true);
     expect(player.spells[0].timer).toEqual(7);
     expect(player.spells[0].currentCooldown).toEqual(29.95);
+  });
+
+  it("should make the player die if his health is under 0", () => {
+    const emitSpy = jest.spyOn(serverSocket, "emit");
+
+    const unityPlayer = { ...UNITY_PLAYER_MOCK, health: 0 };
+    game.state.status = "PLAYING";
+    game.addPlayer(unityPlayer);
+    game.sockets[unityPlayer.id] = serverSocket;
+    game.tick();
+
+    expect(unityPlayer.health).toEqual(1);
+    expect(unityPlayer.position).toEqual({ x: 0, y: 0, z: 0 });
+    expect(emitSpy).toHaveBeenCalledWith(
+      "unity:position",
+      JSON.stringify({ x: 0, y: 0, z: 0 }),
+    );
   });
 });
