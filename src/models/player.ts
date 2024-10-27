@@ -20,6 +20,7 @@ export interface Player {
   coins: number;
   items: Item[];
   specialItems?: Item[];
+  vision?: boolean;
   credits: number;
   blind?: boolean;
 }

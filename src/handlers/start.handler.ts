@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { logger } from "../logger";
 import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
+import { Coin } from "../models/items/coin.item";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
-import { Coin } from "../models/items/coin.item";
-import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -47,6 +47,7 @@ export class StartHandler extends MessageHandler {
           spells: [
             SpellFactory.createSpell(SpellEnum.SlowMode),
             SpellFactory.createSpell(SpellEnum.SuddenStop),
+            SpellFactory.createSpell(SpellEnum.DrunkMode),
           ],
         };
       }

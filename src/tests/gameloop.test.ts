@@ -658,6 +658,7 @@ describe("GameLoop", () => {
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SlowMode));
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.SuddenStop));
     game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.Quickness));
+    game.addSpell(webPlayer, SpellFactory.createSpell(SpellEnum.DrunkMode));
 
     game.currentTick = 20;
 
@@ -691,7 +692,10 @@ describe("GameLoop", () => {
       (spell) => spell.name === "Slow Mode",
     );
     const quicknessSpell = webPlayer.spells.find(
-      (spell) => spell.name === "Slow Mode",
+      (spell) => spell.name === "Quickness",
+    );
+    const drunkmodeSpell = webPlayer.spells.find(
+      (spell) => spell.name === "Drunk Mode",
     );
 
     expect(slowmodeSpell?.duration).toEqual(10);
@@ -703,6 +707,9 @@ describe("GameLoop", () => {
     expect(quicknessSpell?.duration).toEqual(10);
     expect(quicknessSpell?.currentCooldown).toEqual(0);
     expect(quicknessSpell?.timer).toEqual(0);
+    expect(drunkmodeSpell?.duration).toEqual(7);
+    expect(drunkmodeSpell?.currentCooldown).toEqual(0);
+    expect(drunkmodeSpell?.timer).toEqual(0);
   });
 
   it("should update the gamestate to FINISHED when the timer equals 0 and reset the game", () => {
@@ -793,5 +800,81 @@ describe("GameLoop", () => {
 
     const evilman = game.getPlayer("2");
     expect(evilman.blind).toEqual(false);
+  });
+
+  it("should make the unity player drunk when the spell is cast", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+      coins: 0,
+      items: [],
+      credits: 0,
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+      coins: 0,
+      items: [],
+      vision: true,
+      credits: 0,
+    };
+    game.addPlayer(unityPlayer);
+
+    const drunkmodeSpell = SpellFactory.createSpell(SpellEnum.DrunkMode);
+    game.addSpell(player, drunkmodeSpell);
+    drunkmodeSpell.cast(unityPlayer);
+
+    expect(unityPlayer.vision).toEqual(false);
+  });
+
+  it("should make the unity player sober", () => {
+    const playerRole: PlayerRole = "Protector";
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      role: playerRole,
+      spells: [],
+      speed: 10,
+      coins: 0,
+      items: [],
+      credits: 0,
+    };
+    game.addPlayer(player);
+
+    const unityPlayer: Player = {
+      id: "2",
+      name: "Doe",
+      type: "UNITY",
+      spells: [],
+      coins: 0,
+      items: [],
+      vision: true,
+      credits: 0,
+    };
+    game.addPlayer(unityPlayer);
+
+    const drunkmodeSpell = SpellFactory.createSpell(SpellEnum.DrunkMode);
+    game.addSpell(player, drunkmodeSpell);
+
+    game.state.status = "PLAYING";
+    drunkmodeSpell.cast(unityPlayer);
+
+    player.spells[0].timer = 0.05;
+    expect(unityPlayer.vision).toEqual(false);
+
+    game.tick();
+    expect(unityPlayer.vision).toEqual(true);
+    expect(player.spells[0].timer).toEqual(7);
+    expect(player.spells[0].currentCooldown).toEqual(29.95);
   });
 });
