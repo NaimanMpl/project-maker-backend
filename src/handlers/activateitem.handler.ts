@@ -1,3 +1,4 @@
+import { logger } from "../logger";
 import {
   ITEM_ON_COOLDOWN,
   NOT_A_PLAYER,
@@ -32,6 +33,7 @@ export class ActivateItemHandler extends MessageHandler {
       return;
     }
 
+    logger.info(`${player.name} active l'item ${item} sur l'équipe adverse`);
     specialItem.activate(player);
     this.socket.emit("item:activate:success", undefined);
   }

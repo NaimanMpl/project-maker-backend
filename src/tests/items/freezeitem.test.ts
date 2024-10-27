@@ -21,4 +21,15 @@ describe("Freeze Item", () => {
 
     expect(player.blind).toEqual(false);
   });
+
+  it("should remove item on deactivate", () => {
+    const freezeItem = new FreezeItem();
+    const player = { ...PLAYER_MOCK, blind: true, specialItems: [freezeItem] };
+    freezeItem.owner = player;
+    game.addPlayer(player);
+
+    freezeItem.deactivate();
+
+    expect(player.specialItems).toEqual([]);
+  });
 });

@@ -1,3 +1,4 @@
+import { logger } from "../../logger";
 import { game } from "../../server";
 import { Player } from "../player";
 import { Item } from "./item";
@@ -15,10 +16,12 @@ export class FreezeItem extends Item {
       castingTime: 1,
       duration: 5,
     });
+    this.special = true;
   }
 
   activate(caster: Player): void {
-    this.owner = caster;
+    this.casted = true;
+    this.owner = { ...caster, specialItems: undefined };
     if (caster.role === "Evilman") {
       game.protectors.forEach((player) => this.trigger(player));
     } else {
@@ -32,11 +35,15 @@ export class FreezeItem extends Item {
   }
 
   deactivate(): void {
+    logger.info(`L'item ${this.type} se désactive`);
     game.webplayers.forEach((player) => this.reset(player));
-    if (this.owner?.specialItems) {
-      this.owner.specialItems = this.owner.specialItems.filter(
-        (item) => item.id !== this.id,
-      );
+    if (this.owner) {
+      const owner = game.players[this.owner.id];
+      if (owner?.specialItems) {
+        owner.specialItems = owner.specialItems.filter(
+          (item) => item.id !== this.id,
+        );
+      }
     }
     this.currentCooldown = this.cooldown;
   }

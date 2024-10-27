@@ -470,18 +470,20 @@ describe("GameLoop", () => {
   it("should update items cooldown on each tick", () => {
     const coin = new Coin({ x: 0, y: 0, z: 0 });
     coin.duration = 1000;
+    coin.currentCooldown = 30;
     game.state.items = [coin];
     game.state.status = "PLAYING";
 
     game.tick();
     expect(coin.duration).toEqual(999.95);
-    expect(coin.cooldown).toEqual(29.95);
+    expect(coin.currentCooldown).toEqual(29.95);
     expect(coin.castingTime).toEqual(0.95);
   });
 
   it("should update special items cooldown on each tick", () => {
     const freezeItem = new FreezeItem();
     freezeItem.currentCooldown = 30;
+    freezeItem.casted = true;
     game.state.status = "PLAYING";
     game.addPlayer({ ...PLAYER_MOCK, specialItems: [freezeItem] });
 
@@ -727,7 +729,9 @@ describe("GameLoop", () => {
   });
 
   it("should update special items if some players have one", () => {
-    game.addPlayer({ ...PLAYER_MOCK, specialItems: [new FreezeItem()] });
+    const freezeItem = new FreezeItem();
+    freezeItem.casted = true;
+    game.addPlayer({ ...PLAYER_MOCK, specialItems: [freezeItem] });
     game.state.status = "PLAYING";
     game.tick();
 
@@ -738,6 +742,7 @@ describe("GameLoop", () => {
   it("should deactivate special items on update if duration is over according to the team", () => {
     const freezeItem = new FreezeItem();
     freezeItem.duration = 0.05;
+    freezeItem.casted = true;
     game.addPlayer({
       ...PLAYER_MOCK,
       specialItems: [freezeItem],
@@ -765,6 +770,7 @@ describe("GameLoop", () => {
   it("should deactivate special items on update if duration is over according to the team", () => {
     const freezeItem = new FreezeItem();
     freezeItem.duration = 0.05;
+    freezeItem.casted = true;
     game.addPlayer({
       ...PLAYER_MOCK,
       specialItems: [freezeItem],

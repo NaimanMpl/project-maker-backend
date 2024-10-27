@@ -38,23 +38,30 @@ export abstract class Item {
   castingTime: number;
   duration?: number;
   currentCooldown: number;
+  durationLength?: number;
+  killed: boolean;
+  casted: boolean;
+  special: boolean;
 
   update(reduction: number): void {
+    if (this.special) {
+      if (this.killed || !this.casted) {
+        return;
+      }
+    }
     if (this.currentCooldown > 0) {
       this.currentCooldown = Math.max(0, this.currentCooldown - reduction);
     }
     if (this.castingTime > 0) {
       this.castingTime -= reduction;
     }
-    if (this.cooldown > 0) {
-      this.cooldown -= reduction;
-    }
-    if (this.duration != undefined && this.duration > 0) {
+    if (this.duration !== undefined && this.duration > 0) {
       this.duration -= reduction;
     }
     if (this.duration !== undefined && this.duration <= 0) {
       this.destroy();
       this.deactivate();
+      this.killed = true;
     }
   }
 
@@ -93,5 +100,9 @@ export abstract class Item {
     this.cooldown = cooldown;
     this.currentCooldown = 0;
     this.duration = duration;
+    this.durationLength = duration;
+    this.killed = false;
+    this.casted = false;
+    this.special = false;
   }
 }
