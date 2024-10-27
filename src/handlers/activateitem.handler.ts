@@ -2,6 +2,7 @@ import { logger } from "../logger";
 import {
   ITEM_ON_COOLDOWN,
   NOT_A_PLAYER,
+  UNAUTHORIZED,
   UNKNOWN_ITEM,
 } from "../models/gameerror";
 import { ItemCategories } from "../models/items/item";
@@ -16,6 +17,11 @@ export class ActivateItemHandler extends MessageHandler {
 
     if (!player) {
       this.socket.emit("error", JSON.stringify(NOT_A_PLAYER));
+      return;
+    }
+
+    if (player.blind) {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
       return;
     }
 

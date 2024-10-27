@@ -127,4 +127,44 @@ describe("Buy Item Handler", () => {
       done();
     });
   });
+
+  it("should error if the player does not have enough credits", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, credits: 0 });
+    clientSocket.emit(
+      "shop:buy",
+      JSON.stringify({
+        id: "1",
+        type: "FREEZE",
+      }),
+    );
+
+    clientSocket.on("error", (msg) => {
+      const error: GameError = JSON.parse(msg);
+      expect(error).toEqual({
+        type: "NO_ENOUGH_CREDITS",
+        message: "You don't have enough credits.",
+      });
+      done();
+    });
+  });
+
+  it("should error if the player is blind", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, credits: 0, blind: true });
+    clientSocket.emit(
+      "shop:buy",
+      JSON.stringify({
+        id: "1",
+        type: "FREEZE",
+      }),
+    );
+
+    clientSocket.on("error", (msg) => {
+      const error: GameError = JSON.parse(msg);
+      expect(error).toEqual({
+        type: "UNAUTHORIZED",
+        message: "You cannot perform this action.",
+      });
+      done();
+    });
+  });
 });

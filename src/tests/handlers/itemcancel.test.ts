@@ -111,4 +111,24 @@ describe("Item Handler", () => {
       done();
     });
   });
+
+  it("should error if the player is blind", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, blind: true });
+    clientSocket.emit(
+      "item:cancel",
+      JSON.stringify({
+        id: "1",
+        itemId: "1",
+      }),
+    );
+
+    clientSocket.on("error", (msg) => {
+      const error: GameError = JSON.parse(msg);
+      expect(error).toEqual({
+        type: "UNAUTHORIZED",
+        message: "You cannot perform this action.",
+      });
+      done();
+    });
+  });
 });
