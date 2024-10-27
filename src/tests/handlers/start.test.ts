@@ -33,6 +33,7 @@ describe("Start Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     });
     game.addPlayer({
       id: "2",
@@ -41,6 +42,7 @@ describe("Start Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     });
     game.addPlayer({
       id: "3",
@@ -49,6 +51,7 @@ describe("Start Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     });
 
     clientSocket.emit(
@@ -66,6 +69,7 @@ describe("Start Handler", () => {
           type: "UNITY",
           spells: [],
           coins: 0,
+          credits: 0,
           items: [],
         },
       ]);
@@ -91,6 +95,7 @@ describe("Start Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     });
 
     clientSocket.emit(
@@ -119,6 +124,7 @@ describe("Start Handler", () => {
       spells: [],
       coins: 0,
       items: [],
+      credits: 0,
     });
 
     clientSocket.emit(

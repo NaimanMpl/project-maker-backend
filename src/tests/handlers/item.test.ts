@@ -51,6 +51,7 @@ describe("Item Handler", () => {
         type: "WEB",
         spells: [],
         coins: 0,
+        credits: 0,
         items: [],
       });
       expect(game.state.items[0].coords).toEqual({ x: 0, y: 0, z: 0 });
