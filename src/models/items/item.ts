@@ -6,7 +6,8 @@ export type ItemCategories =
   | "WALL"
   | "SPEEDBOOST"
   | "SLOWBOOST"
-  | "COIN";
+  | "COIN"
+  | "FREEZE";
 
 export interface ItemCoords {
   x: number;

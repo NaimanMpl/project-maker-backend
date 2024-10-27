@@ -43,6 +43,11 @@ export const UNKNOWN_ITEM: GameError = {
   message: "The following item is unknown.",
 };
 
+export const NO_ENOUGH_CREDITS: GameError = {
+  type: "NO_ENOUGH_CREDITS",
+  message: "You don't have enough credits.",
+};
+
 export const DEV_MODE_NOT_ENABLED = {
   type: "DEV_MODE_NOT_ENABLED",
   message: "The development mode is not enabled.",

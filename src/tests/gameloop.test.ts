@@ -7,6 +7,7 @@ import { Coin } from "../models/items/coin.item";
 import { Player, PlayerRole } from "../models/player";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
+import { FreezeItem } from "../models/items/freeze.item";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -713,5 +714,14 @@ describe("GameLoop", () => {
     expect(game.players).toEqual({});
     expect(game.sockets).toEqual({});
     expect(game.currentTick).toEqual(0);
+  });
+
+  it("should update special items if some players have one", () => {
+    game.addPlayer({ ...PLAYER_MOCK, specialItems: [new FreezeItem()] });
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const player = game.getPlayer("1");
+    expect(player.specialItems?.[0].duration).toEqual(4.95);
   });
 });

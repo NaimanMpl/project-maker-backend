@@ -19,5 +19,7 @@ export interface Player {
   };
   coins: number;
   items: Item[];
+  specialItems?: Item[];
   credits: number;
+  blind?: boolean;
 }
