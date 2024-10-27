@@ -78,6 +78,10 @@ export class StartHandler extends MessageHandler {
         player,
       }),
     );
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
+    );
     logger.info(`${player.name} a lancé la partie. Lancement du décompte`);
   }
 }

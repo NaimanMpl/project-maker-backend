@@ -7,6 +7,7 @@ import { Coin } from "../models/items/coin.item";
 import { Player, PlayerRole } from "../models/player";
 import { game, io, server } from "../server";
 import { PLAYER_MOCK, UNITY_PLAYER_MOCK } from "./__fixtures__/player";
+import { FreezeItem } from "../models/items/freeze.item";
 
 describe("GameLoop", () => {
   let clientSocket: ClientSocket;
@@ -469,13 +470,25 @@ describe("GameLoop", () => {
   it("should update items cooldown on each tick", () => {
     const coin = new Coin({ x: 0, y: 0, z: 0 });
     coin.duration = 1000;
+    coin.currentCooldown = 30;
     game.state.items = [coin];
     game.state.status = "PLAYING";
 
     game.tick();
     expect(coin.duration).toEqual(999.95);
-    expect(coin.cooldown).toEqual(29.95);
+    expect(coin.currentCooldown).toEqual(29.95);
     expect(coin.castingTime).toEqual(0.95);
+  });
+
+  it("should update special items cooldown on each tick", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.currentCooldown = 30;
+    freezeItem.casted = true;
+    game.state.status = "PLAYING";
+    game.addPlayer({ ...PLAYER_MOCK, specialItems: [freezeItem] });
+
+    game.tick();
+    expect(freezeItem.currentCooldown).toEqual(29.95);
   });
 
   it("should destroy items on next tick if their duration is under 0", () => {
@@ -720,6 +733,73 @@ describe("GameLoop", () => {
     expect(game.players).toEqual({});
     expect(game.sockets).toEqual({});
     expect(game.currentTick).toEqual(0);
+  });
+
+  it("should update special items if some players have one", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.casted = true;
+    game.addPlayer({ ...PLAYER_MOCK, specialItems: [freezeItem] });
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const player = game.getPlayer("1");
+    expect(player.specialItems?.[0].duration).toEqual(4.95);
+  });
+
+  it("should deactivate special items on update if duration is over according to the team", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.duration = 0.05;
+    freezeItem.casted = true;
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      specialItems: [freezeItem],
+      role: "Evilman",
+    });
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      id: "2",
+      name: "Dummy",
+      blind: true,
+      specialItems: [freezeItem],
+      role: "Protector",
+    });
+
+    const player = game.getPlayer("1");
+    freezeItem.owner = player;
+
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const protector = game.getPlayer("2");
+    expect(protector.blind).toEqual(false);
+  });
+
+  it("should deactivate special items on update if duration is over according to the team", () => {
+    const freezeItem = new FreezeItem();
+    freezeItem.duration = 0.05;
+    freezeItem.casted = true;
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      specialItems: [freezeItem],
+      role: "Protector",
+    });
+    game.addPlayer({
+      ...PLAYER_MOCK,
+      id: "2",
+      name: "Dummy",
+      blind: true,
+      specialItems: [freezeItem],
+      role: "Evilman",
+    });
+
+    const player = game.getPlayer("1");
+    freezeItem.owner = player;
+
+    game.state.status = "PLAYING";
+    game.tick();
+
+    const evilman = game.getPlayer("2");
+    expect(evilman.blind).toEqual(false);
   });
 
   it("should make the unity player drunk when the spell is cast", () => {

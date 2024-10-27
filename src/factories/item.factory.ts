@@ -1,8 +1,9 @@
 import { Coin } from "../models/items/coin.item";
-import { ItemCategories, ItemCoords } from "../models/items/item";
+import { FreezeItem } from "../models/items/freeze.item";
+import { ItemCoords } from "../models/items/item";
 
 interface ItemParameters {
-  category: ItemCategories;
+  category: string;
   coords: ItemCoords;
 }
 
@@ -12,6 +13,8 @@ export class ItemFactory {
     switch (category) {
       case "COIN":
         return new Coin(coords);
+      case "FREEZE":
+        return new FreezeItem();
     }
     return null;
   };

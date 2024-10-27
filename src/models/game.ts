@@ -10,6 +10,7 @@ import * as mapLoader from "../loaders/map.loader";
 import { RandomNumberEvent } from "../events/randomnumber.event";
 import { Event } from "./event";
 import { logger } from "../logger";
+import { Shop } from "./shop";
 
 export const EVENT_INTERVAL = 30;
 
@@ -23,6 +24,7 @@ export class Game {
   currentTick: number;
   winTick: number;
   currentEvent?: Event;
+  shop: Shop;
 
   constructor() {
     this.state = {
@@ -65,8 +67,10 @@ export class Game {
     this.dev = process.env.DEV_MODE === "enabled";
     this.winTick = 0;
     this.currentTick = 0;
+    this.shop = new Shop();
     this.loadMap();
   }
+
   loadMap() {
     mapLoader.loadMap().then((mapData) => {
       const { map, start, end, unityMap } = mapData;
@@ -152,6 +156,7 @@ export class Game {
         },
       },
     };
+    this.shop = new Shop();
   }
 
   tick() {
@@ -211,7 +216,6 @@ export class Game {
         logger.info(
           `Un nouvel évènement de type ${this.currentEvent.type} a commencé`,
         );
-        return;
       }
 
       this.evilmans.forEach((player) => {
@@ -253,6 +257,15 @@ export class Game {
         });
 
         item.update(1 / this.config.tickRate);
+      });
+
+      this.webplayers.forEach((player) => {
+        player.credits += 1 / this.config.tickRate;
+        if (player.specialItems) {
+          player.specialItems.forEach((item) => {
+            item.update(1 / this.config.tickRate);
+          });
+        }
       });
 
       this.checkWin();

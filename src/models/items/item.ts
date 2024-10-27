@@ -6,7 +6,8 @@ export type ItemCategories =
   | "WALL"
   | "SPEEDBOOST"
   | "SLOWBOOST"
-  | "COIN";
+  | "COIN"
+  | "FREEZE";
 
 export interface ItemCoords {
   x: number;
@@ -36,19 +37,31 @@ export abstract class Item {
   cooldown: number;
   castingTime: number;
   duration?: number;
+  currentCooldown: number;
+  durationLength?: number;
+  killed: boolean;
+  casted: boolean;
+  special: boolean;
 
   update(reduction: number): void {
+    if (this.special) {
+      if (this.killed || !this.casted) {
+        return;
+      }
+    }
+    if (this.currentCooldown > 0) {
+      this.currentCooldown = Math.max(0, this.currentCooldown - reduction);
+    }
     if (this.castingTime > 0) {
       this.castingTime -= reduction;
     }
-    if (this.cooldown > 0) {
-      this.cooldown -= reduction;
-    }
-    if (this.duration != undefined && this.duration > 0) {
+    if (this.duration !== undefined && this.duration > 0) {
       this.duration -= reduction;
     }
     if (this.duration !== undefined && this.duration <= 0) {
       this.destroy();
+      this.deactivate();
+      this.killed = true;
     }
   }
 
@@ -56,6 +69,9 @@ export abstract class Item {
     game.state.items.push(this);
   }
 
+  abstract activate(caster: Player): void;
+  abstract reset(player: Player): void;
+  abstract deactivate(): void;
   abstract trigger(player: Player): void;
 
   destroy(): void {
@@ -82,6 +98,11 @@ export abstract class Item {
     this.coords = coords;
     this.castingTime = castingTime;
     this.cooldown = cooldown;
+    this.currentCooldown = 0;
     this.duration = duration;
+    this.durationLength = duration;
+    this.killed = false;
+    this.casted = false;
+    this.special = false;
   }
 }

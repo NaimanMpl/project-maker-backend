@@ -38,6 +38,7 @@ export class SignUpHandler extends MessageHandler {
       coins: 0,
       credits: 0,
       items: [],
+      specialItems: [],
     };
 
     if (player.type === "UNITY") {
@@ -48,7 +49,7 @@ export class SignUpHandler extends MessageHandler {
     game.sockets[player.id] = this.socket;
 
     this.socket.emit("signupsuccess", JSON.stringify(player));
-    this.socket.emit("signup:newplayer", JSON.stringify(player));
+    io.to("lobby").emit("signup:newplayer", JSON.stringify(player));
     this.socket.join("lobby");
     io.to("lobby").emit(
       "newplayer",
