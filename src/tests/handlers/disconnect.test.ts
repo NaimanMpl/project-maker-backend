@@ -38,6 +38,7 @@ describe("Disconnect Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     };
 
     game.addPlayer(player);

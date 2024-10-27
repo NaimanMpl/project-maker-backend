@@ -48,7 +48,9 @@ export class ItemHandler extends MessageHandler {
     if (
       game.state.items.some(
         (item) =>
-          item.type === itemType && item.owner?.id === id && item.cooldown > 0,
+          item.type === itemType &&
+          item.owner?.id === id &&
+          item.currentCooldown > 0,
       )
     ) {
       this.socket.emit("error", JSON.stringify(ITEM_ON_COOLDOWN));

@@ -38,6 +38,7 @@ describe("Logout Handler", () => {
       coins: 0,
       items: [],
       credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(
@@ -68,6 +69,7 @@ describe("Logout Handler", () => {
         coins: 0,
         items: [],
         credits: 0,
+        health: 100,
       });
       done();
     });
