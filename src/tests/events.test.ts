@@ -12,7 +12,7 @@ describe("Events", () => {
 
     game.tick();
 
-    expect(game.currentEvent.timer).toEqual(29.95);
+    expect(game.currentEvent.timer).toEqual(9.95);
   });
 
   it("should change the state to EVENT if eventTimer is less or equal than 0", () => {
@@ -40,7 +40,7 @@ describe("Events", () => {
 
     expect(checkWinSpy).toHaveBeenCalled();
     expect(game.state.status).toEqual("PLAYING");
-    expect(game.state.eventTimer).toEqual(29.95);
+    expect(game.state.eventTimer).toEqual(119.95);
     expect(game.currentEvent).toEqual(undefined);
   });
 });

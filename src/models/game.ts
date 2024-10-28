@@ -11,8 +11,10 @@ import { RandomNumberEvent } from "../events/randomnumber.event";
 import { Event } from "./event";
 import { logger } from "../logger";
 import { Shop } from "./shop";
+import { ItemFactory } from "../factories/item.factory";
 
-export const EVENT_INTERVAL = 30;
+export const RANDOM_ITEM_SPAWN_INTERVAL = 10;
+export const EVENT_INTERVAL = 2 * 60;
 
 export class Game {
   state: GameState;
@@ -31,6 +33,7 @@ export class Game {
       loops: 0,
       timer: 5 * 60,
       startTimer: 5,
+      itemTimer: 100 / 10,
       finishedTimer: 5,
       eventTimer: EVENT_INTERVAL,
       status: "LOBBY",
@@ -121,6 +124,7 @@ export class Game {
     this.state.status = "LOBBY";
     this.state.startTimer = 5;
     this.state.timer = 0;
+    this.state.itemTimer = 10 * (100 / (100 + this.state.loops));
     this.players = {};
     this.sockets = {};
     this.winTick = 0;
@@ -130,6 +134,7 @@ export class Game {
       loops: 0,
       timer: 5 * 60,
       finishedTimer: 5,
+      itemTimer: 10 * (100 / (100 + this.state.loops)),
       startTimer: 5,
       eventTimer: EVENT_INTERVAL,
       status: "LOBBY",
@@ -203,6 +208,32 @@ export class Game {
         this.state.eventTimer - 1 / this.config.tickRate,
       );
 
+      this.state.itemTimer = Math.max(
+        0,
+        this.state.itemTimer - 1 / this.config.tickRate,
+      );
+
+      if (this.state.itemTimer <= 0) {
+        // random between bomb and coin and wall with ratio of 6:3:1
+        const Number_of_elements = this.state.loops / 10 + 1;
+        for (let i = 0; i < Number_of_elements; i++) {
+          const type =
+            Math.random() < 0.6
+              ? "BOMB"
+              : Math.random() < 0.75
+                ? "COIN"
+                : "WALL";
+          logger.info("Item placing " + type + " .... ");
+          this.state.itemTimer = 10 * (100 / (100 + this.state.loops));
+          ItemFactory.place_one_at_random(this.state.map, type);
+          logger.info("Item " + type + " placed");
+          logger.info(
+            "Loop ratio for timer item " +
+              10 * (100 / (100 + this.state.loops)),
+          );
+        }
+      }
+
       if (this.state.timer <= 0) {
         this.state.status = "FINISHED";
         return;
@@ -241,6 +272,20 @@ export class Game {
 
       this.unitys.forEach((player) => {
         const socket = this.sockets[player.id];
+
+        this.state.items.forEach((item) => {
+          if (player.position) {
+            if (
+              Math.abs(item.coords.x - player.position.y + 0.25) <= 0.75 &&
+              Math.abs(item.coords.y - player.position.x + 0.25) <= 0.75
+            ) {
+              io.emit("item:trigger", JSON.stringify(item.type));
+              item.trigger(player);
+              logger.info(`Player ${player.name} triggered item ${item.type}`);
+            }
+          }
+        });
+
         if (player.health <= 0 && this.state.startPoint) {
           logger.info("Player died");
           player.position = {
@@ -257,16 +302,6 @@ export class Game {
       });
 
       this.state.items.forEach((item) => {
-        this.unitys.forEach((player) => {
-          if (player.position) {
-            if (
-              Math.abs(item.coords.x - player.position?.x) <= 0.3 &&
-              Math.abs(item.coords.y - player.position?.y) <= 0.3
-            ) {
-              item.trigger(player);
-            }
-          }
-        });
         item.update(1 / this.config.tickRate);
       });
 
@@ -297,11 +332,15 @@ export class Game {
       if (this.state.endPoint && this.currentTick - this.winTick > 20) {
         if (
           Math.abs(
-            player.position.x - this.state.endPoint.properties.position.x,
-          ) <= 0.3 &&
+            player.position.x -
+              this.state.endPoint.properties.position.x +
+              0.25,
+          ) <= 0.75 &&
           Math.abs(
-            player.position.y - this.state.endPoint.properties.position.y,
-          ) <= 0.3
+            player.position.y -
+              this.state.endPoint.properties.position.y +
+              0.25,
+          ) <= 0.75
         ) {
           io.emit("win", JSON.stringify(player));
 

@@ -5,7 +5,7 @@ export type PlayerType = "WEB" | "UNITY";
 export type PlayerRole = "Protector" | "Evilman" | "Player";
 export const DEFAULT_PLAYER_SPEED = 10;
 export const DEFAULT_PLAYER_HEALTH = 1;
-export const DEFAULT_CANCEL_COOLDOWN = 10;
+export const DEFAULT_CANCEL_COOLDOWN = 3;
 
 export interface Player {
   id: string;

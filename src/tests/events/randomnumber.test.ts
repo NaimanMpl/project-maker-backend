@@ -38,7 +38,7 @@ describe("RandomNumberEvent", () => {
 
     event.checkWin();
 
-    expect(evilman.credits).toEqual(100);
+    expect(evilman.credits).toEqual(25);
     expect(ioEmitSpy).toHaveBeenCalledWith(
       "event:winner",
       JSON.stringify({
@@ -64,7 +64,7 @@ describe("RandomNumberEvent", () => {
 
     event.checkWin();
 
-    expect(protector.credits).toEqual(100);
+    expect(protector.credits).toEqual(25);
     expect(ioEmitSpy).toHaveBeenCalledWith(
       "event:winner",
       JSON.stringify({
@@ -90,8 +90,8 @@ describe("RandomNumberEvent", () => {
 
     event.checkWin();
 
-    expect(protector.credits).toEqual(50);
-    expect(evilman.credits).toEqual(50);
+    expect(protector.credits).toEqual(10);
+    expect(evilman.credits).toEqual(10);
     expect(ioEmitSpy).toHaveBeenCalledWith(
       "event:winner",
       JSON.stringify({
@@ -116,7 +116,7 @@ describe("RandomNumberEvent", () => {
 
     event.checkWin();
 
-    expect(protector.credits).toEqual(100);
+    expect(protector.credits).toEqual(25);
     expect(ioEmitSpy).toHaveBeenCalledWith(
       "event:winner",
       JSON.stringify({
@@ -141,7 +141,7 @@ describe("RandomNumberEvent", () => {
 
     event.checkWin();
 
-    expect(evilman.credits).toEqual(100);
+    expect(evilman.credits).toEqual(25);
     expect(ioEmitSpy).toHaveBeenCalledWith(
       "event:winner",
       JSON.stringify({

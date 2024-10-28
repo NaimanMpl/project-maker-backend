@@ -6,9 +6,9 @@ export class SlowModeSpell extends Spell {
     super({
       id: 1,
       name: "Slow Mode",
-      cooldown: 30,
+      cooldown: 40,
       description: "Ce sort active le mode ralentissement sur le joueur Unity.",
-      duration: 10,
+      duration: 5,
       type: "Ralentissement",
     });
   }
@@ -25,7 +25,7 @@ export class SlowModeSpell extends Spell {
   }
 
   spellReset(): void {
-    this.duration = 10;
+    this.duration = 5;
     this.currentCooldown = 0;
     this.timer = 0;
   }

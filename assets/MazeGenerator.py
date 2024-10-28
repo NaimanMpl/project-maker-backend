@@ -57,7 +57,7 @@ argparse = argparse.ArgumentParser()
 argparse.add_argument("--width", type=int, default=10, help="Width of the maze")
 argparse.add_argument("--Name", type=str, default="RandomMaze", help="Name of the maze")
 argparse.add_argument(
-    "--crosswalks", type=int, default=20, help="A ratio for number crosswalks"
+    "--crosswalks", type=int, default=30, help="A ratio for number crosswalks"
 )
 argparse.add_argument(
     "--decorations", type=int, default=500, help="Number of decorations"
@@ -98,7 +98,7 @@ def generate_maze(width, height):
 def add_extra_paths(maze):
     height = len(maze)
     width = len(maze[0])
-    for _ in range((width // 2) * (height // 2) // 2):
+    for _ in range(int((width // 2) * (height // 2) // 1.5)):
         x = random.randint(1, width - 2)
         y = random.randint(1, height - 2)
         if maze[y][x] == "0":

@@ -242,7 +242,7 @@ describe("GameLoop", () => {
     game.tick();
 
     expect(game.state.status).toEqual("PLAYING");
-    expect(player.spells[0].currentCooldown).toEqual(29.95);
+    expect(player.spells[0].currentCooldown).toEqual(39.95);
   });
 
   it("should update spell cooldown (Evilman) on next tick.", () => {
@@ -278,7 +278,7 @@ describe("GameLoop", () => {
     game.tick();
 
     expect(game.state.status).toEqual("PLAYING");
-    expect(player.spells[0].currentCooldown).toEqual(29.95);
+    expect(player.spells[0].currentCooldown).toEqual(39.95);
   });
 
   it("should reset the cooldown of a spell", () => {
@@ -319,7 +319,7 @@ describe("GameLoop", () => {
     expect(player.spells[0].currentCooldown).toEqual(0);
 
     slowSpell.cast(unityPlayer);
-    expect(player.spells[0].currentCooldown).toEqual(30);
+    expect(player.spells[0].currentCooldown).toEqual(40);
   });
 
   it("should reset the cooldown of a spell", () => {
@@ -360,7 +360,7 @@ describe("GameLoop", () => {
     expect(player.spells[0].currentCooldown).toEqual(0);
 
     slowSpell.cast(unityPlayer);
-    expect(player.spells[0].currentCooldown).toEqual(30);
+    expect(player.spells[0].currentCooldown).toEqual(40);
   });
 
   it("should decrement timer on next tick.", () => {
@@ -392,14 +392,14 @@ describe("GameLoop", () => {
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
 
-    expect(player.spells[0].duration).toEqual(10);
-    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].duration).toEqual(5);
+    expect(player.spells[0].timer).toEqual(5);
     expect(player.spells[0].active).toEqual(false);
 
     slowSpell.cast(unityPlayer);
     game.tick();
     expect(player.spells[0].active).toEqual(true);
-    expect(player.spells[0].timer).toEqual(9.95);
+    expect(player.spells[0].timer).toEqual(4.95);
   });
 
   it("should decrement timer on next tick.", () => {
@@ -431,14 +431,14 @@ describe("GameLoop", () => {
     game.addSpell(player, slowSpell);
     game.state.status = "PLAYING";
 
-    expect(player.spells[0].duration).toEqual(10);
-    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].duration).toEqual(5);
+    expect(player.spells[0].timer).toEqual(5);
     expect(player.spells[0].active).toEqual(false);
 
     slowSpell.cast(unityPlayer);
     game.tick();
     expect(player.spells[0].active).toEqual(true);
-    expect(player.spells[0].timer).toEqual(9.95);
+    expect(player.spells[0].timer).toEqual(4.95);
   });
 
   it("should reset the timer when duration is over", () => {
@@ -477,13 +477,12 @@ describe("GameLoop", () => {
 
     game.tick();
     expect(player.spells[0].active).toEqual(false);
-    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].timer).toEqual(5);
     expect(unityPlayer.speed).toEqual(10);
 
     game.tick();
     expect(player.spells[0].active).toEqual(false);
-    expect(player.spells[0].timer).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(29.9);
+    expect(player.spells[0].timer).toEqual(5);
   });
 
   it("should update items cooldown on each tick", () => {
@@ -616,7 +615,7 @@ describe("GameLoop", () => {
     expect(player.spells[0].active).toEqual(false);
     expect(player.spells[0].timer).toEqual(2);
     expect(unityPlayer.speed).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(59.95);
+    expect(player.spells[0].currentCooldown).toEqual(29.95);
   });
 
   it("should remake the unity player walk normally", () => {
@@ -659,9 +658,9 @@ describe("GameLoop", () => {
 
     game.tick();
     expect(player.spells[0].active).toEqual(false);
-    expect(player.spells[0].timer).toEqual(10);
+    expect(player.spells[0].timer).toEqual(5);
     expect(unityPlayer.speed).toEqual(10);
-    expect(player.spells[0].currentCooldown).toEqual(39.95);
+    expect(player.spells[0].currentCooldown).toEqual(19.95);
   });
 
   it("should update loop if unity player is in a winnable state", () => {
@@ -730,13 +729,13 @@ describe("GameLoop", () => {
       (spell) => spell.name === "Drunk Mode",
     );
 
-    expect(slowmodeSpell?.duration).toEqual(10);
+    expect(slowmodeSpell?.duration).toEqual(5);
     expect(slowmodeSpell?.currentCooldown).toEqual(0);
     expect(slowmodeSpell?.timer).toEqual(0);
     expect(suddenStopSpell?.duration).toEqual(2);
     expect(suddenStopSpell?.currentCooldown).toEqual(0);
     expect(suddenStopSpell?.timer).toEqual(0);
-    expect(quicknessSpell?.duration).toEqual(10);
+    expect(quicknessSpell?.duration).toEqual(5);
     expect(quicknessSpell?.currentCooldown).toEqual(0);
     expect(quicknessSpell?.timer).toEqual(0);
     expect(drunkmodeSpell?.duration).toEqual(7);
@@ -911,7 +910,7 @@ describe("GameLoop", () => {
     game.tick();
     expect(unityPlayer.vision).toEqual(true);
     expect(player.spells[0].timer).toEqual(7);
-    expect(player.spells[0].currentCooldown).toEqual(29.95);
+    expect(player.spells[0].currentCooldown).toEqual(24.95);
   });
 
   it("should make the player die if his health is under 0", () => {
@@ -939,5 +938,16 @@ describe("GameLoop", () => {
 
     expect(player.cancelCooldown).toEqual(9.95);
     expect(player.credits).toEqual(0.05);
+  });
+
+  it("should generate items when item timer under 0 accordint to the state loops", () => {
+    game.state.status = "PLAYING";
+    game.state.itemTimer = 0;
+
+    game.state.loops = 22;
+
+    game.tick();
+
+    expect(game.state.items).toHaveLength(4);
   });
 });
