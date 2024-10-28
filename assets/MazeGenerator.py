@@ -189,7 +189,7 @@ def add_random_crosswalks(maze, num_crosswalks):
         x = random.randint(1, len(maze[0]) - 2)
         y = random.randint(1, len(maze) - 2)
         # find a random spot for the crosswalk matching patern 1x4 or 4x1
-        if (
+        if ( # horizontal crosswalk
             maze[y][x] == "2"
             and maze[y][x + 1] == "0"
             and maze[y][x + 2] == "0"
@@ -200,10 +200,23 @@ def add_random_crosswalks(maze, num_crosswalks):
             and maze[y - 1][x + 1] == "0"
             and maze[y - 1][x + 2] == "0"
             and maze[y - 1][x + 3] == "2"
+            and maze[y+1][x+3] != "3"
+            and maze[y+1][x+4] != "3"
+            and maze[y+1][x+5] != "3"
+            and maze[y+1][x+6] != "3"
+            and maze[y+1][x+7] != "3"
+            and maze[y+1][x+8] != "3"
+            and maze[y+1][x-1] != "3"
+            and maze[y+1][x-2] != "3"
+            and maze[y+1][x-3] != "3"
+            and maze[y+1][x-4] != "3"
+            and maze[y+1][x-5] != "3"
+            and maze[y+1][x-6] != "3"
+            and maze[y+1][x-7] != "3"
         ):
             maze[y][x + 1] = "3"
             maze[y][x + 2] = "3"
-        elif (
+        elif ( # vertical crosswalk
             maze[y][x] == "2"
             and maze[y + 1][x] == "0"
             and maze[y + 2][x] == "0"
@@ -214,6 +227,19 @@ def add_random_crosswalks(maze, num_crosswalks):
             and maze[y + 1][x - 1] == "0"
             and maze[y + 2][x - 1] == "0"
             and maze[y + 3][x - 1] == "2"
+            and maze[y+3][x+1] != "3"
+            and maze[y+4][x+1] != "3"
+            and maze[y+5][x+1] != "3"
+            and maze[y+6][x+1] != "3"
+            and maze[y+7][x+1] != "3"
+            and maze[y+8][x+1] != "3"
+            and maze[y-1][x+1] != "3"
+            and maze[y-2][x+1] != "3"
+            and maze[y-3][x+1] != "3"
+            and maze[y-4][x+1] != "3"
+            and maze[y-5][x+1] != "3"
+            and maze[y-6][x+1] != "3"
+            and maze[y-7][x+1] != "3"
         ):
             maze[y + 1][x] = "3"
             maze[y + 2][x] = "3"
@@ -402,9 +428,9 @@ def generate_json(maze, map_name):
                 )
             elif maze[i][j] == "3":
                 angle = 1
-                if maze[i - 1][j] == "2" or maze[i + 1][j] == "2":
+                if maze[i - 1][j] == "2" or maze[i + 1][j] == "2" or maze[i-1][j] == "7" or maze[i+1][j] == "7" or maze[i-1][j] == "8" or maze[i+1][j] == "8":
                     angle = 0
-                elif maze[i][j + 1] == "2" or maze[i][j - 1] == "2":
+                elif maze[i][j + 1] == "2" or maze[i][j - 1] == "2" or maze[i][j+1] == "7" or maze[i][j-1] == "7" or maze[i][j+1] == "8" or maze[i][j-1] == "8":
                     angle = 90
 
                 tiles.append(
