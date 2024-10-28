@@ -63,13 +63,15 @@ argparse.add_argument(
     "--decorations", type=int, default=500, help="Number of decorations"
 )
 argparse.add_argument("--ratio", type=int, default=16 / 9, help="Ratio of the maze")
+argparse.add_argument("--space_between_crosswalks", type=int, default=5, help="Space between crosswalks")
 args = argparse.parse_args()
 width = args.width
 height = int(width / args.ratio)
 
+space_between_crosswalks = args.space_between_crosswalks
 map_name = args.Name
 
-num_crosswalks = args.crosswalks * width
+num_crosswalks = args.crosswalks * width * 2
 decorations = 500 * width
 
 def generate_maze(width, height):
@@ -196,8 +198,8 @@ def can_place_horizontal(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 1, x + 2) and maze[y + 1][x + 2] == "0" and
         is_in_bounds(maze, y + 1, x + 3) and maze[y + 1][x + 3] == "2" and
-        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(-3, 9)) and
-        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(-3, 9))
+        all(is_in_bounds(maze, y - i, x - 1) and maze[y + i][x - 1] != "3" for i in range(1, space_between_crosswalks)) and
+        all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(1, space_between_crosswalks))
     )
 
 def can_place_vertical(maze, y, x):
@@ -209,8 +211,8 @@ def can_place_vertical(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 2, x + 1) and maze[y + 2][x + 1] == "0" and
         is_in_bounds(maze, y + 3, x + 1) and maze[y + 3][x + 1] == "2" and
-        all(is_in_bounds(maze, y + i, x - 1) and maze[y + i][x - 1] != "3" for i in range(1, 4)) and
-        all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(3, 9))
+        all(is_in_bounds(maze, y + 1, x - i) and maze[y + 1][x - i] != "3" for i in range(1, space_between_crosswalks)) and
+        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(1, space_between_crosswalks))
     )
 
 def add_random_crosswalks(maze, num_crosswalks):
@@ -554,6 +556,11 @@ def main():
         if tile["type"] == "End":
             end = tile
 
+    # IN CASE OF DEBUGGING
+    # for x in maze:
+    #     for y in x:
+    #         print(y, end="")
+    #     print()
     print(json.dumps({"map": maze, "start": start, "end": end, "unityMap": unity_map}))
 
 
