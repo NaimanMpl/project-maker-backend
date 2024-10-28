@@ -63,7 +63,8 @@ argparse.add_argument(
     "--decorations", type=int, default=500, help="Number of decorations"
 )
 argparse.add_argument("--ratio", type=int, default=16 / 9, help="Ratio of the maze")
-argparse.add_argument("--space_between_crosswalks", type=int, default=5, help="Space between crosswalks")
+argparse.add_argument("--space_between_crosswalks", type=int, default=4, help="Space between crosswalks")
+argparse.add_argument("--debug", type=bool, default=False, help="Debug mode")
 args = argparse.parse_args()
 width = args.width
 height = int(width / args.ratio)
@@ -198,8 +199,7 @@ def can_place_horizontal(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 1, x + 2) and maze[y + 1][x + 2] == "0" and
         is_in_bounds(maze, y + 1, x + 3) and maze[y + 1][x + 3] == "2" and
-        all(is_in_bounds(maze, y - i, x - 1) and maze[y + i][x - 1] != "3" for i in range(1, space_between_crosswalks)) and
-        all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(1, space_between_crosswalks))
+        all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(-space_between_crosswalks, space_between_crosswalks))
     )
 
 def can_place_vertical(maze, y, x):
@@ -211,8 +211,7 @@ def can_place_vertical(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 2, x + 1) and maze[y + 2][x + 1] == "0" and
         is_in_bounds(maze, y + 3, x + 1) and maze[y + 3][x + 1] == "2" and
-        all(is_in_bounds(maze, y + 1, x - i) and maze[y + 1][x - i] != "3" for i in range(1, space_between_crosswalks)) and
-        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(1, space_between_crosswalks))
+        all(is_in_bounds(maze, y + 1 , x + i) and maze[y + 1 ][x + i] != "3" for i in range(-space_between_crosswalks, space_between_crosswalks))
     )
 
 def add_random_crosswalks(maze, num_crosswalks):
@@ -541,8 +540,9 @@ def main():
         maze_str_to_int.append(row_int)
 
     maze = maze_str_to_int
-    save_json_to_file(json.dumps({"map": maze}), "mazeArray")
-    save_json_to_file(maze_json, "map")
+    if not args.debug:
+        save_json_to_file(json.dumps({"map": maze}), "mazeArray")
+        save_json_to_file(maze_json, "map")
 
     unity_map = json.loads(maze_json)
 
@@ -556,12 +556,13 @@ def main():
         if tile["type"] == "End":
             end = tile
 
-    # IN CASE OF DEBUGGING
-    # for x in maze:
-    #     for y in x:
-    #         print(y, end="")
-    #     print()
-    print(json.dumps({"map": maze, "start": start, "end": end, "unityMap": unity_map}))
+    if args.debug:
+        for x in maze:
+            for y in x:
+                print(y, end="")
+            print()
+    else:
+        print(json.dumps({"map": maze, "start": start, "end": end, "unityMap": unity_map}))
 
 
 if __name__ == "__main__":
