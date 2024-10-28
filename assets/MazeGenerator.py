@@ -217,7 +217,6 @@ def add_random_crosswalks(maze, num_crosswalks):
     for _ in range(num_crosswalks):
         x = random.randint(1, len(maze[0]) - 2)
         y = random.randint(1, len(maze) - 2)
-
         if can_place_horizontal(maze, y, x):
             maze[y][x + 1] = "3"
             maze[y][x + 2] = "3"
