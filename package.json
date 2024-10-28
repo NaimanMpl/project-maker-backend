@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "node dist/src/app.js",
     "dev": "tsx watch src/app.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
