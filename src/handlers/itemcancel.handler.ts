@@ -25,6 +25,11 @@ export class ItemCancelHandler extends MessageHandler {
       return;
     }
 
+    if (player.role === "Evilman") {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
+      return;
+    }
+
     if (player.cancelCooldown && player.cancelCooldown > 0) {
       this.socket.emit("error", JSON.stringify(CANCEL_ON_COOLDOWN));
       return;
@@ -51,9 +56,6 @@ export class ItemCancelHandler extends MessageHandler {
     const owner = item.owner;
     this.socket.emit("item:cancel:success", JSON.stringify(owner));
 
-    if (player?.role === "Evilman") {
-      io.to("protectors").emit("item:canceled", JSON.stringify(player));
-    }
     if (player?.role === "Protector") {
       io.to("evilmans").emit("item:canceled", JSON.stringify(player));
     }

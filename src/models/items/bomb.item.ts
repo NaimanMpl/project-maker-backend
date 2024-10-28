@@ -4,11 +4,11 @@ import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
 
 export const PHRASE_PASS: string[] = [
-  "Couper le fil rouge",
-  "Le fil bleu est sûr",
+  "Désactivation",
+  "Désamorçage",
   "LA BETE EST LA",
-  "LA BOMBE EST LA",
-  "C'est maintenant ou jamais",
+  "LA GAME",
+  "Chrono",
 ];
 
 export class Bomb extends Item {
@@ -21,7 +21,7 @@ export class Bomb extends Item {
       name: "Bomb",
       description: "A bomb that kills the player if the player walks on it",
       coords,
-      cooldown: 15,
+      cooldown: 20,
       castingTime: 1,
       duration: 15,
     });

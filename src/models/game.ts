@@ -30,7 +30,7 @@ export class Game {
 
   constructor() {
     this.state = {
-      loops: 100,
+      loops: 0,
       timer: 5 * 60,
       startTimer: 5,
       itemTimer: 100 / 10,

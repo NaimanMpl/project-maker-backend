@@ -940,4 +940,15 @@ describe("GameLoop", () => {
     expect(player.cancelCooldown).toEqual(9.95);
     expect(player.credits).toEqual(0.05);
   });
+
+  it("should generate items when item timer under 0 accordint to the state loops", () => {
+    game.state.status = "PLAYING";
+    game.state.itemTimer = 0;
+
+    game.state.loops = 22;
+
+    game.tick();
+
+    expect(game.state.items).toHaveLength(4);
+  });
 });
