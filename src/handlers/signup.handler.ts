@@ -6,6 +6,7 @@ import {
   USERNAME_ALREADY_TAKEN,
 } from "../models/gameerror";
 import {
+  DEFAULT_CANCEL_COOLDOWN,
   DEFAULT_PLAYER_HEALTH,
   DEFAULT_PLAYER_SPEED,
   Player,
@@ -45,6 +46,7 @@ export class SignUpHandler extends MessageHandler {
       credits: 0,
       items: [],
       specialItems: [],
+      cancelCooldown: DEFAULT_CANCEL_COOLDOWN,
     };
 
     if (player.type === "UNITY") {

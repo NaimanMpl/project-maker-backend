@@ -46,6 +46,7 @@ describe("Item Handler", () => {
     serverSocket.on("item:cancel", () => {
       expect(game.state.items).toEqual([]);
       expect(ioEmitSpy).toHaveBeenCalledWith("evilmans");
+      expect(game.getPlayer("1").cancelCooldown).toEqual(10);
       done();
     });
   });
@@ -127,6 +128,26 @@ describe("Item Handler", () => {
       expect(error).toEqual({
         type: "UNAUTHORIZED",
         message: "You cannot perform this action.",
+      });
+      done();
+    });
+  });
+
+  it("should error if the player has a cancel cooldown", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, blind: false, cancelCooldown: 10 });
+    clientSocket.emit(
+      "item:cancel",
+      JSON.stringify({
+        id: "1",
+        itemId: "1",
+      }),
+    );
+
+    clientSocket.on("error", (msg) => {
+      const error: GameError = JSON.parse(msg);
+      expect(error).toEqual({
+        type: "CANCEL_ON_COOLDOWN",
+        message: "The cancel item is on cooldown.",
       });
       done();
     });

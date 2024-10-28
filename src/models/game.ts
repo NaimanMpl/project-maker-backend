@@ -272,6 +272,12 @@ export class Game {
 
       this.webplayers.forEach((player) => {
         player.credits += 1 / this.config.tickRate;
+        if (player.cancelCooldown && player.cancelCooldown > 0) {
+          player.cancelCooldown = Math.max(
+            0,
+            player.cancelCooldown - 1 / this.config.tickRate,
+          );
+        }
         if (player.specialItems) {
           player.specialItems.forEach((item) => {
             item.update(1 / this.config.tickRate);

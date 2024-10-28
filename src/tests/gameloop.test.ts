@@ -930,4 +930,14 @@ describe("GameLoop", () => {
       JSON.stringify({ x: 0, y: 0, z: 0 }),
     );
   });
+
+  it("should update the player credits and cancelCooldown", () => {
+    game.addPlayer({ ...PLAYER_MOCK, cancelCooldown: 10 });
+    game.state.status = "PLAYING";
+    const player = game.getPlayer("1");
+    game.tick();
+
+    expect(player.cancelCooldown).toEqual(9.95);
+    expect(player.credits).toEqual(0.05);
+  });
 });
