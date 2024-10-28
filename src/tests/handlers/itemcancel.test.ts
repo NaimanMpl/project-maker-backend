@@ -4,6 +4,8 @@ import { game, io, server } from "../../server";
 import { PLAYER_MOCK } from "../__fixtures__/player";
 import { GameError } from "../../models/gameerror";
 import { Coin } from "../../models/items/coin.item";
+import { Bomb } from "../../models/items/bomb.item";
+import { waitForServer } from "../utils";
 
 describe("Item Handler", () => {
   let clientSocket: ClientSocket;
@@ -49,6 +51,63 @@ describe("Item Handler", () => {
       expect(game.getPlayer("1").cancelCooldown).toEqual(10);
       done();
     });
+  });
+
+  it("should error if the item is a bomb and the password is incorrect", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
+
+    const bomb = new Bomb({ x: 0, y: 0, z: 0 });
+    bomb.owner = game.getPlayer("1");
+    game.state.items = [bomb];
+
+    clientSocket.emit(
+      "item:cancel",
+      JSON.stringify({
+        id: "1",
+        itemId: "123456789",
+      }),
+    );
+
+    clientSocket.on("error", (msg) => {
+      const error: GameError = JSON.parse(msg);
+      expect(error).toEqual({
+        type: "WRONG_PASSWORD",
+        message: "The password is incorrect.",
+      });
+      expect(game.getPlayer("1").blind).toEqual(true);
+    });
+
+    clientSocket.on("player:unblind", () => {
+      expect(game.getPlayer("1").blind).toEqual(false);
+      done();
+    });
+  });
+
+  it("should remove the bomb if the password is correct", async () => {
+    game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
+
+    const ioEmitSpy = jest.spyOn(io, "to");
+    const bomb = new Bomb({ x: 0, y: 0, z: 0 });
+    bomb.password = "secret";
+    bomb.owner = game.getPlayer("1");
+    game.state.items = [bomb];
+
+    clientSocket.emit(
+      "item:cancel",
+      JSON.stringify({
+        id: "1",
+        itemId: "123456789",
+        password: "secret",
+      }),
+    );
+
+    game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
+
+    await waitForServer(serverSocket, "item:cancel");
+
+    expect(game.state.items).toEqual([]);
+    expect(ioEmitSpy).toHaveBeenCalledWith("evilmans");
+    expect(game.getPlayer("1").cancelCooldown).toEqual(10);
   });
 
   it("should remove item of game state and broadcast to protectors if owner is evilman", (done) => {

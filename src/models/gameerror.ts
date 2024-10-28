@@ -48,6 +48,11 @@ export const UNKNOWN_ITEM: GameError = {
   message: "The following item is unknown.",
 };
 
+export const WRONG_PASSWORD: GameError = {
+  type: "WRONG_PASSWORD",
+  message: "The password is incorrect.",
+};
+
 export const NO_ENOUGH_CREDITS: GameError = {
   type: "NO_ENOUGH_CREDITS",
   message: "You don't have enough credits.",
