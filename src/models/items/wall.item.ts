@@ -9,7 +9,7 @@ export class Wall extends Item {
       id: uuid4(),
       type: "WALL",
       name: "Wall",
-      description: " A wall that block the path of the player",
+      description: "A wall that block the path of the player",
       coords,
       cooldown: 10,
       castingTime: 1,
