@@ -49,6 +49,11 @@ export class ItemHandler extends MessageHandler {
       return;
     }
 
+    if (!player.items.find((item) => item.type === itemType)) {
+      this.socket.emit("error", JSON.stringify(UNKNOWN_ITEM));
+      return;
+    }
+
     item.owner = player;
 
     if (
