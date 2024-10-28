@@ -38,12 +38,31 @@ export const ITEM_ON_COOLDOWN: GameError = {
   message: "The item is on cooldown.",
 };
 
+export const CANCEL_ON_COOLDOWN: GameError = {
+  type: "CANCEL_ON_COOLDOWN",
+  message: "The cancel item is on cooldown.",
+};
+
 export const UNKNOWN_ITEM: GameError = {
   type: "UNKNOWN_ITEM",
   message: "The following item is unknown.",
 };
 
+export const WRONG_PASSWORD: GameError = {
+  type: "WRONG_PASSWORD",
+  message: "The password is incorrect.",
+};
+
+export const NO_ENOUGH_CREDITS: GameError = {
+  type: "NO_ENOUGH_CREDITS",
+  message: "You don't have enough credits.",
+};
+
 export const DEV_MODE_NOT_ENABLED = {
   type: "DEV_MODE_NOT_ENABLED",
   message: "The development mode is not enabled.",
+};
+export const NO_EVENT = {
+  type: "NO_EVENT",
+  message: "There is no event currently active.",
 };

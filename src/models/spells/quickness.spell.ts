@@ -1,20 +1,20 @@
 import { DEFAULT_PLAYER_SPEED, Player } from "../player";
 import { Spell } from "../spell";
 
-export class SlowModeSpell extends Spell {
+export class QuicknessSpell extends Spell {
   constructor() {
     super({
-      id: 1,
-      name: "Slow Mode",
-      cooldown: 40,
-      description: "Ce sort active le mode ralentissement sur le joueur Unity.",
+      id: 3,
+      name: "Quickness",
+      cooldown: 20,
+      description: "Ce sort permet d'accélérer la vitesse du joueur Unity.",
       duration: 5,
-      type: "Ralentissement",
+      type: "Rapidité",
     });
   }
 
   cast(player: Player): void {
-    player.speed = 5;
+    player.speed = 15;
     this.active = true;
     this.currentCooldown = this.cooldown;
     this.timer = this.duration;

@@ -5,7 +5,13 @@ import {
   GAME_ALREADY_STARTED,
   USERNAME_ALREADY_TAKEN,
 } from "../models/gameerror";
-import { DEFAULT_PLAYER_SPEED, Player, PlayerType } from "../models/player";
+import {
+  DEFAULT_CANCEL_COOLDOWN,
+  DEFAULT_PLAYER_HEALTH,
+  DEFAULT_PLAYER_SPEED,
+  Player,
+  PlayerType,
+} from "../models/player";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
 
@@ -33,10 +39,14 @@ export class SignUpHandler extends MessageHandler {
       id: uuidv4(),
       name,
       type,
+      health: DEFAULT_PLAYER_HEALTH,
       spells: [],
       speed: 0,
       coins: 0,
+      credits: 0,
       items: [],
+      specialItems: [],
+      cancelCooldown: DEFAULT_CANCEL_COOLDOWN,
     };
 
     if (player.type === "UNITY") {
@@ -47,6 +57,7 @@ export class SignUpHandler extends MessageHandler {
     game.sockets[player.id] = this.socket;
 
     this.socket.emit("signupsuccess", JSON.stringify(player));
+    io.to("lobby").emit("signup:newplayer", JSON.stringify(player));
     this.socket.join("lobby");
     io.to("lobby").emit(
       "newplayer",

@@ -1,9 +1,12 @@
 import { Socket } from "socket.io";
+import { SpellEnum, SpellFactory } from "../factories/spell.factory";
 import { logger } from "../logger";
 import { UNAUTHORIZED, UNITY_PLAYER_NOT_FOUND } from "../models/gameerror";
+import { Coin } from "../models/items/coin.item";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
-import { Coin } from "../models/items/coin.item";
+import { Wall } from "../models/items/wall.item";
+import { Bomb } from "../models/items/bomb.item";
 
 export class StartHandler extends MessageHandler {
   constructor(socket: Socket) {
@@ -35,17 +38,25 @@ export class StartHandler extends MessageHandler {
     const half = Math.ceil(shuffledPlayers.length / 2);
 
     // Fill evilmans
-    shuffledPlayers.slice(0, half).forEach((protector) => {
-      const player = game.players[protector.id];
-      const socket = game.sockets[protector.id];
+    shuffledPlayers.slice(0, half).forEach((evilman) => {
+      const player = game.players[evilman.id];
+      const socket = game.sockets[evilman.id];
       if (player) {
         game.players[player.id] = {
           ...player,
-          role: "Protector",
-          items: [new Coin({ x: 0, y: 0, z: 0 })],
+          role: "Evilman",
+          items: [
+            new Wall({ x: 0, y: 0, z: 0 }),
+            new Bomb({ x: 0, y: 0, z: 0 }),
+          ],
+          spells: [
+            SpellFactory.createSpell(SpellEnum.SlowMode),
+            SpellFactory.createSpell(SpellEnum.SuddenStop),
+            SpellFactory.createSpell(SpellEnum.DrunkMode),
+          ],
         };
       }
-      socket?.join("protectors");
+      socket?.join("evilmans");
     });
 
     // Fill protectors
@@ -55,11 +66,12 @@ export class StartHandler extends MessageHandler {
       if (player) {
         game.players[player.id] = {
           ...player,
-          role: "Evilman",
+          role: "Protector",
           items: [new Coin({ x: 0, y: 0, z: 0 })],
+          spells: [SpellFactory.createSpell(SpellEnum.Quickness)],
         };
       }
-      socket?.join("evilmans");
+      socket?.join("protectors");
     });
 
     game.state.status = "STARTING";
@@ -70,6 +82,10 @@ export class StartHandler extends MessageHandler {
       JSON.stringify({
         player,
       }),
+    );
+    io.to("lobby").emit(
+      "newplayer",
+      JSON.stringify(Object.values(game.players)),
     );
     logger.info(`${player.name} a lancé la partie. Lancement du décompte`);
   }

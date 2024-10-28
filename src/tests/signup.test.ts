@@ -1,7 +1,7 @@
 import { Socket as ServerSocket } from "socket.io";
 import ioc, { Socket as ClientSocket } from "socket.io-client";
-import { Player } from "../models/player";
 import { game, io, server } from "../server";
+import { waitForServer } from "./utils";
 
 describe("SignUp Event", () => {
   let clientSocket: ClientSocket;
@@ -17,18 +17,21 @@ describe("SignUp Event", () => {
     });
   });
 
+  beforeEach(() => {
+    game.reset();
+  });
+
   afterEach(() => {
     clientSocket.removeAllListeners();
   });
 
   afterAll((done) => {
-    game.reset();
     clientSocket.close();
     server.close(done);
     io.close();
   });
 
-  it("should signup a new user if state is LOBBY", (done) => {
+  it("should signup a new user if state is LOBBY", async () => {
     clientSocket.emit(
       "signup",
       JSON.stringify({
@@ -37,23 +40,9 @@ describe("SignUp Event", () => {
       }),
     );
 
-    serverSocket.on("signup", () => {
-      expect(game.players).toEqual({
-        "123456789": {
-          id: "123456789",
-          name: "John",
-          type: "WEB",
-          spells: [],
-          speed: 0,
-          coins: 0,
-          items: [],
-        },
-      });
-    });
-
-    clientSocket.on("signupsuccess", (msg) => {
-      const player: Player = JSON.parse(msg);
-      expect(player).toEqual({
+    await waitForServer(serverSocket, "signup");
+    expect(game.players).toEqual({
+      "123456789": {
         id: "123456789",
         name: "John",
         type: "WEB",
@@ -61,12 +50,16 @@ describe("SignUp Event", () => {
         speed: 0,
         coins: 0,
         items: [],
-      });
-      done();
+        credits: 0,
+        specialItems: [],
+        health: 1,
+        cancelCooldown: 3,
+      },
     });
   });
 
   it("should not signup a new user if state is not LOBBY and send an error", (done) => {
+    game.state.status = "PLAYING";
     clientSocket.emit(
       "signup",
       JSON.stringify({
@@ -74,8 +67,6 @@ describe("SignUp Event", () => {
         type: "WEB",
       }),
     );
-
-    game.state.status = "PLAYING";
 
     clientSocket.on("error", (error) => {
       expect(error).toEqual(
@@ -99,6 +90,8 @@ describe("SignUp Event", () => {
       speed: 0,
       coins: 0,
       items: [],
+      credits: 0,
+      health: 100,
     });
 
     clientSocket.emit(

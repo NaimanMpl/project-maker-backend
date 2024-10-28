@@ -6,7 +6,7 @@ export class SuddenStopSpell extends Spell {
     super({
       id: 2,
       name: "Sudden Stop",
-      cooldown: 60,
+      cooldown: 30,
       description: "Ce sort arrête brutalement le joueur Unity.",
       duration: 2,
       type: "Arrêt",
@@ -22,7 +22,6 @@ export class SuddenStopSpell extends Spell {
 
   reset(player: Player) {
     player.speed = DEFAULT_PLAYER_SPEED;
-    this.currentCooldown = this.cooldown;
   }
 
   spellReset(): void {

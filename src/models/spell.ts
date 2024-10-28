@@ -48,7 +48,7 @@ export abstract class Spell {
   abstract reset(player: Player): void;
 
   update(player: Player): void {
-    if (this.currentCooldown > 0 && this.active) {
+    if (this.currentCooldown > 0) {
       this.currentCooldown -= 1 / game.config.tickRate;
 
       if (this.currentCooldown <= 0) {
@@ -56,17 +56,15 @@ export abstract class Spell {
       }
     }
 
-    if (!this.active) {
-      return;
-    }
+    if (this.active) {
+      if (this.duration && this.timer) {
+        this.timer -= 1 / game.config.tickRate;
 
-    if (this.duration && this.timer) {
-      this.timer -= 1 / game.config.tickRate;
-
-      if (this.timer <= 0) {
-        this.active = false;
-        this.timer = this.duration;
-        this.reset(player);
+        if (this.timer <= 0) {
+          this.active = false;
+          this.timer = this.duration;
+          this.reset(player);
+        }
       }
     }
   }

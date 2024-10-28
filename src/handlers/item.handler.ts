@@ -7,6 +7,7 @@ import { ItemFactory } from "../factories/item.factory";
 import {
   ITEM_ON_COOLDOWN,
   NOT_A_PLAYER,
+  UNAUTHORIZED,
   UNKNOWN_ITEM,
 } from "../models/gameerror";
 
@@ -32,6 +33,11 @@ export class ItemHandler extends MessageHandler {
       return;
     }
 
+    if (player.blind) {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
+      return;
+    }
+
     const item = ItemFactory.createItem({
       category: itemType as ItemCategories,
       coords: { x, y, z: 0 },
@@ -43,12 +49,19 @@ export class ItemHandler extends MessageHandler {
       return;
     }
 
+    if (!player.items.find((item) => item.type === itemType)) {
+      this.socket.emit("error", JSON.stringify(UNKNOWN_ITEM));
+      return;
+    }
+
     item.owner = player;
 
     if (
       game.state.items.some(
         (item) =>
-          item.type === itemType && item.owner?.id === id && item.cooldown > 0,
+          item.type === itemType &&
+          item.owner?.id === id &&
+          item.currentCooldown > 0,
       )
     ) {
       this.socket.emit("error", JSON.stringify(ITEM_ON_COOLDOWN));
@@ -59,6 +72,7 @@ export class ItemHandler extends MessageHandler {
     }
     logger.info(`Le joueur ${player.name} a activé l'item ${item.type}`);
     item.place();
+    item.currentCooldown = item.cooldown;
     io.emit("newitem", JSON.stringify(item));
   }
 }

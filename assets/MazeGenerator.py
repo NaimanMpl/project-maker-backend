@@ -98,7 +98,7 @@ def generate_maze(width, height):
 def add_extra_paths(maze):
     height = len(maze)
     width = len(maze[0])
-    for _ in range((width // 2) * (height // 2) // 2):
+    for _ in range(int((width // 2) * (height // 2) // 1.5)):
         x = random.randint(1, width - 2)
         y = random.randint(1, height - 2)
         if maze[y][x] == "0":
