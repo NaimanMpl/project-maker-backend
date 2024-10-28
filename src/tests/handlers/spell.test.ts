@@ -142,7 +142,7 @@ describe("Spell", () => {
     );
 
     serverSocket.on("cast:spell", () => {
-      expect(player.spells[0].currentCooldown).toEqual(30);
+      expect(player.spells[0].currentCooldown).toEqual(40);
       expect(player.spells[0].active).toEqual(true);
       done();
     });

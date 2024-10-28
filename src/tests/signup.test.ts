@@ -53,7 +53,7 @@ describe("SignUp Event", () => {
         credits: 0,
         specialItems: [],
         health: 1,
-        cancelCooldown: 10,
+        cancelCooldown: 3,
       },
     });
   });

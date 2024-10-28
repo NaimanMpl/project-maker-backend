@@ -29,30 +29,6 @@ describe("Item Handler", () => {
     game.reset();
   });
 
-  it("should remove item of game state and broadcast to evilmans if owner is protector", (done) => {
-    game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
-    const ioEmitSpy = jest.spyOn(io, "to");
-
-    const coin = new Coin({ x: 0, y: 0, z: 0 });
-    coin.owner = game.getPlayer("1");
-    game.state.items = [coin];
-
-    clientSocket.emit(
-      "item:cancel",
-      JSON.stringify({
-        id: "1",
-        itemId: "123456789",
-      }),
-    );
-
-    serverSocket.on("item:cancel", () => {
-      expect(game.state.items).toEqual([]);
-      expect(ioEmitSpy).toHaveBeenCalledWith("evilmans");
-      expect(game.getPlayer("1").cancelCooldown).toEqual(10);
-      done();
-    });
-  });
-
   it("should error if the item is a bomb and the password is incorrect", (done) => {
     game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
 
@@ -107,15 +83,15 @@ describe("Item Handler", () => {
 
     expect(game.state.items).toEqual([]);
     expect(ioEmitSpy).toHaveBeenCalledWith("evilmans");
-    expect(game.getPlayer("1").cancelCooldown).toEqual(10);
+    expect(game.getPlayer("1").cancelCooldown).toEqual(3);
   });
 
-  it("should remove item of game state and broadcast to protectors if owner is evilman", (done) => {
+  it("should remove item of game state and broadcast to evilmans", (done) => {
     const ioEmitSpy = jest.spyOn(io, "to");
-    game.addPlayer({ ...PLAYER_MOCK, role: "Evilman" });
+    game.addPlayer({ ...PLAYER_MOCK, role: "Protector" });
 
     const coin = new Coin({ x: 0, y: 0, z: 0 });
-    coin.owner = game.getPlayer("1");
+    coin.owner = { ...PLAYER_MOCK, role: "Evilman" };
     game.state.items = [coin];
 
     clientSocket.emit(
@@ -128,7 +104,7 @@ describe("Item Handler", () => {
 
     serverSocket.on("item:cancel", () => {
       expect(game.state.items).toEqual([]);
-      expect(ioEmitSpy).toHaveBeenCalledWith("protectors");
+      expect(ioEmitSpy).toHaveBeenCalledWith("evilmans");
       done();
     });
   });
@@ -148,6 +124,32 @@ describe("Item Handler", () => {
       expect(error).toEqual({
         type: "UNKNOWN_ITEM",
         message: "The following item is unknown.",
+      });
+      done();
+    });
+  });
+
+  it("should error if player is an evilman", (done) => {
+    game.addPlayer({ ...PLAYER_MOCK, role: "Evilman" });
+
+    const coin = new Coin({ x: 0, y: 0, z: 0 });
+    coin.id = "1";
+    coin.owner = { ...PLAYER_MOCK, role: "Evilman" };
+    game.state.items = [coin];
+
+    clientSocket.emit(
+      "item:cancel",
+      JSON.stringify({
+        id: "1",
+        itemId: "1",
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      expect(error).toEqual({
+        type: "UNAUTHORIZED",
+        message: "You cannot perform this action.",
       });
       done();
     });
