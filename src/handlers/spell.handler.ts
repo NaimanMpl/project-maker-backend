@@ -29,6 +29,11 @@ export class SpellHandler extends MessageHandler {
       return;
     }
 
+    if (player.blind) {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
+      return;
+    }
+
     if (game.unitys.length === 0) {
       this.socket.emit("error", JSON.stringify(UNITY_PLAYER_NOT_FOUND));
       return;

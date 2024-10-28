@@ -185,4 +185,42 @@ describe("Spell", () => {
       done();
     });
   });
+
+  it("should error if the player is blind", (done) => {
+    game.state.status = "PLAYING";
+
+    const player: Player = {
+      id: "1",
+      name: "John",
+      type: "WEB",
+      spells: [],
+      coins: 0,
+      items: [],
+      credits: 0,
+      health: 100,
+      blind: true,
+    };
+
+    const slowSpell = SpellFactory.createSpell(SpellEnum.SlowMode);
+    game.addSpell(player, slowSpell);
+    game.addPlayer(player);
+
+    clientSocket.emit(
+      "cast:spell",
+      JSON.stringify({
+        playerId: "1",
+        id: 0,
+        spell: slowSpell,
+      }),
+    );
+
+    clientSocket.on("error", (message) => {
+      const error: GameError = JSON.parse(message);
+      expect(error).toEqual({
+        type: "UNAUTHORIZED",
+        message: "You cannot perform this action.",
+      });
+      done();
+    });
+  });
 });

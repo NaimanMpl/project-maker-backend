@@ -1,4 +1,4 @@
-import { NOT_A_PLAYER, UNKNOWN_ITEM } from "../models/gameerror";
+import { NOT_A_PLAYER, UNAUTHORIZED, UNKNOWN_ITEM } from "../models/gameerror";
 import { game, io } from "../server";
 import { MessageHandler } from "./handler";
 
@@ -9,6 +9,11 @@ export class ItemCancelHandler extends MessageHandler {
 
     if (!player) {
       this.socket.emit("error", JSON.stringify(NOT_A_PLAYER));
+      return;
+    }
+
+    if (player.blind) {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
       return;
     }
 

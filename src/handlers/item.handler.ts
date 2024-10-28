@@ -7,6 +7,7 @@ import { ItemFactory } from "../factories/item.factory";
 import {
   ITEM_ON_COOLDOWN,
   NOT_A_PLAYER,
+  UNAUTHORIZED,
   UNKNOWN_ITEM,
 } from "../models/gameerror";
 
@@ -29,6 +30,11 @@ export class ItemHandler extends MessageHandler {
 
     if (!player) {
       this.socket.emit("error", JSON.stringify(NOT_A_PLAYER));
+      return;
+    }
+
+    if (player.blind) {
+      this.socket.emit("error", JSON.stringify(UNAUTHORIZED));
       return;
     }
 
