@@ -21,7 +21,7 @@ export class RandomNumberEvent extends Event {
     const { min, max } = options;
     super({
       type: "RANDOM_NUMBER",
-      timeLimit: 30,
+      timeLimit: 10,
       description: `Choisis un nombre entre ${min} et ${max}, l'équipe qui se rapproche le plus du nombre aléatoire remporte des crédits`,
     });
     this.randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
@@ -77,17 +77,17 @@ export class RandomNumberEvent extends Event {
     switch (winner) {
       case "Both":
         game.webplayers.forEach((player) => {
-          player.credits += 50;
+          player.credits += 10;
         });
         break;
       case "Evilman":
         game.evilmans.forEach((evilman) => {
-          evilman.credits += 100;
+          evilman.credits += 25;
         });
         break;
       case "Protector":
         game.protectors.forEach((protector) => {
-          protector.credits += 100;
+          protector.credits += 25;
         });
         break;
     }

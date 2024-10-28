@@ -6,7 +6,7 @@ export class DrunkModeSpell extends Spell {
     super({
       id: 3,
       name: "Drunk Mode",
-      cooldown: 30,
+      cooldown: 25,
       description: "Ce sort rend ivre temporairement le joueur Unity.",
       duration: 7,
       type: "Ivresse",

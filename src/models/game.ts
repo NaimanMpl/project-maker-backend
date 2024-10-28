@@ -13,8 +13,8 @@ import { logger } from "../logger";
 import { Shop } from "./shop";
 import { ItemFactory } from "../factories/item.factory";
 
-export const EVENT_INTERVAL = 30;
 export const RANDOM_ITEM_SPAWN_INTERVAL = 10;
+export const EVENT_INTERVAL = 2 * 60;
 
 export class Game {
   state: GameState;

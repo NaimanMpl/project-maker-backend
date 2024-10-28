@@ -12,7 +12,7 @@ export class FreezeItem extends Item {
       name: "Gel",
       description: "Gel l'équipe adverse pendant 5 secondes.",
       coords: { x: 0, y: 0, z: 0 },
-      cooldown: 30,
+      cooldown: 60,
       castingTime: 1,
       duration: 5,
     });
