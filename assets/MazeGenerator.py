@@ -184,67 +184,46 @@ def add_sidewalks(maze):
     return maze
 
 
+def is_in_bounds(maze, y, x):
+    return 0 <= y < len(maze) and 0 <= x < len(maze[y])
+
+def can_place_horizontal(maze, y, x):
+    return (
+        is_in_bounds(maze, y, x) and maze[y][x] == "2" and
+        is_in_bounds(maze, y, x + 1) and maze[y][x + 1] == "0" and
+        is_in_bounds(maze, y, x + 2) and maze[y][x + 2] == "0" and
+        is_in_bounds(maze, y, x + 3) and maze[y][x + 3] == "2" and
+        is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
+        is_in_bounds(maze, y + 1, x + 2) and maze[y + 1][x + 2] == "0" and
+        is_in_bounds(maze, y + 1, x + 3) and maze[y + 1][x + 3] == "2" and
+        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(-3, 9)) and
+        all(is_in_bounds(maze, y + 1, x + i) and maze[y + 1][x + i] != "3" for i in range(-3, 9))
+    )
+
+def can_place_vertical(maze, y, x):
+    return (
+        is_in_bounds(maze, y, x) and maze[y][x] == "2" and
+        is_in_bounds(maze, y + 1, x) and maze[y + 1][x] == "0" and
+        is_in_bounds(maze, y + 2, x) and maze[y + 2][x] == "0" and
+        is_in_bounds(maze, y + 3, x) and maze[y + 3][x] == "2" and
+        is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
+        is_in_bounds(maze, y + 2, x + 1) and maze[y + 2][x + 1] == "0" and
+        is_in_bounds(maze, y + 3, x + 1) and maze[y + 3][x + 1] == "2" and
+        all(is_in_bounds(maze, y + i, x - 1) and maze[y + i][x - 1] != "3" for i in range(1, 4)) and
+        all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(3, 9))
+    )
+
 def add_random_crosswalks(maze, num_crosswalks):
     for _ in range(num_crosswalks):
         x = random.randint(1, len(maze[0]) - 2)
         y = random.randint(1, len(maze) - 2)
-        # find a random spot for the crosswalk matching patern 1x4 or 4x1
-        if ( # horizontal crosswalk
-            maze[y][x] == "2"
-            and maze[y][x + 1] == "0"
-            and maze[y][x + 2] == "0"
-            and maze[y][x + 3] == "2"
-            and maze[y + 1][x + 1] == "0"
-            and maze[y + 1][x + 2] == "0"
-            and maze[y + 1][x + 3] == "2"
-            and maze[y - 1][x + 1] == "0"
-            and maze[y - 1][x + 2] == "0"
-            and maze[y - 1][x + 3] == "2"
-            and maze[y+1][x+3] != "3"
-            and maze[y+1][x+4] != "3"
-            and maze[y+1][x+5] != "3"
-            and maze[y+1][x+6] != "3"
-            and maze[y+1][x+7] != "3"
-            and maze[y+1][x+8] != "3"
-            and maze[y+1][x-1] != "3"
-            and maze[y+1][x-2] != "3"
-            and maze[y+1][x-3] != "3"
-            and maze[y+1][x-4] != "3"
-            and maze[y+1][x-5] != "3"
-            and maze[y+1][x-6] != "3"
-            and maze[y+1][x-7] != "3"
-        ):
+        if can_place_horizontal(maze, y, x):
             maze[y][x + 1] = "3"
             maze[y][x + 2] = "3"
-        elif ( # vertical crosswalk
-            maze[y][x] == "2"
-            and maze[y + 1][x] == "0"
-            and maze[y + 2][x] == "0"
-            and maze[y + 3][x] == "2"
-            and maze[y + 1][x + 1] == "0"
-            and maze[y + 2][x + 1] == "0"
-            and maze[y + 3][x + 1] == "2"
-            and maze[y + 1][x - 1] == "0"
-            and maze[y + 2][x - 1] == "0"
-            and maze[y + 3][x - 1] == "2"
-            and maze[y+3][x+1] != "3"
-            and maze[y+4][x+1] != "3"
-            and maze[y+5][x+1] != "3"
-            and maze[y+6][x+1] != "3"
-            and maze[y+7][x+1] != "3"
-            and maze[y+8][x+1] != "3"
-            and maze[y-1][x+1] != "3"
-            and maze[y-2][x+1] != "3"
-            and maze[y-3][x+1] != "3"
-            and maze[y-4][x+1] != "3"
-            and maze[y-5][x+1] != "3"
-            and maze[y-6][x+1] != "3"
-            and maze[y-7][x+1] != "3"
-        ):
+        elif can_place_vertical(maze, y, x):
             maze[y + 1][x] = "3"
             maze[y + 2][x] = "3"
     return maze
-
 
 def check_if_neighboor_is_crosswalk_or_sidewalk(maze, x, y):
     if (
