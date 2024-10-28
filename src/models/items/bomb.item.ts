@@ -1,3 +1,4 @@
+import { game } from "../../server";
 import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
@@ -27,6 +28,7 @@ export class Bomb extends Item {
 
   trigger(player: Player): void {
     player.health -= 1;
+    game.state.timer -= 2;
     this.destroy();
   }
 }

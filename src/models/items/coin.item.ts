@@ -1,3 +1,4 @@
+import { io } from "../../server";
 import { Player } from "../player";
 import { Item } from "./item";
 import { v4 as uuid4 } from "uuid";
@@ -12,6 +13,7 @@ export class Coin extends Item {
       coords,
       cooldown: 0,
       castingTime: 1,
+      duration: 30,
     });
   }
 
@@ -26,5 +28,9 @@ export class Coin extends Item {
 
   trigger(player: Player): void {
     player.coins += 1;
+    // cast a speedboost spell
+    io.to("unitys").emit("item:trigger", "Coin");
+    console.log("Coin triggered");
+    this.destroy();
   }
 }

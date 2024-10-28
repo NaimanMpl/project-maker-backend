@@ -13,6 +13,7 @@ export interface GameState {
   status: GameStatus;
   timer: number;
   startTimer: number;
+  itemTimer: number;
   finishedTimer: number;
   eventTimer: number;
   loops: number;
