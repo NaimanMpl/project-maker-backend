@@ -53,6 +53,7 @@ export abstract class Spell {
 
       if (this.currentCooldown <= 0) {
         this.currentCooldown = 0;
+        this.active = false;
       }
     }
 
