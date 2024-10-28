@@ -12,7 +12,7 @@ import { Event } from "./event";
 import { logger } from "../logger";
 import { Shop } from "./shop";
 
-export const EVENT_INTERVAL = 30;
+export const EVENT_INTERVAL = 2 * 60;
 
 export class Game {
   state: GameState;

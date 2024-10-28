@@ -25,10 +25,10 @@ export class ItemCancelHandler extends MessageHandler {
     const owner = item.owner;
     this.socket.emit("item:cancel:success", JSON.stringify(owner));
 
-    if (owner?.role === "Evilman") {
+    if (player?.role === "Evilman") {
       io.to("protectors").emit("item:canceled", JSON.stringify(player));
     }
-    if (owner?.role === "Protector") {
+    if (player?.role === "Protector") {
       io.to("evilmans").emit("item:canceled", JSON.stringify(player));
     }
 

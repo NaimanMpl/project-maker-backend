@@ -6,9 +6,9 @@ export class QuicknessSpell extends Spell {
     super({
       id: 3,
       name: "Quickness",
-      cooldown: 40,
+      cooldown: 20,
       description: "Ce sort permet d'accélérer la vitesse du joueur Unity.",
-      duration: 10,
+      duration: 5,
       type: "Rapidité",
     });
   }
@@ -25,7 +25,7 @@ export class QuicknessSpell extends Spell {
   }
 
   spellReset(): void {
-    this.duration = 10;
+    this.duration = 5;
     this.currentCooldown = 0;
     this.timer = 0;
   }
