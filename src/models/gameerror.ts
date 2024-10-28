@@ -38,6 +38,11 @@ export const ITEM_ON_COOLDOWN: GameError = {
   message: "The item is on cooldown.",
 };
 
+export const CANCEL_ON_COOLDOWN: GameError = {
+  type: "CANCEL_ON_COOLDOWN",
+  message: "The cancel item is on cooldown.",
+};
+
 export const UNKNOWN_ITEM: GameError = {
   type: "UNKNOWN_ITEM",
   message: "The following item is unknown.",
