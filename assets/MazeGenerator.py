@@ -199,6 +199,10 @@ def can_place_horizontal(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 1, x + 2) and maze[y + 1][x + 2] == "0" and
         is_in_bounds(maze, y + 1, x + 3) and maze[y + 1][x + 3] == "2" and
+        is_in_bounds(maze, y - 1, x + 1) and maze[y - 1][x + 1] == "0" and
+        is_in_bounds(maze, y - 1, x + 2) and maze[y - 1][x + 2] == "0" and
+        is_in_bounds(maze, y - 1, x + 3) and maze[y - 1][x + 3] == "2" and
+        
         all(is_in_bounds(maze, y + i, x + 1) and maze[y + i][x + 1] != "3" for i in range(-space_between_crosswalks, space_between_crosswalks))
     )
 
@@ -211,6 +215,9 @@ def can_place_vertical(maze, y, x):
         is_in_bounds(maze, y + 1, x + 1) and maze[y + 1][x + 1] == "0" and
         is_in_bounds(maze, y + 2, x + 1) and maze[y + 2][x + 1] == "0" and
         is_in_bounds(maze, y + 3, x + 1) and maze[y + 3][x + 1] == "2" and
+        is_in_bounds(maze, y + 1, x - 1) and maze[y + 1][x - 1] == "0" and
+        is_in_bounds(maze, y + 2, x - 1) and maze[y + 2][x - 1] == "0" and
+        is_in_bounds(maze, y + 3, x - 1) and maze[y + 3][x - 1] == "2" and
         all(is_in_bounds(maze, y + 1 , x + i) and maze[y + 1 ][x + i] != "3" for i in range(-space_between_crosswalks, space_between_crosswalks))
     )
 
